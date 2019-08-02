@@ -20,17 +20,17 @@ int main(void)
     System::getInstance().config();
 
     // start reception of the first character
-//    System::getInstance().getConsole()->getInterface().startReception();
+    System::getInstance().getConsole()->getInterface().startReception();
 
     // send first prompt
-//    System::getInstance().getConsole()->sendPrompt();
+    System::getInstance().getConsole()->sendPrompt();
 
     // main loop
     while(1)
     {
         System::getInstance().blinkSystemLED();
 
-//        System::getInstance().getConsole()->handler();
+        System::getInstance().getConsole()->handler();
 //        System::getInstance().getHID()->test(); //XXX
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();

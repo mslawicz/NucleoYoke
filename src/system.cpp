@@ -21,7 +21,7 @@ System::System() :
 
 {
     //pSpi3 = nullptr;
-    //pConsole = nullptr;
+    pConsole = nullptr;
     //pHID = nullptr;
     //pDisplay = nullptr;
 }
@@ -106,8 +106,8 @@ void System::config(void)
 {
     errorLED.write(GPIO_PinState::GPIO_PIN_RESET);
     Timer::config();
-    //pConsole = new Console;
-    //pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Discovery Yoke program started");
+    pConsole = new Console;
+    pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
     //pHID = new USB::Device;
     // SPI3 is used for display
 //    pSpi3 = new SpiBus(SPI3);
@@ -120,7 +120,7 @@ void System::config(void)
 void System::terminate(void)
 {
 //    delete pDisplay;
-    //delete pConsole;
+    delete pConsole;
 //    delete pSpi3;
 }
 
