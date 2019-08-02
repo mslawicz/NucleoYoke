@@ -27,15 +27,15 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define USBD_VID                      0x0483
-#define USBD_PID                      0x572B
+#define USBD_PID                      0x5740
 #define USBD_LANGID_STRING            0x409
 #define USBD_MANUFACTURER_STRING      "Marcin Slawicz"
 #define USBD_PRODUCT_HS_STRING        "Nucleo Yoke"
 #define USBD_PRODUCT_FS_STRING        "Nucleo Yoke"
-#define USBD_CONFIGURATION_HS_STRING  "HID Config"
-#define USBD_INTERFACE_HS_STRING      "HID Interface"
-#define USBD_CONFIGURATION_FS_STRING  "HID Config"
-#define USBD_INTERFACE_FS_STRING      "HID Interface"
+#define USBD_CONFIGURATION_HS_STRING  "CDC Config"
+#define USBD_INTERFACE_HS_STRING      "CDC Interface"
+#define USBD_CONFIGURATION_FS_STRING  "CDC Config"
+#define USBD_INTERFACE_FS_STRING      "CDC Interface"
 
 /* Private macro -------------------------------------------------------------*/
 /* Private function prototypes -----------------------------------------------*/
@@ -70,8 +70,8 @@ __ALIGN_BEGIN   uint8_t USBD_DeviceDesc[USB_LEN_DEV_DESC] __ALIGN_END = {
   USB_DESC_TYPE_DEVICE,       /* bDescriptorType */
   0x00,                       /* bcdUSB */
   0x02,
-  0x00,                       /* bDeviceClass */
-  0x00,                       /* bDeviceSubClass */
+  0x02,                       /* bDeviceClass */
+  0x02,                       /* bDeviceSubClass */
   0x00,                       /* bDeviceProtocol */
   USB_MAX_EP0_SIZE,           /* bMaxPacketSize */
   LOBYTE(USBD_VID),           /* idVendor */

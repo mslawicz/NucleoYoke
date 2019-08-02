@@ -19,7 +19,6 @@ public:
     Device();
     ~Device();
     void test(void);
-    static USBD_HandleTypeDef deviceHandle;  // device handle structure
 private:
 };
 
