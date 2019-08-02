@@ -10,18 +10,19 @@
 #include "usb.h"
 #include "timer.h" //XXX test
 #include "usbd_desc.h"
-#include "usbd_hid.h"
+#include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
 #include "usbd_conf.h"
+
+USBD_HandleTypeDef hUsbDeviceFS;
 
 namespace USB
 {
 
-USBD_HandleTypeDef Device::deviceHandle; // device handle structure
-
 Device::Device()
 {
     USBD_StatusTypeDef usbdStatus;
-    usbdStatus = USBD_Init(&Device::deviceHandle, &Class_Desc, DEVICE_FS);
+    usbdStatus = USBD_Init(&hUsbDeviceFS, &Class_Desc, DEVICE_FS);
     if(usbdStatus == USBD_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB Device initialized");
@@ -31,17 +32,27 @@ Device::Device()
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB Device initialization failed, code=" + Console::toHex(usbdStatus));
         return;
     }
-    usbdStatus = USBD_RegisterClass(&Device::deviceHandle, USBD_HID_CLASS);
+    usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC);
     if(usbdStatus == USBD_OK)
     {
-        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB HID class registered");
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB CDC class registered");
     }
     else
     {
-        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB HID class initialization failed, code=" + Console::toHex(usbdStatus));
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB CDC class initialization failed, code=" + Console::toHex(usbdStatus));
         return;
     }
-    usbdStatus = USBD_Start(&Device::deviceHandle);
+    usbdStatus = static_cast<USBD_StatusTypeDef>(USBD_CDC_RegisterInterface(&hUsbDeviceFS, &USBD_Interface_fops_FS));
+    if(usbdStatus == USBD_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB CDC interface registered");
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB CDC interface registration failed, code=" + Console::toHex(usbdStatus));
+        return;
+    }
+    usbdStatus = USBD_Start(&hUsbDeviceFS);
     if(usbdStatus == USBD_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB device started");
@@ -61,20 +72,7 @@ Device::~Device()
 
 void Device::test(void)
 {
-    static Timer tm;
-    static uint8_t x = 0;
-    static uint8_t y = 0;
-    if(tm.elapsed(10000) && System::getInstance().systemPushbutton.read())
-    {
-        tm.reset();
-        uint8_t buffer[4] = {0, x, y, 0}; // buttons, X, Y, wheel
-        USBD_HID_SendReport(&Device::deviceHandle, buffer, 4);
-    }
-    if(tm.elapsed(200000))
-    {
-        x = rand() % 7 - 3;
-        y = rand() % 5 - 2;
-    }
+
 }
 
 } /* namespace USB */
