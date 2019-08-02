@@ -10,6 +10,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "uart.h"
+#include "usb.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx.h"
 #include "stm32f4xx_it.h"
@@ -18,6 +19,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
 /* Private function prototypes -----------------------------------------------*/
 /* Private functions ---------------------------------------------------------*/
 
@@ -126,7 +128,15 @@ void USART3_IRQHandler(void)
   HAL_UART_IRQHandler(UART::pUSART3->getUartHandle());
 }
 
-/* USER CODE BEGIN 1 */
+/**
+  * @brief  This function handles USB-On-The-Go FS global interrupt request.
+  * @param  None
+  * @retval None
+  */
+void OTG_FS_IRQHandler(void)
+{
+  HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
+}
 
-/* USER CODE END 1 */
+
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

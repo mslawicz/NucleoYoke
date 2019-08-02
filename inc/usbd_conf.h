@@ -51,6 +51,11 @@
 #define USBD_SELF_POWERED                     1U
 #define USBD_DEBUG_LEVEL                      2U
 
+/****************************************/
+/* #define for FS and HS identification */
+#define DEVICE_FS       0
+#define DEVICE_HS       1
+
 /* MSC Class Config */
 #define MSC_MEDIA_PACKET                       8192U
 
