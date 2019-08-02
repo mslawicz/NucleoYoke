@@ -1,6 +1,6 @@
 /**
   ******************************************************************************
-  * @file    usbd_customhid_if_template.c
+  * @file    usbd_customhid_if.c
   * @author  MCD Application Team
   * @brief   USB Device Custom HID interface file.
   *		     This template should be copied to the user folder, renamed and customized
@@ -25,7 +25,7 @@
   EndBSPDependencies */
 
 /* Includes ------------------------------------------------------------------*/
-#include "usbd_customhid_if_template.h"
+#include <usbd_customhid_if.h>
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
@@ -37,7 +37,7 @@ static int8_t TEMPLATE_CUSTOM_HID_OutEvent (uint8_t event_idx, uint8_t state);
 /* Private variables ---------------------------------------------------------*/
 USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_template_fops =
 {
-  TEMPLATE_CUSTOM_HID_ReportDesc,
+  NULL, //XXX MS: TEMPLATE_CUSTOM_HID_ReportDesc,
   TEMPLATE_CUSTOM_HID_Init,
   TEMPLATE_CUSTOM_HID_DeInit,
   TEMPLATE_CUSTOM_HID_OutEvent,
