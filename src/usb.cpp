@@ -21,7 +21,7 @@ USBD_HandleTypeDef Device::deviceHandle; // device handle structure
 Device::Device()
 {
     USBD_StatusTypeDef usbdStatus;
-    usbdStatus = USBD_Init(&Device::deviceHandle, &HID_Desc, DEVICE_FS);
+    usbdStatus = USBD_Init(&Device::deviceHandle, &Class_Desc, DEVICE_FS);
     if(usbdStatus == USBD_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB Device initialized");
@@ -70,7 +70,7 @@ void Device::test(void)
         uint8_t buffer[4] = {0, x, y, 0}; // buttons, X, Y, wheel
         USBD_HID_SendReport(&Device::deviceHandle, buffer, 4);
     }
-    if(tm.elapsed(1000000))
+    if(tm.elapsed(200000))
     {
         x = rand() % 7 - 3;
         y = rand() % 5 - 2;
