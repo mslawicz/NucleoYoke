@@ -7,9 +7,10 @@
 
 #include "virtualcom.h"
 
-VirtualCom::VirtualCom()
+VirtualCom::VirtualCom(USBD_HandleTypeDef* pUsbdHandle) :
+    pUsbdHandle(pUsbdHandle)
 {
-    // TODO Auto-generated constructor stub
+
 
 }
 
@@ -18,3 +19,10 @@ VirtualCom::~VirtualCom()
     // TODO Auto-generated destructor stub
 }
 
+/*
+ * virtual com handler to be executed in a loop
+ */
+void VirtualCom::handler()
+{
+
+}

@@ -13,6 +13,8 @@
 
 #define USE_HSE_OSCILLATOR  1
 
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
 System::System() :
     testPin(TEST_PORT, TEST_PIN, GPIO_MODE_OUTPUT_PP),
     systemLED(LED1_GPIO_PORT, LED1_PIN, GPIO_MODE_OUTPUT_PP),   //green LED
@@ -23,6 +25,7 @@ System::System() :
     //pSpi3 = nullptr;
     pConsole = nullptr;
     pHID = nullptr;
+    pVirtualCom = nullptr;
     //pDisplay = nullptr;
 }
 
@@ -116,6 +119,7 @@ void System::config(void)
     pConsole = new Console;
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
     pHID = new USB::Device;
+    pVirtualCom = new VirtualCom(&hUsbDeviceFS);
     // SPI3 is used for display
 //    pSpi3 = new SpiBus(SPI3);
 //    pDisplay = new Display(SpiBus::pSpi3, DISPLAY_CS_PORT, DISPLAY_CS_PIN);
@@ -127,6 +131,7 @@ void System::config(void)
 void System::terminate(void)
 {
 //    delete pDisplay;
+    delete pVirtualCom;
     delete pHID;
     delete pConsole;
 //    delete pSpi3;
