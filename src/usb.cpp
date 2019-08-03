@@ -10,8 +10,9 @@
 #include "usb.h"
 #include "timer.h" //XXX test
 #include "usbd_desc.h"
-#include "usbd_cdc.h"
-#include "usbd_cdc_if.h"
+#include "usbd_hid.h"
+//#include "usbd_cdc.h" XXX enable it for CDC
+//#include "usbd_cdc_if.h" XXX enable it for CDC
 #include "usbd_conf.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -32,6 +33,18 @@ Device::Device()
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB Device initialization failed, code=" + Console::toHex(usbdStatus));
         return;
     }
+
+    usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
+    if(usbdStatus == USBD_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB HID class registered");
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB HID class initialization failed, code=" + Console::toHex(usbdStatus));
+        return;
+    }
+/* XXX this section is for CDC device
     usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC);
     if(usbdStatus == USBD_OK)
     {
@@ -52,6 +65,8 @@ Device::Device()
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB CDC interface registration failed, code=" + Console::toHex(usbdStatus));
         return;
     }
+end of CDC device section */
+
     usbdStatus = USBD_Start(&hUsbDeviceFS);
     if(usbdStatus == USBD_OK)
     {
