@@ -6,6 +6,9 @@
  */
 
 #include "virtualcom.h"
+#include "system.h"
+#include "usbd_cdc.h"
+#include "usbd_cdc_if.h"
 
 VirtualCom::VirtualCom(USBD_HandleTypeDef* pUsbdHandle) :
     pUsbdHandle(pUsbdHandle)
@@ -22,7 +25,17 @@ VirtualCom::~VirtualCom()
 /*
  * virtual com handler to be executed in a loop
  */
-void VirtualCom::handler()
+void VirtualCom::handler(void)
 {
+    if(!sendQueue.empty() && (pUsbdHandle->pClassData != nullptr) && (!((USBD_CDC_HandleTypeDef*)pUsbdHandle->pClassData)->TxState))
+    {
+        // send queue not empty and USB send is not busy
+        CDC_Transmit_FS(&sendQueue.front()[0], sendQueue.front().size());
+        sendQueue.pop();
+    }
+}
 
+void moveDataToReceiveQueue(uint8_t* data, uint32_t length)
+{
+    System::getInstance().getVirtualCom()->putDataToReceiveQueue(data, length);
 }
