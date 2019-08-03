@@ -6,7 +6,6 @@
  */
 
 #include "console.h"
-#include "system.h" //XXX test
 #include <unordered_map>
 
 const bool Console::IsChannelActive[] = {
@@ -40,9 +39,6 @@ void Console::handler(void)
         interface.send("\r\n");
 
         // interpret command here
-        // XXX send received data to virtual com for testing
-        message += "->USB";
-        System::getInstance().getVirtualCom()->send(std::vector<uint8_t>(message.begin(), message.end()));
 
         // send the prompt character
         sendPrompt();

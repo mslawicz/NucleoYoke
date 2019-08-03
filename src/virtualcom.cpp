@@ -33,12 +33,10 @@ void VirtualCom::handler(void)
         CDC_Transmit_FS(&sendQueue.front()[0], sendQueue.front().size());
         sendQueue.pop();
     }
-    // for test purposes received data is sent to console
     if(!receiveQueue.empty())
     {
         // receive queue is not empty
-        std::string dataString = std::string(receiveQueue.front().begin(), receiveQueue.front().end());
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_USB, "USB->" + dataString);
+        // do sth with the received data
         receiveQueue.pop();
     }
 }
