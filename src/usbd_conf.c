@@ -25,6 +25,7 @@
 /* Private define ------------------------------------------------------------*/
 /* Private macro -------------------------------------------------------------*/
 /* Private variables ---------------------------------------------------------*/
+USBD_HandleTypeDef hUsbDeviceFS;
 PCD_HandleTypeDef hpcd_USB_OTG_FS;
 void Error_Handler(void);
 /* Private function prototypes -----------------------------------------------*/

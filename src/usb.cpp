@@ -14,7 +14,7 @@
 #include "usbd_cdc_if.h"
 #include "usbd_conf.h"
 
-USBD_HandleTypeDef hUsbDeviceFS;
+extern USBD_HandleTypeDef hUsbDeviceFS;
 
 namespace USB
 {
