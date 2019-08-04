@@ -116,8 +116,6 @@ void Device::test(void)
     GPIO_PinState currentButtonState = System::getInstance().systemPushbutton.read();
     if(currentButtonState != lastButtonState)
     {
-//        uint8_t buf[] = {(uint8_t)(currentButtonState << 1), 0, 0, 0, 0}; // triggering the right button of a mouse
-//        USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
 }
