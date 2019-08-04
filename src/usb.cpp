@@ -11,8 +11,8 @@
 #include "timer.h" //XXX test
 #include "usbd_desc.h"
 #include "usbd_hid.h"
-//#include "usbd_cdc.h" XXX enable it for CDC
-//#include "usbd_cdc_if.h" XXX enable it for CDC
+//#include "usbd_cdc.h" //XXX enable it for CDC
+//#include "usbd_cdc_if.h" //XXX enable it for CDC
 #include "usbd_conf.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -99,8 +99,10 @@ void Device::test(void)
                 (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
                 (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
                 (uint8_t)(state * (rand() % 8)), // HAT
-                (uint8_t)(state * (rand() & 0xFF)) // buttons
-
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
+                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
         };
         USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
