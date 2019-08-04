@@ -91,7 +91,14 @@ void Device::test(void)
     GPIO_PinState currentButtonState = System::getInstance().systemPushbutton.read();
     if(currentButtonState != lastButtonState)
     {
-        uint8_t buf[] = {(uint8_t)(currentButtonState << 1), 0, 0, 0, 0}; // triggering the right button of a mouse
+        uint8_t state = (uint8_t)(currentButtonState);
+        uint8_t buf[] =
+        {
+                (uint8_t)(-128 + state * 60 * ( 1 + (rand() % 4))), // throttle
+                (uint8_t)(state * (-128 + 80 * (rand() % 4))), // X
+                (uint8_t)(state * (-128 + 80 * (rand() % 4))), // Y
+                (uint8_t)(state * ((rand() % 0xFF) & 0xFE)), // HAT and buttons
+        };
         USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
