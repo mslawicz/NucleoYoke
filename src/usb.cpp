@@ -94,10 +94,13 @@ void Device::test(void)
         uint8_t state = (uint8_t)(currentButtonState);
         uint8_t buf[] =
         {
-                (uint8_t)(-128 + state * 60 * ( 1 + (rand() % 4))), // throttle
-                (uint8_t)(state * (-128 + 80 * (rand() % 4))), // X
-                (uint8_t)(state * (-128 + 80 * (rand() % 4))), // Y
-                (uint8_t)(state * ((rand() % 0xFF) & 0xFE)), // HAT and buttons
+                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // rudder
+                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // throttle
+                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
+                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
+                (uint8_t)(state * (rand() % 8)), // HAT
+                (uint8_t)(state * (rand() & 0xFF)) // buttons
+
         };
         USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
