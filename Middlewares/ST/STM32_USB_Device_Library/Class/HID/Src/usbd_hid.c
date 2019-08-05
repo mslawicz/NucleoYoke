@@ -390,8 +390,8 @@ __ALIGN_BEGIN static uint8_t HID_NucleoYoke_ReportDesc[HID_NUCLEOYOKE_REPORT_DES
         0x81, 0x02,                    //     INPUT (Data,Var,Abs)
         0xc0,                          //   END_COLLECTION
         0x09, 0x39,                    //   USAGE (Hat switch)
-        0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
-        0x25, 0x07,                    //   LOGICAL_MAXIMUM (7)
+        0x15, 0x01,                    //   LOGICAL_MINIMUM (1)
+        0x25, 0x08,                    //   LOGICAL_MAXIMUM (8)
         0x35, 0x00,                    //   PHYSICAL_MINIMUM (0)
         0x46, 0x3b, 0x01,              //   PHYSICAL_MAXIMUM (315)
         0x65, 0x14,                    //   UNIT (Eng Rot:Angular Pos)
