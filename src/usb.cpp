@@ -10,9 +10,11 @@
 #include "usb.h"
 #include "timer.h" //XXX test
 #include "usbd_desc.h"
-#include "usbd_hid.h"
-//#include "usbd_cdc.h" //XXX enable it for CDC
-//#include "usbd_cdc_if.h" //XXX enable it for CDC
+//#include "usbd_hid.h" XXX enable for HID
+#include "usbd_customhid.h"
+#include "usbd_custom_hid_if.h"
+//#include "usbd_cdc.h" XXX enable it for CDC
+//#include "usbd_cdc_if.h" XXX enable it for CDC
 #include "usbd_conf.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -33,7 +35,7 @@ Device::Device()
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB Device initialization failed, code=" + Console::toHex(usbdStatus));
         return;
     }
-
+/* XXX this section is for HID device
     usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_HID);
     if(usbdStatus == USBD_OK)
     {
@@ -44,6 +46,29 @@ Device::Device()
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB HID class initialization failed, code=" + Console::toHex(usbdStatus));
         return;
     }
+end of HID device section */
+/* XXX this section is for custom HID device */
+    usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_CUSTOM_HID);
+    if(usbdStatus == USBD_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB custom HID class registered");
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB custom HID class initialization failed, code=" + Console::toHex(usbdStatus));
+        return;
+    }
+    usbdStatus = static_cast<USBD_StatusTypeDef>(USBD_CUSTOM_HID_RegisterInterface(&hUsbDeviceFS, &USBD_CustomHID_fops_FS));
+    if(usbdStatus == USBD_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "USB custom HID interface registered");
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_USB, "USB custom HID interface registration failed, code=" + Console::toHex(usbdStatus));
+        return;
+    }
+//end of custom HID device section */
 /* XXX this section is for CDC device
     usbdStatus = USBD_RegisterClass(&hUsbDeviceFS, &USBD_CDC);
     if(usbdStatus == USBD_OK)
