@@ -129,7 +129,7 @@ void Device::test(void)
                 (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
                 (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
         };
-        USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
+        //USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
 }
