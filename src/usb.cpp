@@ -116,20 +116,20 @@ void Device::test(void)
     GPIO_PinState currentButtonState = System::getInstance().systemPushbutton.read();
     if(currentButtonState != lastButtonState)
     {
-        uint8_t state = (uint8_t)(currentButtonState);
-        uint8_t buf[] =
-        {
-                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // rudder
-                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // throttle
-                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
-                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
-                (uint8_t)(state * (1+(rand() % 8))), // HAT
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
-                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
-        };
-        //USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
+//        uint8_t state = (uint8_t)(currentButtonState);
+//        uint8_t buf[] =
+//        {
+//                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // rudder
+//                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // throttle
+//                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
+//                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
+//                (uint8_t)(state * (1+(rand() % 8))), // HAT
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
+//                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
+//        };
+//        USBD_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
 }
