@@ -119,7 +119,6 @@ void Device::test(void)
         uint8_t state = (uint8_t)(currentButtonState);
         uint8_t buf[] =
         {
-                //(uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // rudder
                 (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // throttle
                 (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
                 (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
