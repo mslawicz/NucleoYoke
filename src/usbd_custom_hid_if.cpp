@@ -30,7 +30,8 @@
 uint8_t dataBuffer[CUSTOM_HID_EPOUT_SIZE];
 
 
-/** Usb HID report descriptor. */
+#if(FORCE_FEEDBACK)
+/** Usb HID+PID report descriptor. */
 __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END =
 {
     0x05, 0x01,    // USAGE_PAGE (Generic Desktop)
@@ -536,6 +537,75 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
         0xC0,          //  END_COLLECTION
     0xC0,          //  END_COLLECTION
 };
+#else
+/** Usb HID report descriptor. */
+__ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DESC_SIZE] __ALIGN_END =
+{
+    0x05, 0x01,    // USAGE_PAGE (Generic Desktop)
+    0x15, 0x00,    // LOGICAL_MINIMUM (0)
+    0x09, 0x04,    // USAGE (Joystick)
+    0xA1, 0x01,    // COLLECTION (Application)
+        //Start Joystick input definition
+        //0x85, 0x01,    // Report ID 1
+        0x05, 0x02,    // USAGE_PAGE (Simulation Controls)
+        0x09, 0xbb,    // USAGE (Throttle)
+        0x15, 0x81,    // LOGICAL_MINIMUM (-127)
+        0x25, 0x7f,    // LOGICAL_MAXIMUM (127)
+        0x75, 0x08,    // REPORT_SIZE (8)
+        0x95, 0x01,    // REPORT_COUNT (1)
+        0x81, 0x02,    // INPUT (Data,Var,Abs)
+        0x05, 0x01,    // USAGE_PAGE (Generic Desktop)
+
+        // Define axes
+        0x09, 0x01,    // USAGE (Pointer)
+        0xa1, 0x00,    // COLLECTION (Physical)
+            0x09, 0x30,    // USAGE (X)
+            0x09, 0x31,    // USAGE (Y)
+            0x09, 0x32,    // USAGE (Z)
+            0x75, 0x08,    // REPORT_SIZE (8)
+            0x95, 0x03,    // REPORT_COUNT (3)
+            0x81, 0x02,    // INPUT (Data,Var,Abs)
+        0xc0,          // END_COLLECTION
+
+        //Define HAT switch
+        0x09, 0x39,    // USAGE (Hat switch)
+        0x15, 0x01,    // LOGICAL_MINIMUM (1)
+        0x25, 0x08,    // LOGICAL_MAXIMUM (8)
+        0x35, 0x00,    // PHYSICAL_MINIMUM (0)
+        0x46, 0x3b, 0x01,    // PHYSICAL_MAXIMUM (315)
+        0x65, 0x14,    // UNIT (Eng Rot:Angular Pos)
+        0x75, 0x04,    // REPORT_SIZE (4)
+        0x95, 0x01,    // REPORT_COUNT (1)
+        0x81, 0x42,    // INPUT (Data,Var,Abs, Null)
+        0x75, 0x04,    // REPORT_SIZE (4)
+        0x95, 0x01,    // REPORT_COUNT (1)
+        0x81, 0x41,    // INPUT (Cnst,Ary,Abs,Null)
+
+        //Define buttons
+        0x05, 0x09,    // USAGE_PAGE (Button)
+        0x19, 0x01,    // USAGE_MINIMUM (Button 1)
+        0x29, 0x20,    // USAGE_MAXIMUM (Button 32)
+        0x15, 0x00,    // LOGICAL_MINIMUM (0)
+        0x25, 0x01,    // LOGICAL_MAXIMUM (1)
+        0x75, 0x01,    // REPORT_SIZE (1)
+        0x95, 0x20,    // REPORT_COUNT (32)
+        0x55, 0x00,    // UNIT_EXPONENT (0)
+        0x65, 0x00,    // UNIT (None)
+        0x81, 0x02,    // INPUT (Data,Var,Abs)
+        //End Joystick Input definition
+
+        // output data
+        0x15, 0x00,                    //   LOGICAL_MINIMUM (0)
+        0x26, 0xff, 0x00,              //   LOGICAL_MAXIMUM (255)
+        0x75, 0x08,                    //   REPORT_SIZE (8)
+        0x95, 0x40,                    //   REPORT_COUNT (64)
+        0x09, 0x01,                    //   USAGE (Undefined)
+        0x91, 0x02,                    //   OUTPUT (Data,Var,Abs)
+        0x95, 0x01,                    //   REPORT_COUNT (1)
+        0x09, 0x01,                    //   USAGE (Undefined)
+        0xb1, 0x02,                    //   FEATURE (Data,Var,Abs)
+};
+#endif
 
 
 
