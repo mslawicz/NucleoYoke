@@ -55,7 +55,7 @@
 #if(FORCE_FEEDBACK)
 #define USBD_CUSTOM_HID_REPORT_DESC_SIZE      870U
 #else
-#define USBD_CUSTOM_HID_REPORT_DESC_SIZE      106U
+#define USBD_CUSTOM_HID_REPORT_DESC_SIZE      108U
 #endif
 
 /****************************************/

@@ -546,7 +546,7 @@ __ALIGN_BEGIN static uint8_t CUSTOM_HID_ReportDesc_FS[USBD_CUSTOM_HID_REPORT_DES
     0x09, 0x04,    // USAGE (Joystick)
     0xA1, 0x01,    // COLLECTION (Application)
         //Start Joystick input definition
-        //0x85, 0x01,    // Report ID 1
+        0x85, 0x01,    // Report ID 1
         0x05, 0x02,    // USAGE_PAGE (Simulation Controls)
         0x09, 0xbb,    // USAGE (Throttle)
         0x15, 0x81,    // LOGICAL_MINIMUM (-127)
