@@ -26,9 +26,11 @@
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
-#define USBD_VID                      0x0483
-//#define USBD_PID                      0x5740 // Virtual COM Port
-#define USBD_PID                      0x5710 // Joystick in FS Mode
+//#define USBD_VID                    0x0483 // STMicroelectronics
+#define USBD_VID                      0x045E // Microsoft
+//#define USBD_PID                    0x5740 // Virtual COM Port
+//#define USBD_PID                    0x5710 // Joystick in FS Mode
+#define USBD_PID                      0x001B // Sidewinder Force Feedback 2
 #define USBD_LANGID_STRING            0x409
 #define USBD_MANUFACTURER_STRING      "Marcin Slawicz"
 #define USBD_PRODUCT_HS_STRING        "Nucleo Yoke"
