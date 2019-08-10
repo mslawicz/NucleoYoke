@@ -27,10 +27,8 @@
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
 #define USBD_VID                      0x0483
-//#define USBD_PID                      0x5740 // CDC device
-//#define USBD_PID                      0x572B // HID device
-//#define USBD_PID                      0x5710 // HID device joystick
-#define USBD_PID                      0x5750 // custom HID device
+//#define USBD_PID                      0x5740 // Virtual COM Port
+#define USBD_PID                      0x5710 // Joystick in FS Mode
 #define USBD_LANGID_STRING            0x409
 #define USBD_MANUFACTURER_STRING      "Marcin Slawicz"
 #define USBD_PRODUCT_HS_STRING        "Nucleo Yoke"
