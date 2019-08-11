@@ -43,5 +43,5 @@ void VirtualCom::handler(void)
 
 void moveDataToReceiveQueue(uint8_t* data, uint32_t length)
 {
-    System::getInstance().getVirtualCom()->putDataToReceiveQueue(data, length);
+    //System::getInstance().getVirtualCom()->putDataToReceiveQueue(data, length);
 }

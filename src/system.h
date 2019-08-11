@@ -11,7 +11,6 @@
 #include "gpio.h"
 #include "console.h"
 #include "usb.h"
-#include "virtualcom.h"
 //#include "display.h"
 
 #define TEST_PORT   GPIOA
@@ -29,7 +28,6 @@ public:
     void blinkSystemLED(void);
     Console* getConsole(void) const { return pConsole; }
     USB::Device* getHID(void) const { return pHID; }
-    VirtualCom* getVirtualCom(void) const { return pVirtualCom; }
 //    Display* getDisplay(void) const { return pDisplay; }
     GPIO testPin;
     GPIO systemLED;
@@ -39,7 +37,6 @@ private:
     System();
     Console* pConsole;
     USB::Device* pHID;
-    VirtualCom* pVirtualCom;
 //    Display* pDisplay;
 //    SpiBus* pSpi3;
 };

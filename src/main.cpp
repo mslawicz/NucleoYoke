@@ -32,7 +32,6 @@ int main(void)
 
         System::getInstance().getConsole()->handler();
         System::getInstance().getHID()->test(); //XXX
-        System::getInstance().getVirtualCom()->handler();
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();
     }
