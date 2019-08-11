@@ -11,8 +11,8 @@
 Yoke::Yoke() :
     interface()
 {
-    // TODO Auto-generated constructor stub
-
+    receivedData = nullptr;
+    forceFeedbackGain = 0xFF;
 }
 
 Yoke::~Yoke()
@@ -29,6 +29,9 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
     case 0x0C:  // PID Device control
         deviceControl();
         break;
+    case 0x0D:  //set overall force feedback gain
+        forceFeedbackGain = receivedData[1];
+        break;
     default:
         System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported report ID: " + Console::toHex(receivedData[0],2));
         break;
@@ -40,5 +43,16 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
  */
 void Yoke::deviceControl(void)
 {
-    System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Device control: " + Console::toHex(receivedData[1],2));
+    switch(receivedData[1])
+    {
+    case 0x03:
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Stop all effects request");
+        break;
+    case 0x04:
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Reset request");
+        break;
+    default:
+        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported device control: " + Console::toHex(receivedData[1],2));
+        break;
+    }
 }

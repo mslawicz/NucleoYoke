@@ -22,6 +22,7 @@ private:
     void deviceControl();
     USB::Device interface;
     uint8_t* receivedData;
+    uint8_t forceFeedbackGain;
 };
 
 #endif /* YOKE_H_ */
