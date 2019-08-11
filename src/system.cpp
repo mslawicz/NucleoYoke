@@ -117,7 +117,7 @@ void System::config(void)
     Timer::config();
     pConsole = new Console;
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
-    pYoke = new USB::Device;
+    pYoke = new Yoke;
     // SPI3 is used for display
 //    pSpi3 = new SpiBus(SPI3);
 //    pDisplay = new Display(SpiBus::pSpi3, DISPLAY_CS_PORT, DISPLAY_CS_PIN);

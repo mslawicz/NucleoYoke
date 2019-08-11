@@ -10,7 +10,7 @@
 
 #include "gpio.h"
 #include "console.h"
-#include "usb.h"
+#include "yoke.h"
 //#include "display.h"
 
 #define TEST_PORT   GPIOA
@@ -27,7 +27,7 @@ public:
     void terminate(void);
     void blinkSystemLED(void);
     Console* getConsole(void) const { return pConsole; }
-    USB::Device* getYoke(void) const { return pYoke; }
+    Yoke* getYoke(void) const { return pYoke; }
 //    Display* getDisplay(void) const { return pDisplay; }
     GPIO testPin;
     GPIO systemLED;
@@ -36,7 +36,7 @@ public:
 private:
     System();
     Console* pConsole;
-    USB::Device* pYoke;
+    Yoke* pYoke;
 //    Display* pDisplay;
 //    SpiBus* pSpi3;
 };

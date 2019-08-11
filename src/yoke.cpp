@@ -7,7 +7,8 @@
 
 #include "yoke.h"
 
-Yoke::Yoke()
+Yoke::Yoke() :
+    interface()
 {
     // TODO Auto-generated constructor stub
 
