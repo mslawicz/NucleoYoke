@@ -17,8 +17,11 @@ public:
     Yoke();
     ~Yoke();
     USB::Device& getInterface(void) { return interface; }
+    void forceFeedbackHandler(uint8_t* buffer);
 private:
+    void deviceControl();
     USB::Device interface;
+    uint8_t* receivedData;
 };
 
 #endif /* YOKE_H_ */

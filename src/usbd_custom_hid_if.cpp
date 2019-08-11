@@ -866,17 +866,8 @@ static int8_t CUSTOM_HID_DeInit_FS(void)
   */
 static int8_t CUSTOM_HID_OutEvent_FS(uint8_t* buffer)
 {
-  /* USER CODE BEGIN 6 */
-    //handle host sent data here
-    std::string bufferString;
-    for(size_t k=0; k<16; k++)
-    {
-        bufferString += " ";
-        bufferString += Console::toHex(buffer[k], 2, false);
-    }
-    System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "O: " + bufferString);
+    System::getInstance().getYoke()->forceFeedbackHandler(buffer);
     return (USBD_OK);
-  /* USER CODE END 6 */
 }
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
