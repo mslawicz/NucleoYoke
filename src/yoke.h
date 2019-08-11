@@ -10,6 +10,7 @@
 #define YOKE_H_
 
 #include "usb.h"
+#include <string>
 
 class Yoke
 {
@@ -20,6 +21,7 @@ public:
     void forceFeedbackHandler(uint8_t* buffer);
 private:
     void deviceControl();
+    std::string getBufferData(uint8_t length);
     USB::Device interface;
     uint8_t* receivedData;
     uint8_t forceFeedbackGain;

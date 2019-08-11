@@ -33,7 +33,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
         forceFeedbackGain = receivedData[1];
         break;
     default:
-        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported report ID: " + Console::toHex(receivedData[0],2));
+        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported report: " + getBufferData(6));
         break;
     }
 }
@@ -52,7 +52,20 @@ void Yoke::deviceControl(void)
         System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Reset request");
         break;
     default:
-        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported device control: " + Console::toHex(receivedData[1],2));
+        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported device control: " + getBufferData(4));
         break;
     }
+}
+
+/*
+ * make string of buffer content
+ */
+std::string Yoke::getBufferData(uint8_t length)
+{
+    std::string data;
+    for(uint8_t k=0; k<length; k++)
+    {
+        data += Console::toHex(receivedData[k], 2, false);
+    }
+    return data;
 }
