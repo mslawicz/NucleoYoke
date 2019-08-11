@@ -22,6 +22,7 @@ public:
 private:
     void deviceControl();
     std::string getBufferData(uint8_t length);
+    void setEffect(void);
     USB::Device interface;
     uint8_t* receivedData;
     uint8_t forceFeedbackGain;
