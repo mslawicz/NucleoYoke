@@ -27,7 +27,7 @@ public:
     void terminate(void);
     void blinkSystemLED(void);
     Console* getConsole(void) const { return pConsole; }
-    USB::Device* getHID(void) const { return pHID; }
+    USB::Device* getYoke(void) const { return pYoke; }
 //    Display* getDisplay(void) const { return pDisplay; }
     GPIO testPin;
     GPIO systemLED;
@@ -36,7 +36,7 @@ public:
 private:
     System();
     Console* pConsole;
-    USB::Device* pHID;
+    USB::Device* pYoke;
 //    Display* pDisplay;
 //    SpiBus* pSpi3;
 };

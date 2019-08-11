@@ -31,7 +31,7 @@ int main(void)
         System::getInstance().blinkSystemLED();
 
         System::getInstance().getConsole()->handler();
-        System::getInstance().getHID()->test(); //XXX
+        System::getInstance().getYoke()->test(); //XXX
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();
     }
