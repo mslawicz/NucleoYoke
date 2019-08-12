@@ -25,23 +25,7 @@ Yoke::~Yoke()
 
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
-    receivedData = buffer;
-    // take the action depending on the report_id (see the report descriptor)
-    switch(receivedData[0])
-    {
-    case 0x05:  // set force report
-        setEffect();
-        break;
-    case 0x0C:  // PID Device control
-        deviceControl();
-        break;
-    case 0x0D:  //set overall force feedback gain
-        forceFeedbackGain = receivedData[1];
-        break;
-    default:
-        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Unsupported report:" + getBufferData(6));
-        break;
-    }
+    System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Received from host:" + getBufferData(6));
 }
 
 /*
