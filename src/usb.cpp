@@ -117,9 +117,12 @@ void Device::test(void)
     if(currentButtonState != lastButtonState)
     {
         uint8_t state = (uint8_t)(currentButtonState);
-        uint16_t X = state * (250 * (2 - rand() % 5));
-        uint16_t Y = state * (250 * (2 - rand() % 5));
-        uint8_t Rz = state * (15 * (2 - rand() % 5));
+        uint16_t X = state * (2000 * (2 - rand() % 5));
+        uint16_t Y = state * (2000 * (2 - rand() % 5));
+        uint16_t Z = state * (2000 * (2 - rand() % 5));
+        uint8_t Rx = state * (63 * (1 + rand() % 4));
+        uint8_t Ry = state * (63 * (1 + rand() % 4));
+        uint8_t Rz = state * (63 * (1 + rand() % 4));
         uint8_t buf[] =
         {
                 0x01, // report id
@@ -127,20 +130,18 @@ void Device::test(void)
                 (uint8_t)((X >> 8) & 0xFF),
                 (uint8_t)(Y & 0xFF),
                 (uint8_t)((Y >> 8) & 0xFF),
+                (uint8_t)(Z & 0xFF),
+                (uint8_t)((Z >> 8) & 0xFF),
+                Rx,
+                Ry,
                 Rz,
-                (uint8_t)(state * 31 * (1 + rand() % 4)), // slider
-                (uint8_t)(state * ((rand() % 8))), // HAT 0-7
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
-                0x00, 0x00, 0x00, 0x00, // ?
 
-//                (uint8_t)(-127 + state * 60 * ( 1 + (rand() % 4))), // throttle
-//                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // X
-//                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Y
-//                (uint8_t)(state * (-127 + 80 * (rand() % 4))), // Z
-//                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
-//                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
-//                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
-//                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
+                (uint8_t)(state * (1 + (rand() % 8))), // HAT 0-7
+
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
+                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
+                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
         };
         USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;

@@ -13,8 +13,6 @@
 
 #define USE_HSE_OSCILLATOR  1
 
-extern USBD_HandleTypeDef hUsbDeviceFS;
-
 System::System() :
     testPin(TEST_PORT, TEST_PIN, GPIO_MODE_OUTPUT_PP),
     systemLED(LED1_GPIO_PORT, LED1_PIN, GPIO_MODE_OUTPUT_PP),   //green LED

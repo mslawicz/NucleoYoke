@@ -51,12 +51,7 @@
 #define USBD_SELF_POWERED                     1U
 #define USBD_DEBUG_LEVEL                      0U
 #define USBD_CUSTOMHID_OUTREPORT_BUF_SIZE     0x40
-#define FORCE_FEEDBACK                        1
-#if(FORCE_FEEDBACK)
-#define USBD_CUSTOM_HID_REPORT_DESC_SIZE      1337U //870U
-#else
-#define USBD_CUSTOM_HID_REPORT_DESC_SIZE      108U
-#endif
+#define USBD_CUSTOM_HID_REPORT_DESC_SIZE      116U
 
 /****************************************/
 /* #define for FS and HS identification */
