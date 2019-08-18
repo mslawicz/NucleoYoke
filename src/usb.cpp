@@ -117,32 +117,38 @@ void Device::test(void)
     if(currentButtonState != lastButtonState)
     {
         uint8_t state = (uint8_t)(currentButtonState);
-        uint16_t X = state * (2000 * (2 - rand() % 5));
-        uint16_t Y = state * (2000 * (2 - rand() % 5));
-        uint16_t Z = state * (2000 * (2 - rand() % 5));
-        uint8_t Rx = state * (63 * (1 + rand() % 4));
-        uint8_t Ry = state * (63 * (1 + rand() % 4));
-        uint8_t Rz = state * (63 * (1 + rand() % 4));
-        uint8_t buf[] =
-        {
-                0x01, // report id
-                (uint8_t)(X & 0xFF),
-                (uint8_t)((X >> 8) & 0xFF),
-                (uint8_t)(Y & 0xFF),
-                (uint8_t)((Y >> 8) & 0xFF),
-                (uint8_t)(Z & 0xFF),
-                (uint8_t)((Z >> 8) & 0xFF),
-                Rx,
-                Ry,
-                Rz,
+        // joystick test
+//        uint16_t X = state * (2000 * (2 - rand() % 5));
+//        uint16_t Y = state * (2000 * (2 - rand() % 5));
+//        uint16_t Z = state * (2000 * (2 - rand() % 5));
+//        uint8_t Rx = state * (63 * (1 + rand() % 4));
+//        uint8_t Ry = state * (63 * (1 + rand() % 4));
+//        uint8_t Rz = state * (63 * (1 + rand() % 4));
+//        uint8_t buf[] =
+//        {
+//                0x01, // report id
+//                (uint8_t)(X & 0xFF),
+//                (uint8_t)((X >> 8) & 0xFF),
+//                (uint8_t)(Y & 0xFF),
+//                (uint8_t)((Y >> 8) & 0xFF),
+//                (uint8_t)(Z & 0xFF),
+//                (uint8_t)((Z >> 8) & 0xFF),
+//                Rx,
+//                Ry,
+//                Rz,
+//
+//                (uint8_t)(state * (1 + (rand() % 8))), // HAT 0-7
+//
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
+//                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
+//                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
+//        };
 
-                (uint8_t)(state * (1 + (rand() % 8))), // HAT 0-7
+        // keyboard test
+        uint8_t buf[9] = {0x02, 0x00};
+        buf[3] = state * (0x04 + rand() % 20);
 
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 1-8
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 9-16
-                (uint8_t)(state * (rand() & 0xFF)), // buttons 17-24
-                (uint8_t)(state * (rand() & 0xFF)) // buttons 25-32
-        };
         USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
