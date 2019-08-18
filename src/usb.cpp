@@ -146,10 +146,23 @@ void Device::test(void)
 //        };
 
         // keyboard test
-        uint8_t buf[9] = {0x02, 0x00};
-        buf[3] = state * (0x04 + rand() % 20);
+//        uint8_t buf[9] = {0x02, 0x00};
+//        buf[3] = state * (0x04 + rand() % 20);
 
-        USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
+        // buffer test
+        if(state)
+        {
+            uint8_t buf[64] = {0x03, 0x00};
+            uint8_t length = (rand() % 4) + 1;
+            buf[1] = length;
+            for(uint8_t k=0; k < length; k++)
+            {
+                buf[2+k] = k+1;
+            }
+            USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, 2+length);
+        }
+
+        //USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
         lastButtonState = currentButtonState;
     }
 }
