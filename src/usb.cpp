@@ -148,6 +148,8 @@ void Device::test(void)
         // keyboard test
 //        uint8_t buf[9] = {0x02, 0x00};
 //        buf[3] = state * (0x04 + rand() % 20);
+//        USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, buf, sizeof(buf));
+
 
         // buffer test
         if(state)
