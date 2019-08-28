@@ -23,7 +23,8 @@ Yoke::~Yoke()
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
     receivedData = buffer;
-    System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Received from host:" + getBufferData(6));
+    //System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "Received from host:" + getBufferData(6)); //XXX
+    System::getInstance().errorLED.write(receivedData[13] & 0x01 ? GPIO_PinState::GPIO_PIN_SET : GPIO_PinState::GPIO_PIN_RESET);
 }
 
 /*
