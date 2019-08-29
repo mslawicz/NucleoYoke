@@ -21,7 +21,7 @@ Console::Console() :
     interface(USART3, 115200)
 {
     // register console commands
-    commands.emplace("h", std::pair<std::string, std::function<void(StringVector)>>({"command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
+    commands.emplace("help", std::pair<std::string, std::function<void(StringVector)>>({"help - command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
 }
 
 Console::~Console()
@@ -103,6 +103,7 @@ std::string Console::toHex(uint32_t value, uint8_t positions, bool prefix)
  */
 void Console::executeCommand(std::string commandString)
 {
+    interface.send("\r\n");
     auto commandVector = splitString(commandString);
     auto commandIt = commands.find(commandVector[0]);
     if(commandIt == commands.end())
