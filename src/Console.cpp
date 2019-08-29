@@ -101,5 +101,32 @@ std::string Console::toHex(uint32_t value, uint8_t positions, bool prefix)
  */
 void Console::executeCommand(std::string commandString)
 {
+    auto commandVector = splitString(commandString);
+    // display vector for test
+    for(auto word : commandVector)
+    {
+        sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "Command substring '" + word + "'");
+    }
+}
 
+/*
+ * split string by space delimiter
+ * returns the vector of splitted words
+ * delimiter should be a single space character only
+ */
+std::vector<std::string> Console::splitString(std::string str)
+{
+    std::vector<std::string> words;
+    size_t spacePosition;
+    do
+    {
+        spacePosition = str.find(' ');
+        if(spacePosition != std::string::npos)
+        {
+            words.push_back(str.substr(0, spacePosition));
+            str = str.substr(spacePosition+1);
+        }
+    } while (spacePosition != std::string::npos);
+    words.push_back(str);
+    return words;
 }

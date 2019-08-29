@@ -41,6 +41,7 @@ public:
     static const bool IsChannelActive[LogChannel::LC_END];
 private:
     void executeCommand(std::string commandString);
+    std::vector<std::string> splitString(std::string str);
     UART interface;
 };
 
