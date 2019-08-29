@@ -5,7 +5,8 @@
  *      Author: Marcin
  */
 
-#include "usb.h"
+#include "USB.h"
+
 #include "usbd_desc.h"
 //#include "usbd_hid.h" XXX enable for HID
 #include "usbd_customhid.h"

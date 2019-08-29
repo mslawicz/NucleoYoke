@@ -9,8 +9,8 @@
 #ifndef YOKE_H_
 #define YOKE_H_
 
-#include "usb.h"
 #include <string>
+#include "USB.h"
 
 class Yoke
 {
