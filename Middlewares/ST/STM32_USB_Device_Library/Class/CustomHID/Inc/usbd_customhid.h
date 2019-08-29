@@ -51,11 +51,11 @@
 #define USB_CUSTOM_HID_DESC_SIZ              9U
 
 #ifndef CUSTOM_HID_HS_BINTERVAL
-  #define CUSTOM_HID_HS_BINTERVAL            0x14U
+  #define CUSTOM_HID_HS_BINTERVAL            0x0AU
 #endif /* CUSTOM_HID_HS_BINTERVAL */
 
 #ifndef CUSTOM_HID_FS_BINTERVAL
-  #define CUSTOM_HID_FS_BINTERVAL            0x14U
+  #define CUSTOM_HID_FS_BINTERVAL            0x0AU
 #endif /* CUSTOM_HID_FS_BINTERVAL */
 
 #ifndef USBD_CUSTOMHID_OUTREPORT_BUF_SIZE
