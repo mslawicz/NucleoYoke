@@ -20,9 +20,7 @@ public:
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
 private:
-    std::string getBufferData(uint8_t length);
     USB::Device interface;
-    uint8_t* receivedData;
 };
 
 #endif /* YOKE_H_ */
