@@ -6,8 +6,9 @@
  */
 
 #include "uart.h"
+
+#include "GPIO.h"
 #include "system.h"
-#include "gpio.h"
 
 UART* UART::pUSART3 = nullptr;
 

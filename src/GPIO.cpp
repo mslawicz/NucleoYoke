@@ -5,7 +5,7 @@
  *      Author: Marcin
  */
 
-#include "gpio.h"
+#include "GPIO.h"
 
 GPIO::GPIO(GPIO_TypeDef* port, uint32_t pin, uint32_t mode, uint32_t pull, uint32_t speed, uint32_t alternate) :
     port(port),

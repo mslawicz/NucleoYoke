@@ -6,7 +6,6 @@
  */
 
 #include "system.h"
-#include "gpio.h"
 #include "usb.h"
 #include "timer.h" //XXX test
 #include "usbd_desc.h"
@@ -16,6 +15,7 @@
 //#include "usbd_cdc.h" XXX enable it for CDC
 //#include "usbd_cdc_if.h" XXX enable it for CDC
 #include "usbd_conf.h"
+#include "GPIO.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
@@ -118,7 +118,7 @@ void Device::test(void)
     {
         uint8_t state = (uint8_t)(currentButtonState);
         // joystick test
-        uint16_t X = state * (200 - rand() % 101);
+        uint16_t X = state * (1000 - rand() % 2001);
         uint16_t Y = 0 * state * (2000 * (2 - rand() % 5));
         uint16_t Z = 0 * state * (2000 * (2 - rand() % 5));
         uint8_t Rx = 0 * state * (63 * (1 + rand() % 4));
