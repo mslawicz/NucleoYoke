@@ -104,10 +104,14 @@ std::string Console::toHex(uint32_t value, uint8_t positions, bool prefix)
 void Console::executeCommand(std::string commandString)
 {
     auto commandVector = splitString(commandString);
-    // display vector for test
-    for(auto word : commandVector)
+    auto commandIt = commands.find(commandVector[0]);
+    if(commandIt == commands.end())
     {
-        sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "Command substring '" + word + "'");
+        sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "unknown command");
+    }
+    else
+    {
+        commandIt->second.second(commandVector);
     }
 }
 
@@ -139,5 +143,8 @@ StringVector Console::splitString(std::string str)
  */
 void Console::displayHelp(StringVector arguments)
 {
-    sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "lets display help here");
+    for(auto command : commands)
+    {
+        interface.send(command.second.first + "\r\n");
+    }
 }
