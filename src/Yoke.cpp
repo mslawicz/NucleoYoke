@@ -5,7 +5,8 @@
  *      Author: Marcin
  */
 
-#include "yoke.h"
+#include "Yoke.h"
+
 #include "usbd_customhid.h"
 #include "System.h"
 

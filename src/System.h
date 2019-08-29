@@ -10,7 +10,7 @@
 
 #include "Console.h"
 #include "GPIO.h"
-#include "yoke.h"
+#include "Yoke.h"
 //#include "display.h"
 
 #define TEST_PORT   GPIOA
