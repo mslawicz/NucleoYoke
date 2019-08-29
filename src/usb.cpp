@@ -7,7 +7,6 @@
 
 #include "system.h"
 #include "usb.h"
-#include "timer.h" //XXX test
 #include "usbd_desc.h"
 //#include "usbd_hid.h" XXX enable for HID
 #include "usbd_customhid.h"
@@ -16,6 +15,7 @@
 //#include "usbd_cdc_if.h" XXX enable it for CDC
 #include "usbd_conf.h"
 #include "GPIO.h"
+#include "Timer.h" //XXX test
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 

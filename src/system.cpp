@@ -6,10 +6,9 @@
  */
 
 #include "system.h"
-#include "timer.h"
-//#include "display.h"
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_nucleo_144.h"
+#include "Timer.h"
 
 #define USE_HSE_OSCILLATOR  1
 

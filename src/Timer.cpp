@@ -5,8 +5,8 @@
  *      Author: Marcin
  */
 
-#include "timer.h"
 #include "system.h"
+#include "Timer.h"
 
 TIM_HandleTypeDef Timer::hTim = {0};
 
