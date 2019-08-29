@@ -20,6 +20,8 @@ const bool Console::IsChannelActive[] = {
 Console::Console() :
     interface(USART3, 115200)
 {
+    // register console commands
+    commands.emplace("h", std::pair<std::string, std::function<void(StringVector)>>({"command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
 }
 
 Console::~Console()
@@ -114,9 +116,9 @@ void Console::executeCommand(std::string commandString)
  * returns the vector of splitted words
  * delimiter should be a single space character only
  */
-std::vector<std::string> Console::splitString(std::string str)
+StringVector Console::splitString(std::string str)
 {
-    std::vector<std::string> words;
+    StringVector words;
     size_t spacePosition;
     do
     {
@@ -129,4 +131,13 @@ std::vector<std::string> Console::splitString(std::string str)
     } while (spacePosition != std::string::npos);
     words.push_back(str);
     return words;
+}
+
+/*
+ * display command list help
+ *
+ */
+void Console::displayHelp(StringVector arguments)
+{
+    sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "lets display help here");
 }

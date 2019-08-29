@@ -9,6 +9,11 @@
 #define CONSOLE_H_
 
 #include "UART.h"
+#include <string>
+#include <vector>
+#include <unordered_map>
+#include <utility>
+#include <functional>
 
 enum Severity
 {
@@ -28,6 +33,9 @@ enum LogChannel
     LC_END
 };
 
+typedef std::vector<std::string> StringVector;
+typedef std::unordered_map<std::string, std::pair<std::string, std::function<void(StringVector)>>> CommandContainer;
+
 class Console
 {
 public:
@@ -41,8 +49,10 @@ public:
     static const bool IsChannelActive[LogChannel::LC_END];
 private:
     void executeCommand(std::string commandString);
-    std::vector<std::string> splitString(std::string str);
+    void displayHelp(StringVector);
+    StringVector splitString(std::string str);
     UART interface;
+    CommandContainer commands;
 };
 
 #endif /* CONSOLE_H_ */
