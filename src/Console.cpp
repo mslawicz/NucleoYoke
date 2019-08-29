@@ -36,6 +36,8 @@ void Console::handler(void)
     {
         // there is a message in reception queue
         auto message = interface.getReceivedString();
+        // execute the console command
+        executeCommand(message);
         // echo CR LF
         interface.send("\r\n");
 
@@ -92,4 +94,12 @@ std::string Console::toHex(uint32_t value, uint8_t positions, bool prefix)
         hexString.insert(0, "0x");
     }
     return hexString;
+}
+
+/*
+ * execute console command
+ */
+void Console::executeCommand(std::string commandString)
+{
+
 }

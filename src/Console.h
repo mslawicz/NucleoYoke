@@ -40,6 +40,7 @@ public:
     static std::string toHex(uint32_t value, uint8_t positions = 0, bool prefix = true);
     static const bool IsChannelActive[LogChannel::LC_END];
 private:
+    void executeCommand(std::string commandString);
     UART interface;
 };
 
