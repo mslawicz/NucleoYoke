@@ -5,7 +5,8 @@
  *      Author: Marcin
  */
 
-#include "virtualcom.h"
+#include "VirtualCom.h"
+
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
 #include "System.h"
