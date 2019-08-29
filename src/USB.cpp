@@ -5,8 +5,6 @@
  *      Author: Marcin
  */
 
-#include "USB.h"
-
 #include "usbd_desc.h"
 //#include "usbd_hid.h" XXX enable for HID
 #include "usbd_customhid.h"
@@ -14,6 +12,7 @@
 //#include "usbd_cdc.h" XXX enable it for CDC
 //#include "usbd_cdc_if.h" XXX enable it for CDC
 #include "usbd_conf.h"
+#include "USB.h"
 #include "GPIO.h"
 #include "System.h"
 #include "Timer.h" //XXX test

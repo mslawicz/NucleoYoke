@@ -5,11 +5,11 @@
  *      Author: Marcin
  */
 
-#include "System.h"
-
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "Timer.h"
+#include "System.h"
+
 
 #define USE_HSE_OSCILLATOR  1
 

@@ -6,7 +6,6 @@
  */
 
 #include "UART.h"
-
 #include "GPIO.h"
 #include "System.h"
 

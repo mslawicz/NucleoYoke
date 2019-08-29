@@ -5,10 +5,10 @@
  *      Author: Marcin
  */
 
-#include "Yoke.h"
-
 #include "usbd_customhid.h"
+#include "Yoke.h"
 #include "System.h"
+
 
 Yoke::Yoke() :
     interface()
