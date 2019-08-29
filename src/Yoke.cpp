@@ -26,7 +26,14 @@ Yoke::~Yoke()
  */
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
-
+    if(buffer[0] == 0x03)
+    {
+        memcpy(&forceFeedbackData, buffer+1, sizeof(ForceFeedbackData));
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Received unexpected HID report id=" + std::to_string(static_cast<int>(buffer[0])));
+    }
 }
 
 

@@ -12,6 +12,13 @@
 #include "USB.h"
 #include <string>
 
+struct ForceFeedbackData
+{
+    float pitchForce;
+    float rollForce;
+    float yawForce;
+};
+
 class Yoke
 {
 public:
@@ -21,6 +28,7 @@ public:
     void forceFeedbackHandler(uint8_t* buffer);
 private:
     USB::Device interface;
+    ForceFeedbackData forceFeedbackData;
 };
 
 #endif /* YOKE_H_ */
