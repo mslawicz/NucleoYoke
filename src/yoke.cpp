@@ -6,8 +6,8 @@
  */
 
 #include "yoke.h"
-#include "system.h"
 #include "usbd_customhid.h"
+#include "System.h"
 
 Yoke::Yoke() :
     interface()

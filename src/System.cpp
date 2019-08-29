@@ -5,7 +5,8 @@
  *      Author: Marcin
  */
 
-#include "system.h"
+#include "System.h"
+
 #include "stm32f4xx_hal.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "Timer.h"

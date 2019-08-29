@@ -6,9 +6,9 @@
  */
 
 #include "virtualcom.h"
-#include "system.h"
 #include "usbd_cdc.h"
 #include "usbd_cdc_if.h"
+#include "System.h"
 
 VirtualCom::VirtualCom(USBD_HandleTypeDef* pUsbdHandle) :
     pUsbdHandle(pUsbdHandle)
