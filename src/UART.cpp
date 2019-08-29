@@ -5,7 +5,7 @@
  *      Author: Marcin
  */
 
-#include "uart.h"
+#include "UART.h"
 
 #include "GPIO.h"
 #include "System.h"

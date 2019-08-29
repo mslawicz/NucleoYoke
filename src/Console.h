@@ -8,7 +8,7 @@
 #ifndef CONSOLE_H_
 #define CONSOLE_H_
 
-#include "uart.h"
+#include "UART.h"
 
 enum Severity
 {
