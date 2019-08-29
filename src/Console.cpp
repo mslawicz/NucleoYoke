@@ -5,7 +5,8 @@
  *      Author: Marcin
  */
 
-#include "console.h"
+#include "Console.h"
+
 #include <unordered_map>
 
 const bool Console::IsChannelActive[] = {

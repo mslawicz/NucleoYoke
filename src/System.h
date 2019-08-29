@@ -8,7 +8,7 @@
 #ifndef SYSTEM_H_
 #define SYSTEM_H_
 
-#include "console.h"
+#include "Console.h"
 #include "GPIO.h"
 #include "yoke.h"
 //#include "display.h"
