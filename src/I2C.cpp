@@ -7,3 +7,8 @@
 
 #include "I2C.h"
 
+I2cBus::I2cBus(I2C_TypeDef* I2cInstance) :
+    instance(I2cInstance)
+{
+
+}

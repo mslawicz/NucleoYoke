@@ -11,6 +11,7 @@
 #include "Console.h"
 #include "GPIO.h"
 #include "Yoke.h"
+#include "I2C.h"
 //#include "display.h"
 
 #define TEST_PORT   GPIOA
@@ -37,6 +38,7 @@ private:
     System();
     Console* pConsole;
     Yoke* pYoke;
+    I2cBus* pI2C1;
 //    Display* pDisplay;
 //    SpiBus* pSpi3;
 };

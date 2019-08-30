@@ -20,6 +20,7 @@ System::System() :
     systemPushbutton(KEY_BUTTON_GPIO_PORT, KEY_BUTTON_PIN, GPIO_MODE_INPUT, GPIO_NOPULL)
 
 {
+    pI2C1 = nullptr;
     //pSpi3 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
@@ -115,6 +116,8 @@ void System::config(void)
     Timer::config();
     pConsole = new Console;
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
+    // I2C1 is used for stepper motor controllers
+    pI2C1 = new I2cBus(I2C1);
     pYoke = new Yoke;
     // SPI3 is used for display
 //    pSpi3 = new SpiBus(SPI3);
@@ -129,6 +132,7 @@ void System::terminate(void)
 //    delete pDisplay;
     delete pYoke;
     delete pConsole;
+    delete pI2C1;
 //    delete pSpi3;
 }
 
