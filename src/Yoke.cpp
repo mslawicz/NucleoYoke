@@ -26,9 +26,15 @@ Yoke::~Yoke()
  */
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
+    static uint8_t cnt = 0;
     if(buffer[0] == 0x03)
     {
         memcpy(&forceFeedbackData, buffer+1, sizeof(ForceFeedbackData));
+        if(cnt++ > 20)
+        {
+            cnt = 0;
+            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_USB, "FF: " + std::to_string(forceFeedbackData.pitchForce) + "," + std::to_string(forceFeedbackData.rollForce) + "," + std::to_string(forceFeedbackData.yawForce));
+        }
     }
     else
     {
