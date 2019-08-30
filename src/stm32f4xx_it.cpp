@@ -14,6 +14,7 @@
 #include "stm32f4xx_it.h"
 #include "UART.h"
 #include "USB.h"
+#include "I2C.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -122,26 +123,29 @@ void SysTick_Handler(void)
 
 /**
   * @brief This function handles DMA1 stream0 global interrupt.
+  * it is called after completed I2C reception
   */
 void DMA1_Stream0_IRQHandler(void)
 {
-  //HAL_DMA_IRQHandler(&hdma_i2c1_rx);
+    HAL_DMA_IRQHandler(I2cBus::pI2c1->getDmaRxHandle());
 }
 
 /**
   * @brief This function handles DMA1 stream1 global interrupt.
+  * it is called two bytes before completed I2C transmission
   */
 void DMA1_Stream1_IRQHandler(void)
 {
-  //HAL_DMA_IRQHandler(&hdma_i2c1_tx);
+    HAL_DMA_IRQHandler(I2cBus::pI2c1->getDmaTxHandle());
 }
 
 /**
   * @brief This function handles I2C1 event interrupt.
+  * in DMA mode it is called after completed transmission
   */
 void I2C1_EV_IRQHandler(void)
 {
-  //HAL_I2C_EV_IRQHandler(&hi2c1);
+  HAL_I2C_EV_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 
 /**
