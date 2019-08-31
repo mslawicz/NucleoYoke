@@ -29,7 +29,7 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         /* Peripheral interrupt init */
         HAL_NVIC_SetPriority(I2C1_EV_IRQn, 2, 1);
         HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
-        HAL_NVIC_SetPriority(I2C1_ER_IRQn, 2, 2);
+        HAL_NVIC_SetPriority(I2C1_ER_IRQn, 1, 3);
         HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
 
         /* DMA interrupt init */
@@ -163,12 +163,15 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
-    if(tm.elapsed(100000))
+    if(tm.elapsed(400000))
     {
         tm.reset();
         uint8_t data[] = {0x80, 0x04};
-        //HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "HAL_I2C_Mem_Write_DMA result=" + Console::toHex(result) + " error=" + Console::toHex(HAL_I2C_GetError(pBus->getHandle())));
+
         // read WHO_AM_I byte
-        HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
+        //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
 }
+
