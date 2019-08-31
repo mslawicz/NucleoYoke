@@ -163,13 +163,19 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
-    if(tm.elapsed(400000))
+    if(tm.elapsed(100000))
     {
         tm.reset();
         uint8_t data[] = {0x80, 0x04};
-        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "HAL_I2C_Mem_Write_DMA result=" + Console::toHex(result) + " error=" + Console::toHex(HAL_I2C_GetError(pBus->getHandle())));
+        //auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
 
+        // test device 10-1 times with 1000ms timeout (?); anyway it works
+        HAL_I2C_IsDeviceReady(pBus->getHandle(), deviceAddress, 10, 1000);
+//        if(result != HAL_OK)
+//        {
+//            auto error = HAL_I2C_GetError(pBus->getHandle());
+//            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "HAL_I2C_Mem_Write_DMA error=" + Console::toHex(error));
+//        }
         // read WHO_AM_I byte
         //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
