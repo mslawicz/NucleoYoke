@@ -167,17 +167,51 @@ void I2cDevice::test(void)
     {
         tm.reset();
         uint8_t data[] = {0x80, 0x04};
-        //auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
-
-        // test device 10-1 times with 1000ms timeout (?); anyway it works
-        HAL_I2C_IsDeviceReady(pBus->getHandle(), deviceAddress, 10, 1000);
-//        if(result != HAL_OK)
-//        {
-//            auto error = HAL_I2C_GetError(pBus->getHandle());
-//            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "HAL_I2C_Mem_Write_DMA error=" + Console::toHex(error));
-//        }
+        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        if(result != HAL_OK)
+        {
+            auto error = HAL_I2C_GetError(pBus->getHandle());
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "HAL_I2C_Mem_Write_DMA error=" + Console::toHex(error));
+            pBus->tempXXX(); //XXX
+        }
         // read WHO_AM_I byte
         //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
 }
 
+
+void I2cBus::tempXXX(void) //XXX
+    {
+        hDmaI2cTx.Instance = DMA1_Stream1;
+        hDmaI2cTx.Init.Channel = DMA_CHANNEL_0;
+        hDmaI2cTx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        hDmaI2cTx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hDmaI2cTx.Init.MemInc = DMA_MINC_ENABLE;
+        hDmaI2cTx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        hDmaI2cTx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+        hDmaI2cTx.Init.Mode = DMA_NORMAL;
+        hDmaI2cTx.Init.Priority = DMA_PRIORITY_LOW;
+        hDmaI2cTx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_Init(&hDmaI2cTx) != HAL_OK)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " TX DMA initialization failed");
+        }
+        __HAL_LINKDMA(&hI2c,hdmatx,hDmaI2cTx);
+
+        hDmaI2cRx.Instance = DMA1_Stream0;
+        hDmaI2cRx.Init.Channel = DMA_CHANNEL_1;
+        hDmaI2cRx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        hDmaI2cRx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hDmaI2cRx.Init.MemInc = DMA_MINC_ENABLE;
+        hDmaI2cRx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        hDmaI2cRx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+        hDmaI2cRx.Init.Mode = DMA_NORMAL;
+        hDmaI2cRx.Init.Priority = DMA_PRIORITY_LOW;
+        hDmaI2cRx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_Init(&hDmaI2cRx) != HAL_OK)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + "  RX DMA initialization failed");
+        }
+
+        __HAL_LINKDMA(&hI2c,hdmarx,hDmaI2cRx);
+    }

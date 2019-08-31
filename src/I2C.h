@@ -25,6 +25,8 @@ public:
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cTx); }
     DMA_HandleTypeDef* getDmaRxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cRx); }
     static I2cBus* pI2c1;
+
+    void tempXXX(void); //XXX
 private:
     I2C_HandleTypeDef hI2c;
     std::string name;

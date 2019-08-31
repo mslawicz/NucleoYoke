@@ -15,6 +15,7 @@
 #include "UART.h"
 #include "USB.h"
 #include "I2C.h"
+#include "System.h" //XXX
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -153,6 +154,7 @@ void I2C1_EV_IRQHandler(void)
   */
 void I2C1_ER_IRQHandler(void)
 {
+    System::getInstance().errorLED.toggle(); //XXX
   HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 
