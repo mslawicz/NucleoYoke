@@ -8,6 +8,7 @@
 #include "I2C.h"
 #include "GPIO.h"
 #include "System.h"
+#include "Timer.h" //XXX
 
 // this static pointer is used by interrupts
 I2cBus* I2cBus::pI2c1 = nullptr;
@@ -106,4 +107,47 @@ I2cDevice::I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress) :
         deviceAddress(deviceAddress)
 {
     System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + Console::toHex(deviceAddress, 2));
+}
+
+
+/**
+  * @brief  Memory Tx Transfer completed callback.
+  * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @retval None
+  */
+void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hI2c)
+{
+    if(hI2c->Instance == I2C1)
+    {
+        // mark this I2C bus as free
+        //I2cBus::pI2c1->markAsFree();
+    }
+}
+
+/**
+  * @brief  Memory Rx Transfer completed callback.
+  * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @retval None
+  */
+void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
+{
+    if(hI2c->Instance == I2C1)
+    {
+        // mark this I2C bus as free
+        //I2cBus::pI2c1->markAsFree();
+        //I2cBus::pI2c1->markNewDataReady();
+    }
+}
+
+void I2cDevice::test(void)
+{
+    static Timer tm;
+    if(tm.elapsed(10000))
+    {
+        tm.reset();
+        uint8_t data[] = {0x80, 0x04};
+        HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+    }
 }

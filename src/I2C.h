@@ -34,7 +34,10 @@ private:
 
 class I2cDevice
 {
+public:
+    void test(void);
 protected:
+public://XXX
     I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);
 private:
     I2cBus* pBus;       // I2C bus for this device

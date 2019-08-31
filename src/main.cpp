@@ -11,6 +11,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
+#include "I2C.h"    //XXX
 			
 int main(void)
 {
@@ -18,6 +19,10 @@ int main(void)
     System::configMCU();
     // create system singleton object and initialize hardware
     System::getInstance().config();
+
+
+    I2cDevice testDevice(I2cBus::pI2c1, DeviceAddress::LSM9DS1_AG_ADD); //XXX
+
 
     // start reception of the first character
     System::getInstance().getConsole()->getInterface().startReception();
@@ -32,6 +37,7 @@ int main(void)
 
         System::getInstance().getConsole()->handler();
         System::getInstance().getYoke()->getInterface().test(); //XXX
+        testDevice.test();
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();
     }
