@@ -148,6 +148,8 @@ void I2cDevice::test(void)
     {
         tm.reset();
         uint8_t data[] = {0x80, 0x04};
-        HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        //HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        // read WHO_AM_I byte
+        HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
 }
