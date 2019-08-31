@@ -27,8 +27,10 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         __HAL_RCC_I2C1_CLK_ENABLE();
         __HAL_RCC_DMA1_CLK_ENABLE();
         /* Peripheral interrupt init */
-        HAL_NVIC_SetPriority(I2C1_EV_IRQn, 1, 0);
+        HAL_NVIC_SetPriority(I2C1_EV_IRQn, 2, 1);
         HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
+        HAL_NVIC_SetPriority(I2C1_ER_IRQn, 2, 2);
+        HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
 
         /* DMA interrupt init */
         /* DMA1_Stream0_IRQn interrupt configuration */
@@ -144,7 +146,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
-    if(tm.elapsed(10000))
+    if(tm.elapsed(100000))
     {
         tm.reset();
         uint8_t data[] = {0x80, 0x04};

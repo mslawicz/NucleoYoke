@@ -149,6 +149,14 @@ void I2C1_EV_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles I2C1 error interrupt.
+  */
+void I2C1_ER_IRQHandler(void)
+{
+  HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
+}
+
+/**
   * @brief This function handles USART3 global interrupt.
   */
 void USART3_IRQHandler(void)
