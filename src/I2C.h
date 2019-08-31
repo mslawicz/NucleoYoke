@@ -11,6 +11,12 @@
 #include "stm32f4xx_hal.h"
 #include <string>
 
+// I2C device address
+enum DeviceAddress
+{
+    LSM9DS1_AG_ADD = 0xD6
+};
+
 class I2cBus
 {
 public:
@@ -28,7 +34,11 @@ private:
 
 class I2cDevice
 {
-
+protected:
+    I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);
+private:
+    I2cBus* pBus;       // I2C bus for this device
+    DeviceAddress deviceAddress;        // I2C device address (7-bit left aligned)
 };
 
 #endif /* I2C_H_ */

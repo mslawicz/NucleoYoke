@@ -96,3 +96,14 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " filter configuration failed");
     }
 }
+
+/*
+ * constructor of I2C device
+ * every device should have an I2C bus assigned and should have a proper address declared
+ */
+I2cDevice::I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress) :
+        pBus(pBus),
+        deviceAddress(deviceAddress)
+{
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + Console::toHex(deviceAddress, 2));
+}
