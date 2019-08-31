@@ -15,6 +15,7 @@
 #include "UART.h"
 #include "USB.h"
 #include "I2C.h"
+#include "System.h" //XXX
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -145,6 +146,7 @@ void DMA1_Stream1_IRQHandler(void)
   */
 void I2C1_EV_IRQHandler(void)
 {
+    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
   HAL_I2C_EV_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 
@@ -153,6 +155,7 @@ void I2C1_EV_IRQHandler(void)
   */
 void I2C1_ER_IRQHandler(void)
 {
+    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET); //XXX
   HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 

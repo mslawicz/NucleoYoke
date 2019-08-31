@@ -14,8 +14,11 @@
 #include "I2C.h"
 //#include "display.h"
 
-#define TEST_PORT   GPIOA
-#define TEST_PIN    GPIO_PIN_1
+#define TEST1_PORT   GPIOC
+#define TEST1_PIN    GPIO_PIN_10
+#define TEST2_PORT   GPIOC
+#define TEST2_PIN    GPIO_PIN_11
+
 
 class System
 {
@@ -30,10 +33,11 @@ public:
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
 //    Display* getDisplay(void) const { return pDisplay; }
-    GPIO testPin;
     GPIO systemLED;
     GPIO errorLED;
     GPIO systemPushbutton;
+    GPIO testPin1; //XXX
+    GPIO testPin2; //XXX
 private:
     System();
     Console* pConsole;

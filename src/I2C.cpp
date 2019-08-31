@@ -98,6 +98,12 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " filter configuration failed");
     }
+    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
 }
 
 /*
@@ -141,6 +147,17 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
         //I2cBus::pI2c1->markAsFree();
         //I2cBus::pI2c1->markNewDataReady();
     }
+}
+
+/**
+  * @brief  I2C error callback.
+  * @param  hi2c Pointer to a I2C_HandleTypeDef structure that contains
+  *                the configuration information for the specified I2C.
+  * @retval None
+  */
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+{
+    System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, " I2C error code=" + std::to_string(HAL_I2C_GetError(hi2c)));
 }
 
 void I2cDevice::test(void)
