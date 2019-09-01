@@ -98,6 +98,9 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " filter configuration failed");
     }
+
+    busy = false;
+
     System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
@@ -167,6 +170,7 @@ void I2cDevice::test(void)
     if(tm.elapsed(100000))
     {
         tm.reset();
+        writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82});
 //        uint8_t data[] = {0x80, 0x04};
 //        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
 //        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
@@ -210,6 +214,7 @@ void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister
     pBus->sendQueue.push(dataToSend);
     // enable I2C interrupt here
     // trig I2C transmission
+    pBus->startTransmission();
 }
 
 /*
@@ -228,4 +233,37 @@ void I2cDevice::readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister,
     pBus->sendQueue.push(dataToSend);
     // enable I2C interrupt here
     // trig I2C transmission
+    pBus->startTransmission();
+}
+
+/*
+ * check the send queue and start transmission
+ */
+void I2cBus::startTransmission(void)
+{
+    // if transmission is ongoing, do nothing
+    if(busy)
+    {
+        return;
+    }
+
+    // check if there is data in the send queue
+    if(!sendQueue.empty())
+    {
+        // there is data in the queue
+        DataToSend dataToSend = sendQueue.front();
+        sendQueue.pop();
+        if(dataToSend.Action == ActionType::I2C_WRITE)
+        {
+            // write to device
+            HAL_I2C_Mem_Write_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size());
+            // check the result here
+        }
+        else
+        {
+            // read from device
+            HAL_I2C_Mem_Read_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size());
+            // check the result here
+        }
+    }
 }
