@@ -54,6 +54,7 @@ private:
     DMA_HandleTypeDef hDmaI2cRx;
     std::queue<DataToSend> sendQueue;
     bool busy;      // true if transmission is ongoing
+    IRQn_Type eventIRQn;    // remembers event interrupt name
 };
 
 class I2cDevice

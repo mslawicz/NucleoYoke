@@ -27,8 +27,9 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         __HAL_RCC_I2C1_CLK_ENABLE();
         __HAL_RCC_DMA1_CLK_ENABLE();
         /* Peripheral interrupt init */
-        HAL_NVIC_SetPriority(I2C1_EV_IRQn, 2, 1);
-        HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
+        eventIRQn = I2C1_EV_IRQn;
+        HAL_NVIC_SetPriority(eventIRQn, 2, 1);
+        HAL_NVIC_EnableIRQ(eventIRQn);
         HAL_NVIC_SetPriority(I2C1_ER_IRQn, 1, 3);
         HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
 
@@ -167,7 +168,7 @@ void I2cDevice::test(void)
 {
     static Timer tm;
     //static bool falseAdd = false;
-    if(tm.elapsed(100000))
+    if(tm.elapsed(10000))
     {
         tm.reset();
         writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82});
@@ -229,9 +230,10 @@ void I2cDevice::readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister,
             deviceRegister,
             std::vector<uint8_t>(size, 0)
     };
-    // disable I2C interrupt here
+    // data pushback to the queue mustn't be interrupted
+    HAL_NVIC_DisableIRQ(pBus->eventIRQn);
     pBus->sendQueue.push(dataToSend);
-    // enable I2C interrupt here
+    HAL_NVIC_EnableIRQ(pBus->eventIRQn);
     // trig I2C transmission
     pBus->startTransmission();
 }
