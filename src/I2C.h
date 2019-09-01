@@ -44,8 +44,7 @@ public:
     I2C_HandleTypeDef* getHandle(void) const { return const_cast<__I2C_HandleTypeDef*>(&hI2c); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cTx); }
     DMA_HandleTypeDef* getDmaRxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cRx); }
-    void markAsFree(void) { busy = false; }
-    void startTransmission(void);
+    void handler(void);
     static I2cBus* pI2c1;
     friend I2cDevice;
 
@@ -56,8 +55,6 @@ private:
     DMA_HandleTypeDef hDmaI2cTx;
     DMA_HandleTypeDef hDmaI2cRx;
     std::queue<I2cRequest> sendRequestQueue;
-    bool busy;      // true if transmission is ongoing
-    IRQn_Type eventIRQn;    // remembers event interrupt name
     std::vector<uint8_t> sendBuffer;    // holds currently sent data
     I2cDevice* pCurrentDevice;  // pointer to currently served device
 };

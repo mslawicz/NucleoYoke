@@ -36,6 +36,8 @@ int main(void)
         System::getInstance().blinkSystemLED();
 
         System::getInstance().getConsole()->handler();
+        I2cBus::pI2c1->handler();
+
         System::getInstance().getYoke()->getInterface().test(); //XXX
         testDevice.test();
 //        System::getInstance().getDisplay()->test();

@@ -27,9 +27,8 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         __HAL_RCC_I2C1_CLK_ENABLE();
         __HAL_RCC_DMA1_CLK_ENABLE();
         /* Peripheral interrupt init */
-        eventIRQn = I2C1_EV_IRQn;
-        HAL_NVIC_SetPriority(eventIRQn, 2, 1);
-        HAL_NVIC_EnableIRQ(eventIRQn);
+        HAL_NVIC_SetPriority(I2C1_EV_IRQn, 2, 1);
+        HAL_NVIC_EnableIRQ(I2C1_EV_IRQn);
         HAL_NVIC_SetPriority(I2C1_ER_IRQn, 1, 3);
         HAL_NVIC_EnableIRQ(I2C1_ER_IRQn);
 
@@ -101,7 +100,6 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
     }
 
     pCurrentDevice = nullptr;
-    busy = false;
 
     System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
@@ -134,10 +132,7 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hI2c)
     if(hI2c->Instance == I2C1)
     {
         System::getInstance().testPin1.toggle(); //XXX
-        // mark this I2C bus as free
-        I2cBus::pI2c1->markAsFree();
-        // initiate next transmission
-        I2cBus::pI2c1->startTransmission();
+
     }
 }
 
@@ -152,11 +147,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
     if(hI2c->Instance == I2C1)
     {
         System::getInstance().testPin2.toggle(); //XXX
-        // mark this I2C bus as free
-        I2cBus::pI2c1->markAsFree();
         //I2cBus::pI2c1->markNewDataReady();
-        // initiate next transmission
-        I2cBus::pI2c1->startTransmission();
     }
 }
 
@@ -174,19 +165,22 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
-    //static bool falseAdd = false;
-    if(tm.elapsed(10000))
+    static bool falseAdd = false;
+    if(tm.elapsed(100000))
     {
         tm.reset();
-        writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82, 0x60, 0x40});
-        readRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0c, 4);
-        writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x60, 0x80, 0x11});
-//        uint8_t data[] = {0x80, 0x04};
-//        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
-//        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
-//        falseAdd = !falseAdd;
-//        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), devAdd, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
-//        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
+        for(uint8_t k=0; k<1; k++)
+        {
+            //writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82, 0x60, 0x40});
+            //readRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0c, 4);
+            //writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x60, 0x80, 0x11});
+        }
+        uint8_t data[] = {0x80, 0x04};
+        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
+        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
+        //falseAdd = !falseAdd;
+        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), devAdd, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
 //        if(result != HAL_OK)
 //        {
 //            if(errorAfter == HAL_I2C_ERROR_DMA) // this should be done before sending
@@ -194,8 +188,8 @@ void I2cDevice::test(void)
 //                pBus->tempXXX(); //XXX
 //            }
 //        }
-//        auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
-//        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
+        auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
         // read WHO_AM_I byte
         //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
@@ -222,12 +216,7 @@ void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister
             0,
             this
     };
-    // data pushback to the queue mustn't be interrupted
-    HAL_NVIC_DisableIRQ(pBus->eventIRQn);
     pBus->sendRequestQueue.push(dataToSend);
-    HAL_NVIC_EnableIRQ(pBus->eventIRQn);
-    // trig I2C transmission
-    pBus->startTransmission();
 }
 
 /*
@@ -244,52 +233,47 @@ void I2cDevice::readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister,
             size,
             this
     };
-    // data pushback to the queue mustn't be interrupted
-    HAL_NVIC_DisableIRQ(pBus->eventIRQn);
     pBus->sendRequestQueue.push(dataToSend);
-    HAL_NVIC_EnableIRQ(pBus->eventIRQn);
-    // trig I2C transmission
-    pBus->startTransmission();
 }
 
 /*
- * check the send queue and start transmission
+ * I2C bus handler to be executed in a loop
  */
-void I2cBus::startTransmission(void)
+void I2cBus::handler(void)
 {
-    // if transmission is ongoing, do nothing
-    if(busy)
+    if(sendRequestQueue.empty())
     {
+        // there is no data to transmit
         return;
     }
+//    if(HAL_I2C_GetState(&hI2c) != HAL_I2C_STATE_READY)
+//    {
+//        // I2C in not ready for next transmission
+//        return;
+//    }
 
-    // check if there is data in the send queue
-    if(!sendRequestQueue.empty())
+    I2cRequest currentRequest = sendRequestQueue.front();
+    sendRequestQueue.pop();
+    if(currentRequest.Action == ActionType::I2C_WRITE)
     {
-        // there is data in the queue
-        I2cRequest currentRequest = sendRequestQueue.front();
-        sendRequestQueue.pop();
-        if(currentRequest.Action == ActionType::I2C_WRITE)
+        // copy data to send buffer
+        sendBuffer = currentRequest.Data;
+        // write to device
+        if(HAL_I2C_Mem_Write_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &sendBuffer[0], sendBuffer.size()) != HAL_OK)
         {
-            // copy data to send buffer
-            sendBuffer = currentRequest.Data;
-            // write to device
-            if(HAL_I2C_Mem_Write_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &sendBuffer[0], sendBuffer.size()) == HAL_OK)
-            {
-                busy = true;
-            }
             // handle error here
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, "I2C write error code=" + std::to_string(HAL_I2C_GetError(&hI2c)));
         }
-        else
+    }
+    else
+    {
+        // initialize receive buffer in the device object
+        currentRequest.pDevice->receiveBuffer = std::vector<uint8_t>(currentRequest.NoOfBytesToRead, 0);
+        // read from device
+        if(HAL_I2C_Mem_Read_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &currentRequest.pDevice->receiveBuffer[0], currentRequest.NoOfBytesToRead) != HAL_OK)
         {
-            // initialize receive buffer of the device
-            currentRequest.pDevice->receiveBuffer = std::vector<uint8_t>(currentRequest.NoOfBytesToRead, 0);
-            // read from device
-            if(HAL_I2C_Mem_Read_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &currentRequest.pDevice->receiveBuffer[0], currentRequest.NoOfBytesToRead) == HAL_OK)
-            {
-                busy = true;
-            }
             // handle error here
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, "I2C read error code=" + std::to_string(HAL_I2C_GetError(&hI2c)));
         }
     }
 }
