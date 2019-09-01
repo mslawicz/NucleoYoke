@@ -193,3 +193,39 @@ void I2cBus::tempXXX(void) //XXX
         HAL_DMA_Init(&hDmaI2cTx);
         HAL_DMA_Init(&hDmaI2cRx);
     }
+
+/*
+ * put send request structure into the I2cBus send queue and trig I2C write operation
+ */
+void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data)
+{
+    DataToSend dataToSend =
+    {
+            ActionType::I2C_WRITE,
+            deviceAddress,
+            deviceRegister,
+            data
+    };
+    // disable I2C interrupt here
+    pBus->sendQueue.push(dataToSend);
+    // enable I2C interrupt here
+    // trig I2C transmission
+}
+
+/*
+ * put send request structure into the I2cBus send queue and trig I2C read operation
+ */
+void I2cDevice::readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size)
+{
+    DataToSend dataToSend =
+    {
+            ActionType::I2C_READ,
+            deviceAddress,
+            deviceRegister,
+            std::vector<uint8_t>(size, 0)
+    };
+    // disable I2C interrupt here
+    pBus->sendQueue.push(dataToSend);
+    // enable I2C interrupt here
+    // trig I2C transmission
+}

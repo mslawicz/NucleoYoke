@@ -19,9 +19,15 @@ enum DeviceAddress
     LSM9DS1_AG_ADD = 0xD6
 };
 
-struct SendRequest
+enum ActionType
 {
-    bool ReadRequest;   // false for sending only, true for reading
+    I2C_WRITE,
+    I2C_READ
+};
+
+struct DataToSend
+{
+    ActionType Action;  // action device write/read
     DeviceAddress Address;   // I2C device address shifted left
     uint8_t Register;   // I2C device register to write/read
     std::vector<uint8_t> Data;    // data to send/buffer for reading
@@ -35,6 +41,7 @@ public:
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cTx); }
     DMA_HandleTypeDef* getDmaRxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cRx); }
     static I2cBus* pI2c1;
+    friend I2cDevice;
 
     void tempXXX(void); //XXX
 private:
@@ -42,12 +49,14 @@ private:
     std::string name;
     DMA_HandleTypeDef hDmaI2cTx;
     DMA_HandleTypeDef hDmaI2cRx;
-    std::queue<SendRequest> sendQueue;
+    std::queue<DataToSend> sendQueue;
 };
 
 class I2cDevice
 {
 public:
+    void writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data);
+    void readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size);
     void test(void);
 protected:
 public://XXX
