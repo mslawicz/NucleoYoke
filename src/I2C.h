@@ -25,15 +25,17 @@ enum ActionType
     I2C_READ
 };
 
-struct DataToSend
+class I2cDevice;
+
+struct I2cRequest
 {
     ActionType Action;  // action device write/read
     DeviceAddress Address;   // I2C device address shifted left
     uint8_t Register;   // I2C device register to write/read
-    std::vector<uint8_t> Data;    // data to send/buffer for reading
+    std::vector<uint8_t> Data;    // data to send
+    uint16_t NoOfBytesToRead;       // number of bytes to read
+    I2cDevice* pDevice;     // pointer to I2C device sending this request
 };
-
-class I2cDevice;
 
 class I2cBus
 {
@@ -53,9 +55,11 @@ private:
     std::string name;
     DMA_HandleTypeDef hDmaI2cTx;
     DMA_HandleTypeDef hDmaI2cRx;
-    std::queue<DataToSend> sendQueue;
+    std::queue<I2cRequest> sendRequestQueue;
     bool busy;      // true if transmission is ongoing
     IRQn_Type eventIRQn;    // remembers event interrupt name
+    std::vector<uint8_t> sendBuffer;    // holds currently sent data
+    I2cDevice* pCurrentDevice;  // pointer to currently served device
 };
 
 class I2cDevice
@@ -64,12 +68,14 @@ public:
     void writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data);
     void readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size);
     void test(void);
+    friend I2cBus;
 protected:
 public://XXX
     I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);
 private:
     I2cBus* pBus;       // I2C bus for this device
     DeviceAddress deviceAddress;        // I2C device address (7-bit left aligned)
+    std::vector<uint8_t> receiveBuffer;     // buffer to collect reveived data
 };
 
 #endif /* I2C_H_ */
