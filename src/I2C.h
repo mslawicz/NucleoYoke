@@ -42,6 +42,7 @@ public:
     I2C_HandleTypeDef* getHandle(void) const { return const_cast<__I2C_HandleTypeDef*>(&hI2c); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cTx); }
     DMA_HandleTypeDef* getDmaRxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cRx); }
+    void markAsFree(void) { busy = false; }
     void startTransmission(void);
     static I2cBus* pI2c1;
     friend I2cDevice;

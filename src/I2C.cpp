@@ -132,8 +132,9 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
+        System::getInstance().testPin1.toggle(); //XXX
         // mark this I2C bus as free
-        //I2cBus::pI2c1->markAsFree();
+        I2cBus::pI2c1->markAsFree();
     }
 }
 
@@ -147,8 +148,9 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
+        System::getInstance().testPin2.toggle(); //XXX
         // mark this I2C bus as free
-        //I2cBus::pI2c1->markAsFree();
+        I2cBus::pI2c1->markAsFree();
         //I2cBus::pI2c1->markNewDataReady();
     }
 }
@@ -211,9 +213,10 @@ void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister
             deviceRegister,
             data
     };
-    // disable I2C interrupt here
+    // data pushback to the queue mustn't be interrupted
+    HAL_NVIC_DisableIRQ(pBus->eventIRQn);
     pBus->sendQueue.push(dataToSend);
-    // enable I2C interrupt here
+    HAL_NVIC_EnableIRQ(pBus->eventIRQn);
     // trig I2C transmission
     pBus->startTransmission();
 }
@@ -258,14 +261,20 @@ void I2cBus::startTransmission(void)
         if(dataToSend.Action == ActionType::I2C_WRITE)
         {
             // write to device
-            HAL_I2C_Mem_Write_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size());
-            // check the result here
+            if(HAL_I2C_Mem_Write_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size()) == HAL_OK)
+            {
+                busy = true;
+            }
+            // handle error here
         }
         else
         {
             // read from device
-            HAL_I2C_Mem_Read_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size());
-            // check the result here
+            if(HAL_I2C_Mem_Read_DMA(&hI2c, dataToSend.Address, dataToSend.Register, I2C_MEMADD_SIZE_8BIT, &dataToSend.Data[0], dataToSend.Data.size()) == HAL_OK)
+            {
+                busy = true;
+            }
+            // handle error here
         }
     }
 }
