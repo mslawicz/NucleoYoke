@@ -163,22 +163,25 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
+    //static bool falseAdd = false;
     if(tm.elapsed(100000))
     {
         tm.reset();
-        uint8_t data[] = {0x80, 0x04};
-        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
-        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), deviceAddress, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
-        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
-        if(result != HAL_OK)
-        {
-            if(errorAfter == HAL_I2C_ERROR_DMA) // this should be done before sending
-            {
-                pBus->tempXXX(); //XXX
-            }
-            auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
-        }
+//        uint8_t data[] = {0x80, 0x04};
+//        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
+//        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
+//        falseAdd = !falseAdd;
+//        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), devAdd, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+//        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
+//        if(result != HAL_OK)
+//        {
+//            if(errorAfter == HAL_I2C_ERROR_DMA) // this should be done before sending
+//            {
+//                pBus->tempXXX(); //XXX
+//            }
+//        }
+//        auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
+//        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
         // read WHO_AM_I byte
         //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }

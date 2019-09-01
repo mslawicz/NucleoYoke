@@ -10,11 +10,21 @@
 
 #include "stm32f4xx_hal.h"
 #include <string>
+#include <vector>
+#include <queue>
 
 // I2C device address
 enum DeviceAddress
 {
     LSM9DS1_AG_ADD = 0xD6
+};
+
+struct SendRequest
+{
+    bool ReadRequest;   // false for sending only, true for reading
+    DeviceAddress Address;   // I2C device address shifted left
+    uint8_t Register;   // I2C device register to write/read
+    std::vector<uint8_t> Data;    // data to send/buffer for reading
 };
 
 class I2cBus
@@ -32,6 +42,7 @@ private:
     std::string name;
     DMA_HandleTypeDef hDmaI2cTx;
     DMA_HandleTypeDef hDmaI2cRx;
+    std::queue<SendRequest> sendQueue;
 };
 
 class I2cDevice
