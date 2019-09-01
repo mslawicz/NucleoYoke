@@ -165,22 +165,24 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
 void I2cDevice::test(void)
 {
     static Timer tm;
-    static bool falseAdd = false;
-    if(tm.elapsed(100000))
+//    static bool falseAdd = false;
+    if(tm.elapsed(10000))
     {
         tm.reset();
-        for(uint8_t k=0; k<1; k++)
+        for(uint8_t k=0; k<5; k++)
         {
-            //writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82, 0x60, 0x40});
-            //readRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0c, 4);
-            //writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x60, 0x80, 0x11});
+            writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82, 0x60, 0x40});
+            readRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0c, 4);
+            writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x60, 0x80, 0x11});
+            writeRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0C, std::vector<uint8_t>{0x22, 0x10, 0x50});
+            readRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0c, 4);
         }
-        uint8_t data[] = {0x80, 0x04};
-        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
-        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
-        //falseAdd = !falseAdd;
-        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), devAdd, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
-        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
+//        uint8_t data[] = {0x80, 0x04};
+//        auto errorBefore = HAL_I2C_GetError(pBus->getHandle());
+//        auto devAdd = (DeviceAddress)(deviceAddress | (falseAdd ? 0x3C : 0));
+//        //falseAdd = !falseAdd;
+//        auto result = HAL_I2C_Mem_Write_DMA(pBus->getHandle(), devAdd, 0x0C, I2C_MEMADD_SIZE_8BIT, data, sizeof(data));
+//        auto errorAfter = HAL_I2C_GetError(pBus->getHandle());
 //        if(result != HAL_OK)
 //        {
 //            if(errorAfter == HAL_I2C_ERROR_DMA) // this should be done before sending
@@ -188,8 +190,8 @@ void I2cDevice::test(void)
 //                pBus->tempXXX(); //XXX
 //            }
 //        }
-        auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
+//        auto errorEnd = HAL_I2C_GetError(pBus->getHandle());
+//        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C " + Console::toHex(errorBefore) + Console::toHex(errorAfter) + Console::toHex(errorEnd));
         // read WHO_AM_I byte
         //HAL_I2C_Mem_Read_DMA(pBus->getHandle(), deviceAddress, 0x0F, I2C_MEMADD_SIZE_8BIT, data, 1);
     }
@@ -246,11 +248,11 @@ void I2cBus::handler(void)
         // there is no data to transmit
         return;
     }
-//    if(HAL_I2C_GetState(&hI2c) != HAL_I2C_STATE_READY)
-//    {
-//        // I2C in not ready for next transmission
-//        return;
-//    }
+    if(HAL_I2C_GetState(&hI2c) != HAL_I2C_STATE_READY)
+    {
+        // I2C in not ready for next transmission
+        return;
+    }
 
     I2cRequest currentRequest = sendRequestQueue.front();
     sendRequestQueue.pop();

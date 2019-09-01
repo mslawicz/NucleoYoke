@@ -16,7 +16,8 @@
 // I2C device address
 enum DeviceAddress
 {
-    LSM9DS1_AG_ADD = 0xD6
+    LSM9DS1_AG_ADD = 0xD6,
+    LSM9DS1_M_ADD = 0x3C
 };
 
 enum ActionType
