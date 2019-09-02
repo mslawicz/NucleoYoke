@@ -242,11 +242,11 @@ void I2cBus::handler(void)
         if(HAL_I2C_Mem_Write_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &sendBuffer[0], sendBuffer.size()) != HAL_OK)
         {
             auto error = HAL_I2C_GetError(&hI2c);
-            System::getInstance().getConsole()->getInterface().send("w"+std::to_string(error));//XXX
             if(error == HAL_I2C_ERROR_DMA)
             {
                 HAL_DMA_Init(&hDmaI2cTx);
             }
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " write error=" + Console::toHex(error));
         }
     }
     else
@@ -257,11 +257,11 @@ void I2cBus::handler(void)
         if(HAL_I2C_Mem_Read_DMA(&hI2c, currentRequest.Address, currentRequest.Register, I2C_MEMADD_SIZE_8BIT, &currentRequest.pDevice->receiveBuffer[0], currentRequest.NoOfBytesToRead) != HAL_OK)
         {
             auto error = HAL_I2C_GetError(&hI2c);
-            System::getInstance().getConsole()->getInterface().send("r"+std::to_string(error));//XXX
             if(error == HAL_I2C_ERROR_DMA)
             {
                 HAL_DMA_Init(&hDmaI2cRx);
             }
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " read error=" + Console::toHex(error));
         }
     }
 }
