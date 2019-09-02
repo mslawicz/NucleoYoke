@@ -146,7 +146,7 @@ void DMA1_Stream1_IRQHandler(void)
   */
 void I2C1_EV_IRQHandler(void)
 {
-  HAL_I2C_EV_IRQHandler(I2cBus::pI2c1->getHandle());
+    HAL_I2C_EV_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 
 /**
@@ -154,7 +154,8 @@ void I2C1_EV_IRQHandler(void)
   */
 void I2C1_ER_IRQHandler(void)
 {
-  HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C error interrupt");
+    HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
 }
 
 /**

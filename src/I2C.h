@@ -48,8 +48,6 @@ public:
     void handler(void);
     static I2cBus* pI2c1;
     friend I2cDevice;
-
-    void tempXXX(void); //XXX
 private:
     I2C_HandleTypeDef hI2c;
     std::string name;
