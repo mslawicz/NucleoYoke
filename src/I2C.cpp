@@ -118,6 +118,7 @@ I2cDevice::I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress) :
         deviceAddress(deviceAddress)
 {
     System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + Console::toHex(deviceAddress, 2));
+    newDataReady = false;
 }
 
 
@@ -131,7 +132,6 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
-        System::getInstance().testPin1.toggle(); //XXX
 
     }
 }
@@ -146,8 +146,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
-        System::getInstance().testPin2.toggle(); //XXX
-        //I2cBus::pI2c1->markNewDataReady();
+        I2cBus::pI2c1->getCurrentDevice()->markNewData(true);
     }
 }
 
@@ -177,6 +176,8 @@ void I2cDevice::test(void)
             writeRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0C, std::vector<uint8_t>{0x22, 0x10, 0x50});
             readRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0c, 4);
         }
+        System::getInstance().testPin1.toggle(); //XXX
+        System::getInstance().testPin2.toggle(); //XXX
     }
 }
 

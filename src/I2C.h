@@ -45,6 +45,7 @@ public:
     I2C_HandleTypeDef* getHandle(void) const { return const_cast<__I2C_HandleTypeDef*>(&hI2c); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cTx); }
     DMA_HandleTypeDef* getDmaRxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaI2cRx); }
+    I2cDevice* getCurrentDevice(void) const { return pCurrentDevice; }
     void handler(void);
     static I2cBus* pI2c1;
     friend I2cDevice;
@@ -63,6 +64,7 @@ class I2cDevice
 public:
     void writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data);
     void readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size);
+    void markNewData(bool state) { newDataReady = state; }
     void test(void);
     friend I2cBus;
 protected:
@@ -71,7 +73,8 @@ public://XXX
 private:
     I2cBus* pBus;       // I2C bus for this device
     DeviceAddress deviceAddress;        // I2C device address (7-bit left aligned)
-    std::vector<uint8_t> receiveBuffer;     // buffer to collect reveived data
+    std::vector<uint8_t> receiveBuffer;     // buffer for reveived data
+    bool newDataReady;
 };
 
 #endif /* I2C_H_ */
