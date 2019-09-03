@@ -65,10 +65,10 @@ public:
     void writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data);
     void readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size);
     void markNewData(bool state) { newDataReady = state; }
-    void test(void);
+    bool isNewDataReady(void) const { return newDataReady; }
+    std::vector<uint8_t> getLastData(void) const { return receiveBuffer; }
     friend I2cBus;
 protected:
-public://XXX
     I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);
 private:
     I2cBus* pBus;       // I2C bus for this device

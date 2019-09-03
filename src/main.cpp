@@ -21,7 +21,7 @@ int main(void)
     System::getInstance().config();
 
 
-    I2cDevice testDevice(I2cBus::pI2c1, DeviceAddress::LSM9DS1_AG_ADD); //XXX
+    //I2cDevice testDevice(I2cBus::pI2c1, DeviceAddress::LSM9DS1_AG_ADD); //XXX
 
 
     // start reception of the first character
@@ -39,7 +39,6 @@ int main(void)
         I2cBus::pI2c1->handler();
 
         System::getInstance().getYoke()->getInterface().test(); //XXX
-        testDevice.test();
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();
     }

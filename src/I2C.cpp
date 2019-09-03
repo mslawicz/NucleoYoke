@@ -8,7 +8,6 @@
 #include "I2C.h"
 #include "GPIO.h"
 #include "System.h"
-#include "Timer.h" //XXX
 
 // this static pointer is used by interrupts
 I2cBus* I2cBus::pI2c1 = nullptr;
@@ -100,13 +99,6 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
     }
 
     pLastServedDevice = nullptr;
-
-    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-    System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
 }
 
 /*
@@ -147,7 +139,6 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
     if(hI2c->Instance == I2C1)
     {
         I2cBus::pI2c1->getLastServedDevice()->markNewData(true);
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
     }
 }
 
@@ -162,40 +153,10 @@ void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
     System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, " I2C error code=" + std::to_string(HAL_I2C_GetError(hi2c)));
 }
 
-void I2cDevice::test(void)
-{
-    static Timer tm;
-//    static bool falseAdd = false;
-    if(tm.elapsed(300000))
-    {
-        tm.reset();
-        for(uint8_t k=0; k<1; k++)
-        {
-            writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x82, 0x60, 0x40});
-            readRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0c, 4);
-            writeRequest(DeviceAddress::LSM9DS1_AG_ADD, 0x0C, std::vector<uint8_t>{0x60, 0x80, 0x11});
-            writeRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0C, std::vector<uint8_t>{0x22, 0x10, 0x50});
-            readRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0c, 4);
-        }
-        System::getInstance().testPin2.toggle(); //XXX
-    }
-    if(newDataReady)
-    {
-        newDataReady = false;
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-        std::string recData("r:");
-        for(auto byte : receiveBuffer)
-        {
-            recData += Console::toHex(byte, 2, false);
-            recData += " ";
-        }
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, recData);
-    }
-}
-
 
 /*
- * put send request structure into the I2cBus send queue and trig I2C write operation
+ * put send request structure into the I2cBus send queue
+ * the actual transmission is initiated in I2C bus handler
  */
 void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data)
 {
@@ -212,7 +173,8 @@ void I2cDevice::writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister
 }
 
 /*
- * put send request structure into the I2cBus send queue and trig I2C read operation
+ * put send request structure into the I2cBus send queue
+ * the actual transmission is initiated in I2C bus handler
  */
 void I2cDevice::readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size)
 {
