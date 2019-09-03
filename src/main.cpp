@@ -11,6 +11,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
+#include "LSM6DS3.h"
 			
 int main(void)
 {
@@ -28,6 +29,9 @@ int main(void)
 
     // send first prompt
     System::getInstance().getConsole()->sendPrompt();
+
+    LSM6DS3 imu(I2cBus::pI2c1); //XXX
+    imu.readRequest(DeviceAddress::LSM6DS3_ADD, 0x0F, 1); //XXX what to do with this device address?
 
     // main loop
     while(1)

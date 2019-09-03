@@ -8,10 +8,12 @@
 #ifndef LSM6DS3_H_
 #define LSM6DS3_H_
 
-class LSM6DS3
+#include "I2C.h"
+
+class LSM6DS3 : public I2cDevice
 {
 public:
-    LSM6DS3();
+    LSM6DS3(I2cBus* pBus);
     ~LSM6DS3();
 };
 
