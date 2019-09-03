@@ -99,7 +99,7 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " filter configuration failed");
     }
 
-    pCurrentDevice = nullptr;
+    pLastServedDevice = nullptr;
 
     System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
@@ -146,7 +146,8 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
-        I2cBus::pI2c1->getCurrentDevice()->markNewData(true);
+        I2cBus::pI2c1->getLastServedDevice()->markNewData(true);
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
     }
 }
 
@@ -176,8 +177,19 @@ void I2cDevice::test(void)
             writeRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0C, std::vector<uint8_t>{0x22, 0x10, 0x50});
             readRequest(DeviceAddress::LSM9DS1_M_ADD, 0x0c, 4);
         }
-        System::getInstance().testPin1.toggle(); //XXX
         System::getInstance().testPin2.toggle(); //XXX
+    }
+    if(newDataReady)
+    {
+        newDataReady = false;
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+        std::string recData("r:");
+        for(auto byte : receiveBuffer)
+        {
+            recData += Console::toHex(byte, 2, false);
+            recData += " ";
+        }
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, recData);
     }
 }
 
@@ -235,6 +247,7 @@ void I2cBus::handler(void)
 
     I2cRequest currentRequest = sendRequestQueue.front();
     sendRequestQueue.pop();
+    pLastServedDevice = currentRequest.pDevice;
     if(currentRequest.Action == ActionType::I2C_WRITE)
     {
         // copy data to send buffer to have it in scope
@@ -252,6 +265,8 @@ void I2cBus::handler(void)
     }
     else
     {
+        // mark that new data is not yet available
+        currentRequest.pDevice->newDataReady = false;
         // initialize receive buffer in the device object
         currentRequest.pDevice->receiveBuffer = std::vector<uint8_t>(currentRequest.NoOfBytesToRead, 0);
         // read from device
