@@ -11,7 +11,6 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
-#include "I2C.h"    //XXX
 			
 int main(void)
 {
