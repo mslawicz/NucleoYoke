@@ -11,8 +11,8 @@
 #include "I2C.h"
 #include "GPIO.h"
 
-#define LSM6DS3_INT1_PORT   GPIOC
-#define LSM6DS3_INT1_PIN    GPIO_PIN_3
+#define LSM6DS3_INT1_PORT   GPIOF
+#define LSM6DS3_INT1_PIN    GPIO_PIN_14
 
 enum LSM6DS3Register
 {
