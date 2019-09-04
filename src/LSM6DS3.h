@@ -27,6 +27,8 @@ class LSM6DS3 : public I2cDevice
 public:
     LSM6DS3(I2cBus* pBus);
     ~LSM6DS3();
+    bool isDataReady(void) { return int1Pin.read() == GPIO_PinState::GPIO_PIN_SET; }
+    void getData(void) { readRequest(DeviceAddress::LSM6DS3_ADD, LSM6DS3Register::OUTX_L_G, 12); }
 private:
     GPIO int1Pin;
 };

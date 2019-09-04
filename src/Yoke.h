@@ -13,6 +13,14 @@
 #include "LSM6DS3.h"
 #include <string>
 
+enum YokeState
+{
+    YS_start,
+    YS_wait_for_imu_data_ready,
+    YS_wait_for_data_reception,
+    YS_compute_imu_data
+};
+
 struct ForceFeedbackData
 {
     float pitchForce;
@@ -32,6 +40,7 @@ private:
     USB::Device interface;
     ForceFeedbackData forceFeedbackData;
     LSM6DS3 imu;
+    YokeState state;
 };
 
 #endif /* YOKE_H_ */

@@ -14,7 +14,7 @@ Yoke::Yoke() :
     interface(),
     imu(I2cBus::pI2c1)
 {
-
+    state = YS_start;
 }
 
 Yoke::~Yoke()
@@ -29,6 +29,26 @@ Yoke::~Yoke()
 void Yoke::handler(void)
 {
     interface.test();  //XXX
+
+    switch(state)
+    {
+    case YS_start:
+        state = YS_wait_for_imu_data_ready;
+        break;
+    case YS_wait_for_imu_data_ready:
+        if(imu.isDataReady())
+        {
+            imu.getData();
+            state = YS_wait_for_data_reception;
+        }
+        break;
+    case YS_wait_for_data_reception:
+        break;
+    case YS_compute_imu_data:
+        break;
+    default:
+        break;
+    }
 }
 
 /*
