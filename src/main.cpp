@@ -31,7 +31,6 @@ int main(void)
     System::getInstance().getConsole()->sendPrompt();
 
     LSM6DS3 imu(I2cBus::pI2c1); //XXX
-    imu.readRequest(DeviceAddress::LSM6DS3_ADD, 0x0F, 1); //XXX what to do with this device address?
 
     // main loop
     while(1)
