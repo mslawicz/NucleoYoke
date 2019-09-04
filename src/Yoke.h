@@ -28,6 +28,16 @@ struct ForceFeedbackData
     float yawForce;
 };
 
+struct ImuRawData
+{
+    int16_t gyroscopeX;
+    int16_t gyroscopeY;
+    int16_t gyroscopeZ;
+    int16_t accelerometerX;
+    int16_t accelerometerY;
+    int16_t accelerometerZ;
+};
+
 class Yoke
 {
 public:
@@ -41,6 +51,7 @@ private:
     ForceFeedbackData forceFeedbackData;
     LSM6DS3 imu;
     YokeState state;
+    ImuRawData imuRawData;
 };
 
 #endif /* YOKE_H_ */

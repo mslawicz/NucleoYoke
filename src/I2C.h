@@ -65,7 +65,7 @@ class I2cDevice
 public:
     void markNewDataReceived(bool state) { newDataReceived = state; }
     bool isNewDataReceived(void) const { return newDataReceived; }
-    std::vector<uint8_t> getLastData(void) const { return receiveBuffer; }
+    std::vector<uint8_t> getReceivedData(void) const { return receiveBuffer; }
     friend I2cBus;
 protected:
     I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);

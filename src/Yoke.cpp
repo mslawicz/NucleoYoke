@@ -48,10 +48,26 @@ void Yoke::handler(void)
         {
             imu.markNewDataReceived(false);
             System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-            state = YS_wait_for_imu_data_ready;
+            memcpy(&imuRawData, &imu.getReceivedData()[0], imu.getReceivedData().size());
+            state = YS_compute_imu_data;
         }
         break;
     case YS_compute_imu_data:
+        {
+            static uint32_t cnt = 0; //XXX
+            if(++cnt % 20 == 0)
+            {
+                std::string xyz; //XXX
+                xyz += std::to_string(imuRawData.gyroscopeX); xyz+=" ";
+                xyz += std::to_string(imuRawData.gyroscopeY); xyz+=" ";
+                xyz += std::to_string(imuRawData.gyroscopeZ); xyz+=" ";
+                xyz += std::to_string(imuRawData.accelerometerX); xyz+=" ";
+                xyz += std::to_string(imuRawData.accelerometerY); xyz+=" ";
+                xyz += std::to_string(imuRawData.accelerometerZ); xyz+=" ";
+                System::getInstance().getConsole()->getInterface().send(xyz+"     \r\n");
+            }
+            state = YS_wait_for_imu_data_ready;
+        }
         break;
     default:
         break;
