@@ -10,6 +10,7 @@
 #define YOKE_H_
 
 #include "USB.h"
+#include "LSM6DS3.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -24,11 +25,13 @@ class Yoke
 public:
     Yoke();
     ~Yoke();
+    void handler(void);
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
 private:
     USB::Device interface;
     ForceFeedbackData forceFeedbackData;
+    LSM6DS3 imu;
 };
 
 #endif /* YOKE_H_ */

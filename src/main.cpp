@@ -11,7 +11,6 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
-#include "LSM6DS3.h"
 			
 int main(void)
 {
@@ -30,8 +29,6 @@ int main(void)
     // send first prompt
     System::getInstance().getConsole()->sendPrompt();
 
-    LSM6DS3 imu(I2cBus::pI2c1); //XXX
-
     // main loop
     while(1)
     {
@@ -39,8 +36,8 @@ int main(void)
 
         System::getInstance().getConsole()->handler();
         I2cBus::pI2c1->handler();
+        System::getInstance().getYoke()->handler();
 
-        System::getInstance().getYoke()->getInterface().test(); //XXX
 //        System::getInstance().getDisplay()->test();
 //        System::getInstance().getDisplay()->handler();
     }

@@ -11,7 +11,8 @@
 
 
 Yoke::Yoke() :
-    interface()
+    interface(),
+    imu(I2cBus::pI2c1)
 {
 
 }
@@ -19,6 +20,15 @@ Yoke::Yoke() :
 Yoke::~Yoke()
 {
     // TODO Auto-generated destructor stub
+}
+
+/*
+ * yoke handler
+ * to be called in a main loop
+ */
+void Yoke::handler(void)
+{
+    interface.test();  //XXX
 }
 
 /*
