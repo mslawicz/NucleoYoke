@@ -39,10 +39,17 @@ void Yoke::handler(void)
         if(imu.isDataReady())
         {
             imu.getData();
+            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
             state = YS_wait_for_data_reception;
         }
         break;
     case YS_wait_for_data_reception:
+        if(imu.isNewDataReceived())
+        {
+            imu.markNewDataReceived(false);
+            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+            state = YS_wait_for_imu_data_ready;
+        }
         break;
     case YS_compute_imu_data:
         break;

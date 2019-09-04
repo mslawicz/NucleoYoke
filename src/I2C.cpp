@@ -110,7 +110,7 @@ I2cDevice::I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress) :
         deviceAddress(deviceAddress)
 {
     System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + Console::toHex(deviceAddress, 2));
-    newDataReady = false;
+    newDataReceived = false;
 }
 
 
@@ -138,7 +138,7 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
 {
     if(hI2c->Instance == I2C1)
     {
-        I2cBus::pI2c1->getLastServedDevice()->markNewData(true);
+        I2cBus::pI2c1->getLastServedDevice()->markNewDataReceived(true);
     }
 }
 
@@ -228,7 +228,7 @@ void I2cBus::handler(void)
     else
     {
         // mark that new data is not yet available
-        currentRequest.pDevice->newDataReady = false;
+        currentRequest.pDevice->newDataReceived = false;
         // initialize receive buffer in the device object
         currentRequest.pDevice->receiveBuffer = std::vector<uint8_t>(currentRequest.NoOfBytesToRead, 0);
         // read from device

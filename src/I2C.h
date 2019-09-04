@@ -63,8 +63,8 @@ private:
 class I2cDevice
 {
 public:
-    void markNewData(bool state) { newDataReady = state; }
-    bool isNewDataReady(void) const { return newDataReady; }
+    void markNewDataReceived(bool state) { newDataReceived = state; }
+    bool isNewDataReceived(void) const { return newDataReceived; }
     std::vector<uint8_t> getLastData(void) const { return receiveBuffer; }
     friend I2cBus;
 protected:
@@ -75,7 +75,7 @@ private:
     I2cBus* pBus;       // I2C bus for this device
     DeviceAddress deviceAddress;        // I2C device address (7-bit left aligned)
     std::vector<uint8_t> receiveBuffer;     // buffer for reveived data
-    volatile bool newDataReady;
+    volatile bool newDataReceived;
 };
 
 #endif /* I2C_H_ */
