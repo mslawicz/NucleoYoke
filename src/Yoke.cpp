@@ -9,6 +9,8 @@
 #include "Yoke.h"
 #include "System.h"
 
+FloatVector gGyro; //XXX
+FloatVector gAcc; //XXX
 
 Yoke::Yoke() :
     interface(),
@@ -59,6 +61,8 @@ void Yoke::handler(void)
         acceleration.X = static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
         acceleration.Y = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
         acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+        gGyro = angularRate; //XXX
+        gAcc = acceleration; //XXX
         state = YS_wait_for_imu_data_ready;
         break;
     default:
