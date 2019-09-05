@@ -11,6 +11,7 @@
 
 #include "USB.h"
 #include "LSM6DS3.h"
+#include "Timer.h"
 #include <string>
 
 enum YokeState
@@ -64,6 +65,12 @@ private:
     const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // IMU measurement full scale value
     const float AngularRateFullScale = 4.3633f;   // gyroscope angular rate full scale value [rad/s]
     const float AccelerationFullScale = 2.0f;   // accelerometer full scale value [g]
+    float dTheta;   // pitch angle derivative [rad/s]
+    float dPhi;     // roll angle derivative [rad/s]
+    float theta;    // yoke pitch angle [rad]
+    float phi;      // yoke roll angle [rad]
+    float alpha;    // complementary filter strength factor
+    Timer calculationTimer;
 };
 
 #endif /* YOKE_H_ */
