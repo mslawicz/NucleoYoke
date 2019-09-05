@@ -53,21 +53,13 @@ void Yoke::handler(void)
         }
         break;
     case YS_compute_imu_data:
-        {
-            static uint32_t cnt = 0; //XXX
-            if(++cnt % 20 == 0)
-            {
-                std::string xyz; //XXX
-                xyz += std::to_string(imuRawData.gyroscopeX); xyz+=" ";
-                xyz += std::to_string(imuRawData.gyroscopeY); xyz+=" ";
-                xyz += std::to_string(imuRawData.gyroscopeZ); xyz+=" ";
-                xyz += std::to_string(imuRawData.accelerometerX); xyz+=" ";
-                xyz += std::to_string(imuRawData.accelerometerY); xyz+=" ";
-                xyz += std::to_string(imuRawData.accelerometerZ); xyz+=" ";
-                System::getInstance().getConsole()->getInterface().send(xyz+"     \r\n");
-            }
-            state = YS_wait_for_imu_data_ready;
-        }
+        angularRate.X = static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+        angularRate.Y = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+        angularRate.Z = static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+        acceleration.X = static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+        acceleration.Y = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+        acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+        state = YS_wait_for_imu_data_ready;
         break;
     default:
         break;
