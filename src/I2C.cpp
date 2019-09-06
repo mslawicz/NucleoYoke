@@ -11,6 +11,7 @@
 
 // this static pointer is used by interrupts
 I2cBus* I2cBus::pI2c1 = nullptr;
+I2cBus* I2cBus::pI2c2 = nullptr;
 
 I2cBus::I2cBus(I2C_TypeDef* instance)
 {
@@ -76,6 +77,70 @@ I2cBus::I2cBus(I2C_TypeDef* instance)
 
         pI2c1 = this;
     }
+
+    if(instance == I2C2)
+    {
+        name = "I2C2";
+
+        // SCL pin
+        GPIO(GPIOF, GPIO_PIN_1, GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF4_I2C2);
+        // SDA pin
+        GPIO(GPIOF, GPIO_PIN_0, GPIO_MODE_AF_OD, GPIO_PULLUP, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF4_I2C2);
+        /* Peripheral clock enable */
+        __HAL_RCC_I2C2_CLK_ENABLE();
+        __HAL_RCC_DMA1_CLK_ENABLE();
+        /* Peripheral interrupt init */
+        HAL_NVIC_SetPriority(I2C2_EV_IRQn, 2, 1);
+        HAL_NVIC_EnableIRQ(I2C2_EV_IRQn);
+        HAL_NVIC_SetPriority(I2C2_ER_IRQn, 1, 3);
+        HAL_NVIC_EnableIRQ(I2C2_ER_IRQn);
+
+        /* DMA interrupt init */
+        /* DMA1_Stream7_IRQn interrupt configuration */
+        HAL_NVIC_SetPriority(DMA1_Stream7_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream7_IRQn);
+        /* DMA1_Stream2_IRQn interrupt configuration */
+        HAL_NVIC_SetPriority(DMA1_Stream2_IRQn, 0, 0);
+        HAL_NVIC_EnableIRQ(DMA1_Stream2_IRQn);
+
+        /* Peripheral DMA init*/
+
+        hDmaI2cTx.Instance = DMA1_Stream7;
+        hDmaI2cTx.Init.Channel = DMA_CHANNEL_7;
+        hDmaI2cTx.Init.Direction = DMA_MEMORY_TO_PERIPH;
+        hDmaI2cTx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hDmaI2cTx.Init.MemInc = DMA_MINC_ENABLE;
+        hDmaI2cTx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        hDmaI2cTx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+        hDmaI2cTx.Init.Mode = DMA_NORMAL;
+        hDmaI2cTx.Init.Priority = DMA_PRIORITY_LOW;
+        hDmaI2cTx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_Init(&hDmaI2cTx) != HAL_OK)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " TX DMA initialization failed");
+        }
+        __HAL_LINKDMA(&hI2c,hdmatx,hDmaI2cTx);
+
+        hDmaI2cRx.Instance = DMA1_Stream2;
+        hDmaI2cRx.Init.Channel = DMA_CHANNEL_7;
+        hDmaI2cRx.Init.Direction = DMA_PERIPH_TO_MEMORY;
+        hDmaI2cRx.Init.PeriphInc = DMA_PINC_DISABLE;
+        hDmaI2cRx.Init.MemInc = DMA_MINC_ENABLE;
+        hDmaI2cRx.Init.PeriphDataAlignment = DMA_PDATAALIGN_BYTE;
+        hDmaI2cRx.Init.MemDataAlignment = DMA_MDATAALIGN_BYTE;
+        hDmaI2cRx.Init.Mode = DMA_NORMAL;
+        hDmaI2cRx.Init.Priority = DMA_PRIORITY_LOW;
+        hDmaI2cRx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+        if (HAL_DMA_Init(&hDmaI2cRx) != HAL_OK)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + "  RX DMA initialization failed");
+        }
+
+        __HAL_LINKDMA(&hI2c,hdmarx,hDmaI2cRx);
+
+        pI2c2 = this;
+    }
+
     hI2c.Instance = instance;
     hI2c.Init.ClockSpeed = 400000;
     hI2c.Init.DutyCycle = I2C_DUTYCYCLE_2;

@@ -21,6 +21,7 @@ System::System() :
     testPin2(TEST2_PORT, TEST2_PIN, GPIO_MODE_OUTPUT_PP)
 {
     pI2C1 = nullptr;
+    pI2C2 = nullptr;
     //pSpi3 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
@@ -118,6 +119,7 @@ void System::config(void)
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
     // I2C1 is used for stepper motor controllers
     pI2C1 = new I2cBus(I2C1);
+    pI2C2 = new I2cBus(I2C2);
     pYoke = new Yoke;
     // SPI3 is used for display
 //    pSpi3 = new SpiBus(SPI3);

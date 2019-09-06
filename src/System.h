@@ -43,6 +43,7 @@ private:
     Console* pConsole;
     Yoke* pYoke;
     I2cBus* pI2C1;
+    I2cBus* pI2C2;
 //    Display* pDisplay;
 //    SpiBus* pSpi3;
 };

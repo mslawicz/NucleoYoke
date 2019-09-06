@@ -12,7 +12,7 @@
 #include "GPIO.h"
 
 #define LSM6DS3_INT1_PORT   GPIOF
-#define LSM6DS3_INT1_PIN    GPIO_PIN_14
+#define LSM6DS3_INT1_PIN    GPIO_PIN_2
 
 enum LSM6DS3Register
 {

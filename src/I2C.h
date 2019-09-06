@@ -49,6 +49,7 @@ public:
     I2cDevice* getLastServedDevice(void) const { return pLastServedDevice; }
     void handler(void);
     static I2cBus* pI2c1;
+    static I2cBus* pI2c2;
     friend I2cDevice;
 private:
     I2C_HandleTypeDef hI2c;

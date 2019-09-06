@@ -141,6 +141,24 @@ void DMA1_Stream1_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 stream2 global interrupt.
+  * it is called after completed I2C reception
+  */
+void DMA1_Stream2_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(I2cBus::pI2c2->getDmaRxHandle());
+}
+
+/**
+  * @brief This function handles DMA1 stream7 global interrupt.
+  * it is called two bytes before completed I2C transmission
+  */
+void DMA1_Stream7_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(I2cBus::pI2c2->getDmaTxHandle());
+}
+
+/**
   * @brief This function handles I2C1 event interrupt.
   * in DMA mode it is called after completed transmission (not reception!)
   */
@@ -154,8 +172,26 @@ void I2C1_EV_IRQHandler(void)
   */
 void I2C1_ER_IRQHandler(void)
 {
-    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C error interrupt");
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C1 error interrupt");
     HAL_I2C_ER_IRQHandler(I2cBus::pI2c1->getHandle());
+}
+
+/**
+  * @brief This function handles I2C2 event interrupt.
+  * in DMA mode it is called after completed transmission (not reception!)
+  */
+void I2C2_EV_IRQHandler(void)
+{
+    HAL_I2C_EV_IRQHandler(I2cBus::pI2c2->getHandle());
+}
+
+/**
+  * @brief This function handles I2C2 error interrupt.
+  */
+void I2C2_ER_IRQHandler(void)
+{
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C2 error interrupt");
+    HAL_I2C_ER_IRQHandler(I2cBus::pI2c2->getHandle());
 }
 
 /**
