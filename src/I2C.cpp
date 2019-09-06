@@ -191,6 +191,11 @@ void HAL_I2C_MemTxCpltCallback(I2C_HandleTypeDef *hI2c)
     {
 
     }
+
+    if(hI2c->Instance == I2C2)
+    {
+
+    }
 }
 
 /**
@@ -205,6 +210,11 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
     {
         I2cBus::pI2c1->getLastServedDevice()->markNewDataReceived(true);
     }
+
+    if(hI2c->Instance == I2C2)
+    {
+        I2cBus::pI2c2->getLastServedDevice()->markNewDataReceived(true);
+    }
 }
 
 /**
@@ -213,9 +223,17 @@ void HAL_I2C_MemRxCpltCallback(I2C_HandleTypeDef *hI2c)
   *                the configuration information for the specified I2C.
   * @retval None
   */
-void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hi2c)
+void HAL_I2C_ErrorCallback(I2C_HandleTypeDef *hI2c)
 {
-    System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, " I2C error code=" + std::to_string(HAL_I2C_GetError(hi2c)));
+    if(hI2c->Instance == I2C1)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, " I2C1 error code=" + std::to_string(HAL_I2C_GetError(hI2c)));
+    }
+
+    if(hI2c->Instance == I2C2)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, " I2C1 error code=" + std::to_string(HAL_I2C_GetError(hI2c)));
+    }
 }
 
 

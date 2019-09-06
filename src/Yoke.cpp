@@ -19,7 +19,7 @@ float gPhi; //XXX
 
 Yoke::Yoke() :
     interface(),
-    imu(I2cBus::pI2c1)
+    imu(I2cBus::pI2c2)
 {
     state = YS_start;
     theta = phi = dTheta = dPhi = 0.0f;
