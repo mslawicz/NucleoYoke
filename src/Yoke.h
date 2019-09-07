@@ -19,7 +19,8 @@ enum YokeState
     YS_start,
     YS_wait_for_imu_data_ready,
     YS_wait_for_data_reception,
-    YS_compute_imu_data
+    YS_compute_imu_data,
+    YS_send_yoke_data
 };
 
 struct ForceFeedbackData
@@ -55,6 +56,7 @@ public:
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
 private:
+    int16_t toInt16(float value, int16_t maxValue);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 imu;    // IMU sensor
@@ -71,6 +73,9 @@ private:
     float phi;      // yoke roll angle [rad]
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
+    const int16_t JoystickXyzMaxValue = 0x0FFF;
+    const float thetaGain = 4000.0f;    // multiplier for achieving elevator deflection full scale
+    const float phiGain = 5000.0f;      // multiplier for achieving aileron deflection full scale
 };
 
 #endif /* YOKE_H_ */

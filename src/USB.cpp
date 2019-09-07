@@ -118,9 +118,9 @@ void Device::test(void)
     {
         uint8_t state = (uint8_t)(currentButtonState);
         // joystick test
-        uint16_t X = state * (1000 - rand() % 2001);
-        uint16_t Y = 0 * state * (2000 * (2 - rand() % 5));
-        uint16_t Z = 0 * state * (2000 * (2 - rand() % 5));
+        int16_t X = state * (2000 * (2 - rand() % 5));
+        int16_t Y = state * (2000 * (2 - rand() % 5));
+        int16_t Z = state * (2000 * (2 - rand() % 5));
         uint8_t Rx = 0 * state * (63 * (1 + rand() % 4));
         uint8_t Ry = 0 * state * (63 * (1 + rand() % 4));
         uint8_t Rz = 0 * state * (63 * (1 + rand() % 4));

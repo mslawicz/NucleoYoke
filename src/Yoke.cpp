@@ -17,6 +17,8 @@ float gPhiA; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
 
+extern USBD_HandleTypeDef hUsbDeviceFS;
+
 Yoke::Yoke() :
     interface(),
     imu(I2cBus::pI2c2)
@@ -37,8 +39,6 @@ Yoke::~Yoke()
  */
 void Yoke::handler(void)
 {
-    interface.test();  //XXX
-
     switch(state)
     {
     case YS_start:
@@ -97,6 +97,28 @@ void Yoke::handler(void)
             gTheta = theta; //XXX
             gPhi = phi; //XXX
         }
+        state = YS_send_yoke_data;
+        break;
+    case YS_send_yoke_data:
+        {
+            int16_t deflectionY = toInt16(theta * thetaGain, JoystickXyzMaxValue);
+            int16_t deflectionX = toInt16(phi * phiGain, JoystickXyzMaxValue);
+            // XXX temporary solution for auto-rudder
+            int16_t deflectionZ = toInt16(phi * phiGain * 0.2f, JoystickXyzMaxValue);
+            uint8_t reportBuffer[] =
+            {
+                    0x01,   // report ID
+                    LOBYTE(deflectionX),
+                    HIBYTE(deflectionX),
+                    LOBYTE(deflectionY),
+                    HIBYTE(deflectionY),
+                    LOBYTE(deflectionZ),
+                    HIBYTE(deflectionZ),
+                    0,0,0,0,0,0,0,0
+            };
+            USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
+        }
+        //interface.test(); //XXX
         state = YS_wait_for_imu_data_ready;
         break;
     default:
@@ -119,4 +141,16 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
     }
 }
 
-
+int16_t Yoke::toInt16(float value, int16_t maxValue)
+{
+    int16_t outValue = static_cast<int16_t>(value);
+    if(outValue > maxValue)
+    {
+        outValue = maxValue;
+    }
+    else if(outValue < -maxValue)
+    {
+        outValue = -maxValue;
+    }
+    return outValue;
+}
