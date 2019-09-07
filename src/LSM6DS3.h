@@ -16,9 +16,9 @@
 
 enum LSM6DS3Register
 {
-    ORIENT_CFG_G=0x0B,
     INT1_CTRL=0x0D,
     CTRL1_XL=0x10,
+    CTRL7_G = 0x16,
     OUTX_L_G=0x22
 };
 

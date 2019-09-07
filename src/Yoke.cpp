@@ -64,16 +64,21 @@ void Yoke::handler(void)
         break;
     case YS_compute_imu_data:
         {
-            angularRate.X = static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-            angularRate.Y = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-            angularRate.Z = static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-            acceleration.X = static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
-            acceleration.Y = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+            // angular rate and acceleration value calculations should reflect the sensor orientation
+            // acceleration.Z == 1 when yoke is neutral
+            // acceleration.Y > 0 when yoke is pulled (elevator up)
+            // acceleration.X > 0 when yoke is turned right (right wing down)
+            // angular rate sign must reflect acceleration sign
+            angularRate.Y = static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+            angularRate.X = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+            angularRate.Z = -static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
+            acceleration.Y = -static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+            acceleration.X = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
             acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
             gGyro = angularRate; //XXX
             gAcc = acceleration; //XXX
             // calculate pitch angle derivative [rad/s]
-            dTheta = -angularRate.Y * cos(phi) + angularRate.Z * sin(phi);
+            dTheta = angularRate.Y * cos(phi) + angularRate.Z * sin(phi);
             // calculate roll angle derivative [rad/s]
             dPhi = angularRate.X;
             // calculate pitch angle from accelerometer data
