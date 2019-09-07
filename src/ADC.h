@@ -8,10 +8,15 @@
 #ifndef ADC_H_
 #define ADC_H_
 
-class ADC
+#include "stm32f4xx_hal.h"
+
+class ADConverter
 {
 public:
-    ADC();
+    ADConverter();
+private:
+    ADC_HandleTypeDef hADC;
+    DMA_HandleTypeDef hDMA;
 };
 
 #endif /* ADC_H_ */
