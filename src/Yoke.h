@@ -74,8 +74,8 @@ private:
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
-    const float thetaGain = 4000.0f;    // multiplier for achieving elevator deflection full scale
-    const float phiGain = 5000.0f;      // multiplier for achieving aileron deflection full scale
+    const float thetaGain = 5000.0f;    // multiplier for achieving elevator deflection full scale
+    const float phiGain = 6000.0f;      // multiplier for achieving aileron deflection full scale
 };
 
 #endif /* YOKE_H_ */

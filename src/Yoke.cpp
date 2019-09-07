@@ -101,8 +101,8 @@ void Yoke::handler(void)
         break;
     case YS_send_yoke_data:
         {
-            int16_t deflectionY = toInt16(theta * thetaGain, JoystickXyzMaxValue);
             int16_t deflectionX = toInt16(phi * phiGain, JoystickXyzMaxValue);
+            int16_t deflectionY = toInt16(theta * thetaGain, JoystickXyzMaxValue);
             // XXX temporary solution for auto-rudder
             int16_t deflectionZ = toInt16(phi * phiGain * 0.2f, JoystickXyzMaxValue);
             uint8_t reportBuffer[] =

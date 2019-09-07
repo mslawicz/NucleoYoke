@@ -30,7 +30,7 @@ int main(void)
     while(1)
     {
         System::getInstance().blinkSystemLED();
-
+        System::getInstance().testPin2.toggle();    //XXX
         System::getInstance().getConsole()->handler();
         I2cBus::pI2c1->handler();
         I2cBus::pI2c2->handler();
