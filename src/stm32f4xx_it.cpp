@@ -15,6 +15,7 @@
 #include "UART.h"
 #include "USB.h"
 #include "I2C.h"
+#include "ADC.h"
 #include "System.h" //XXX
 
 /* Private typedef -----------------------------------------------------------*/
@@ -156,6 +157,22 @@ void DMA1_Stream2_IRQHandler(void)
 void DMA1_Stream7_IRQHandler(void)
 {
     HAL_DMA_IRQHandler(I2cBus::pI2c2->getDmaTxHandle());
+}
+
+/**
+  * @brief This function handles DMA2 stream0 global interrupt.
+  */
+void DMA2_Stream0_IRQHandler(void)
+{
+  HAL_DMA_IRQHandler(ADConverter::pADC1->getDmaHandle());
+}
+
+/**
+  * @brief This function handles ADC1 global interrupt.
+  */
+void ADC_IRQHandler(void)
+{
+  HAL_ADC_IRQHandler(ADConverter::pADC1->getHandle());
 }
 
 /**

@@ -12,6 +12,7 @@
 #include <utility>
 
 uint32_t ADConverter::channelRank = 0;
+ADConverter* ADConverter::pADC1 = nullptr;
 
 ADConverter::ADConverter()
 {
@@ -42,7 +43,32 @@ ADConverter::ADConverter()
     registerChannel(ADC_CHANNEL_0);
     registerChannel(ADC_CHANNEL_8);
 
+    /* ADC1 DMA Init */
     __HAL_RCC_DMA2_CLK_ENABLE();
+
+    hDMA.Instance = DMA2_Stream0;
+    hDMA.Init.Channel = DMA_CHANNEL_0;
+    hDMA.Init.Direction = DMA_PERIPH_TO_MEMORY;
+    hDMA.Init.PeriphInc = DMA_PINC_DISABLE;
+    hDMA.Init.MemInc = DMA_MINC_ENABLE;
+    hDMA.Init.PeriphDataAlignment = DMA_PDATAALIGN_HALFWORD;
+    hDMA.Init.MemDataAlignment = DMA_MDATAALIGN_HALFWORD;
+    hDMA.Init.Mode = DMA_NORMAL;
+    hDMA.Init.Priority = DMA_PRIORITY_LOW;
+    hDMA.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
+    if (HAL_DMA_Init(&hDMA) != HAL_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_ADC, "ADC1 DMA initialization failed");
+    }
+
+    __HAL_LINKDMA(&hADC, DMA_Handle, hDMA);
+
+    pADC1 = this;
+
+    /* ADC1 interrupt Init */
+    HAL_NVIC_SetPriority(ADC_IRQn, 3, 1);
+    HAL_NVIC_EnableIRQ(ADC_IRQn);
+
     /* DMA2_Stream0_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
@@ -57,7 +83,21 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
     const std::unordered_map<uint32_t, std::pair<GPIO_TypeDef*, uint32_t>> ADCPorts =
     {
             {ADC_CHANNEL_0, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_0)},
-            {ADC_CHANNEL_8, std::pair<GPIO_TypeDef*, uint32_t>(GPIOB, GPIO_PIN_0)}
+            {ADC_CHANNEL_1, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_1)},
+            {ADC_CHANNEL_2, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_2)},
+            {ADC_CHANNEL_3, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_3)},
+            {ADC_CHANNEL_4, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_4)},
+            {ADC_CHANNEL_5, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_5)},
+            {ADC_CHANNEL_6, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_6)},
+            {ADC_CHANNEL_7, std::pair<GPIO_TypeDef*, uint32_t>(GPIOA, GPIO_PIN_7)},
+            {ADC_CHANNEL_8, std::pair<GPIO_TypeDef*, uint32_t>(GPIOB, GPIO_PIN_0)},
+            {ADC_CHANNEL_9, std::pair<GPIO_TypeDef*, uint32_t>(GPIOB, GPIO_PIN_1)},
+            {ADC_CHANNEL_10, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_0)},
+            {ADC_CHANNEL_11, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_1)},
+            {ADC_CHANNEL_12, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_2)},
+            {ADC_CHANNEL_13, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_3)},
+            {ADC_CHANNEL_14, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_4)},
+            {ADC_CHANNEL_15, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_5)}
     };
 
     ADC_ChannelConfTypeDef config = {channel, ADConverter::channelRank++, samplingTime, 0};
