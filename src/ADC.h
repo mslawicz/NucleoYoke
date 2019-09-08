@@ -15,8 +15,10 @@ class ADConverter
 public:
     ADConverter();
 private:
+    void registerChannel(uint32_t channel, uint32_t samplingTime = ADC_SAMPLETIME_112CYCLES);
     ADC_HandleTypeDef hADC;
     DMA_HandleTypeDef hDMA;
+    static uint32_t channelRank;
 };
 
 #endif /* ADC_H_ */
