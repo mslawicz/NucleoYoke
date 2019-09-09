@@ -11,7 +11,6 @@
 #include <unordered_map>
 #include <utility>
 
-uint32_t ADConverter::channelRank = 1;
 ADConverter* ADConverter::pADC1 = nullptr;
 
 ADConverter::ADConverter()
@@ -29,7 +28,7 @@ ADConverter::ADConverter()
     hADC.Init.ExternalTrigConv = ADC_SOFTWARE_START;
     hADC.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     hADC.Init.NbrOfConversion = 2;
-    hADC.Init.DMAContinuousRequests = DISABLE;
+    hADC.Init.DMAContinuousRequests = ENABLE;
     hADC.Init.EOCSelection = ADC_EOC_SEQ_CONV;
     if (HAL_ADC_Init(&hADC) == HAL_OK)
     {
@@ -41,6 +40,7 @@ ADConverter::ADConverter()
     }
 
     // register ADC channels
+    channelRank = 1;
     registerChannel(ADC_CHANNEL_0);
     registerChannel(ADC_CHANNEL_9);
 
@@ -101,7 +101,7 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
             {ADC_CHANNEL_15, std::pair<GPIO_TypeDef*, uint32_t>(GPIOC, GPIO_PIN_5)}
     };
 
-    ADC_ChannelConfTypeDef config = {channel, ADConverter::channelRank++, samplingTime, 0};
+    ADC_ChannelConfTypeDef config = {channel, channelRank++, samplingTime, 0};
     if (HAL_ADC_ConfigChannel(&hADC, &config) == HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_ADC, "ADC1 channel " + std::to_string(channel) + " registered");
@@ -111,6 +111,32 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_ADC, "ADC1 channel " + std::to_string(channel) + " registration failed");
     }
     GPIO(ADCPorts.find(channel)->second.first, ADCPorts.find(channel)->second.second, GPIO_MODE_ANALOG, GPIO_NOPULL);
+    convertedValues.push_back(0);
 }
 
 
+/**
+  * @brief  Conversion complete callback in non blocking mode
+  * @param  AdcHandle : AdcHandle handle
+  */
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
+{
+    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
+}
+
+/*
+ * start conversions of all registered channels in DMA mode
+ */
+void ADConverter::startConversions(void)
+{
+    static uint8_t cnt = 0;
+    if(++cnt > 52)
+    {
+        cnt = 0;
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_ADC, "ADC values: " + Console::toHex(convertedValues[0], 8, false) + "  " + Console::toHex(convertedValues[1], 8, false));
+    }
+    if(HAL_ADC_Start_DMA(&hADC, &convertedValues[0], channelRank-1) != HAL_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_ADC, "ADC1 start conversion error");
+    }
+}

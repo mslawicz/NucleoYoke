@@ -118,7 +118,8 @@ void Yoke::handler(void)
             };
             USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
         }
-        //interface.test(); //XXX
+        adc.startConversions();
+        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
         state = YS_wait_for_imu_data_ready;
         break;
     default:
