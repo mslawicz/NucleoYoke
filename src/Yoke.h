@@ -12,6 +12,7 @@
 #include "USB.h"
 #include "LSM6DS3.h"
 #include "Timer.h"
+#include "ADC.h"
 #include <string>
 
 enum YokeState
@@ -76,6 +77,7 @@ private:
     const int16_t JoystickXyzMaxValue = 0x0FFF;
     const float thetaGain = 5000.0f;    // multiplier for achieving elevator deflection full scale
     const float phiGain = 6000.0f;      // multiplier for achieving aileron deflection full scale
+    ADConverter adc;                // ADC converter object
 };
 
 #endif /* YOKE_H_ */

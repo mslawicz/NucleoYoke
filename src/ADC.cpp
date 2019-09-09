@@ -11,24 +11,25 @@
 #include <unordered_map>
 #include <utility>
 
-uint32_t ADConverter::channelRank = 0;
+uint32_t ADConverter::channelRank = 1;
 ADConverter* ADConverter::pADC1 = nullptr;
 
 ADConverter::ADConverter()
 {
     __HAL_RCC_ADC1_CLK_ENABLE();
 
+    hADC.State = HAL_ADC_STATE_RESET;
     hADC.Instance = ADC1;
     hADC.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
     hADC.Init.Resolution = ADC_RESOLUTION_12B;
     hADC.Init.ScanConvMode = ENABLE;
-    hADC.Init.ContinuousConvMode = DISABLE;
+    hADC.Init.ContinuousConvMode = ENABLE;
     hADC.Init.DiscontinuousConvMode = DISABLE;
     hADC.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
     hADC.Init.ExternalTrigConv = ADC_SOFTWARE_START;
     hADC.Init.DataAlign = ADC_DATAALIGN_RIGHT;
     hADC.Init.NbrOfConversion = 2;
-    hADC.Init.DMAContinuousRequests = ENABLE;
+    hADC.Init.DMAContinuousRequests = DISABLE;
     hADC.Init.EOCSelection = ADC_EOC_SEQ_CONV;
     if (HAL_ADC_Init(&hADC) == HAL_OK)
     {
@@ -41,7 +42,7 @@ ADConverter::ADConverter()
 
     // register ADC channels
     registerChannel(ADC_CHANNEL_0);
-    registerChannel(ADC_CHANNEL_8);
+    registerChannel(ADC_CHANNEL_9);
 
     /* ADC1 DMA Init */
     __HAL_RCC_DMA2_CLK_ENABLE();
@@ -65,7 +66,7 @@ ADConverter::ADConverter()
 
     pADC1 = this;
 
-    /* ADC1 interrupt Init */
+    /* ADC1 interrupt Init */ //XXX possibly not needed
     HAL_NVIC_SetPriority(ADC_IRQn, 3, 1);
     HAL_NVIC_EnableIRQ(ADC_IRQn);
 
@@ -111,3 +112,5 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
     }
     GPIO(ADCPorts.find(channel)->second.first, ADCPorts.find(channel)->second.second, GPIO_MODE_ANALOG, GPIO_NOPULL);
 }
+
+
