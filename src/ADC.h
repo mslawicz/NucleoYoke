@@ -20,11 +20,11 @@ public:
     void startConversions(void);
     static ADConverter* pADC1;
 private:
-    void registerChannel(uint32_t channel, uint32_t samplingTime = ADC_SAMPLETIME_112CYCLES);
+    void registerChannel(uint32_t channel, uint32_t samplingTime = ADC_SAMPLETIME_480CYCLES);
     ADC_HandleTypeDef hADC;
     DMA_HandleTypeDef hDMA;
     uint32_t channelRank;
-    std::vector<uint32_t> convertedValues;
+    std::vector<uint16_t> convertedValues;
 };
 
 #endif /* ADC_H_ */

@@ -22,7 +22,7 @@ ADConverter::ADConverter()
     hADC.Init.ClockPrescaler = ADC_CLOCK_SYNC_PCLK_DIV4;
     hADC.Init.Resolution = ADC_RESOLUTION_12B;
     hADC.Init.ScanConvMode = ENABLE;
-    hADC.Init.ContinuousConvMode = ENABLE;
+    hADC.Init.ContinuousConvMode = DISABLE;
     hADC.Init.DiscontinuousConvMode = DISABLE;
     hADC.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
     hADC.Init.ExternalTrigConv = ADC_SOFTWARE_START;
@@ -73,6 +73,7 @@ ADConverter::ADConverter()
     /* DMA2_Stream0_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
+    convertedValues = std::vector<uint16_t>{0xAABB, 0, 0, 0xCCDD};
 }
 
 
@@ -121,7 +122,7 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
   */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
 {
-    System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
+    System::getInstance().testPin2.toggle();    //XXX
 }
 
 /*
@@ -133,9 +134,15 @@ void ADConverter::startConversions(void)
     if(++cnt > 52)
     {
         cnt = 0;
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_ADC, "ADC values: " + Console::toHex(convertedValues[0], 8, false) + "  " + Console::toHex(convertedValues[1], 8, false));
+        std::string msg("ADC values:");
+        for(auto elem : convertedValues)
+        {
+            msg += " ";
+            msg += Console::toHex(elem, 4, false);
+        }
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_ADC, msg);
     }
-    if(HAL_ADC_Start_DMA(&hADC, &convertedValues[0], channelRank-1) != HAL_OK)
+    if(HAL_ADC_Start_DMA(&hADC, reinterpret_cast<uint32_t*>(&convertedValues[1]), channelRank-1) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_ADC, "ADC1 start conversion error");
     }
