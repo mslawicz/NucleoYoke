@@ -154,7 +154,9 @@ void Yoke::sendJoystickData(void)
             HIBYTE(deflectionY),
             LOBYTE(deflectionZ),
             HIBYTE(deflectionZ),
-            0,0,0,0,0,0,0,0
+            0,0,0,
+            LOBYTE(adc.getConvertedValues()[1] >> 4),
+            0,0,0,0,0,0,0
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
 }
