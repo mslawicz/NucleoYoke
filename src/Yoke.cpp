@@ -64,6 +64,13 @@ void Yoke::handler(void)
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
         adc.startConversions();
     }
+
+    if(adc.isConversionComplete())
+    {
+        // ADC conversion is complete
+        adc.setConversionComplete(false);
+        System::getInstance().testPin2.toggle();    //XXX
+    }
 }
 
 /*

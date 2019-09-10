@@ -17,6 +17,8 @@ public:
     ADConverter();
     ADC_HandleTypeDef* getHandle(void) const { return const_cast<ADC_HandleTypeDef*>(&hADC); }
     DMA_HandleTypeDef* getDmaHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDMA); }
+    void setConversionComplete(bool state) { conversionComplete = state; }
+    bool isConversionComplete(void) const { return conversionComplete; }
     void startConversions(void);
     static ADConverter* pADC1;
 private:
@@ -25,6 +27,7 @@ private:
     DMA_HandleTypeDef hDMA;
     uint32_t channelRank;
     std::vector<uint16_t> convertedValues;
+    bool conversionComplete;
 };
 
 #endif /* ADC_H_ */
