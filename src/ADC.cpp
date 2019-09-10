@@ -73,7 +73,6 @@ ADConverter::ADConverter()
     /* DMA2_Stream0_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-    convertedValues = std::vector<uint16_t>{0xAABB, 0, 0, 0xCCDD};
 }
 
 
@@ -130,19 +129,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
  */
 void ADConverter::startConversions(void)
 {
-    static uint8_t cnt = 0; //XXX
-    if(++cnt > 52) //XXX
-    {
-        cnt = 0;
-        std::string msg("ADC values:");
-        for(auto elem : convertedValues)
-        {
-            msg += " ";
-            msg += Console::toHex(elem, 4, false);
-        }
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_ADC, msg);
-    }
-    if(HAL_ADC_Start_DMA(&hADC, reinterpret_cast<uint32_t*>(&convertedValues[1]), channelRank-1) != HAL_OK)
+    if(HAL_ADC_Start_DMA(&hADC, reinterpret_cast<uint32_t*>(&convertedValues[0]), channelRank-1) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_ADC, "ADC1 start conversion error");
     }
