@@ -130,8 +130,8 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
  */
 void ADConverter::startConversions(void)
 {
-    static uint8_t cnt = 0;
-    if(++cnt > 52)
+    static uint8_t cnt = 0; //XXX
+    if(++cnt > 52) //XXX
     {
         cnt = 0;
         std::string msg("ADC values:");

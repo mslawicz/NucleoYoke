@@ -26,6 +26,9 @@ int main(void)
     // send first prompt
     System::getInstance().getConsole()->sendPrompt();
 
+    // reset essential yoke parameters before first handler call
+    System::getInstance().getYoke()->resetParameters();
+
     // main loop
     while(1)
     {

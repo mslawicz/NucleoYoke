@@ -15,15 +15,6 @@
 #include "ADC.h"
 #include <string>
 
-enum YokeState
-{
-    YS_start,
-    YS_wait_for_imu_data_ready,
-    YS_wait_for_data_reception,
-    YS_compute_imu_data,
-    YS_send_yoke_data
-};
-
 struct ForceFeedbackData
 {
     float pitchForce;
@@ -56,12 +47,14 @@ public:
     void handler(void);
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
+    void resetParameters(void);
 private:
     int16_t toInt16(float value, int16_t maxValue);
+    void computeParameters(void);
+    void sendJoystickData(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 imu;    // IMU sensor
-    YokeState state;    // state of the handler state machine
     ImuRawData imuRawData;      // raw data read from IMU sensor
     FloatVector angularRate;    // angular rate measured [rad/s]
     FloatVector acceleration;   // acceleration measured [g]
@@ -78,6 +71,7 @@ private:
     const float thetaGain = 5000.0f;    // multiplier for achieving elevator deflection full scale
     const float phiGain = 6000.0f;      // multiplier for achieving aileron deflection full scale
     ADConverter adc;                // ADC converter object
+    bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
 };
 
 #endif /* YOKE_H_ */
