@@ -73,7 +73,6 @@ ADConverter::ADConverter()
     /* DMA2_Stream0_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
-    conversionComplete = false;
 }
 
 
@@ -122,7 +121,8 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
   */
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
 {
-    ADConverter::pADC1->setConversionComplete(true);
+    // nothing must be done here
+    System::getInstance().testPin2.toggle();    //XXX
 }
 
 /*
