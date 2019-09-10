@@ -142,8 +142,9 @@ void Yoke::sendJoystickData(void)
 {
     int16_t deflectionX = toInt16(phi * phiGain, JoystickXyzMaxValue);
     int16_t deflectionY = toInt16(theta * thetaGain, JoystickXyzMaxValue);
-    // XXX temporary solution for auto-rudder
-    int16_t deflectionZ = toInt16(phi * phiGain * 0.2f, JoystickXyzMaxValue);
+    // rudder is derived from the first converted value
+    // it must be converted from 12-bit unsigned to 13-bit signed
+    int16_t deflectionZ = (adc.getConvertedValues()[0] << 1) - 0xFFF;
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
