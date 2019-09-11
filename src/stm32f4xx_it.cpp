@@ -167,14 +167,6 @@ void DMA2_Stream0_IRQHandler(void)
   HAL_DMA_IRQHandler(ADConverter::pADC1->getDmaHandle());
 }
 
-/** XXX possibly not needed
-  * @brief This function handles ADC1 global interrupt.
-  */
-void ADC_IRQHandler(void)
-{
-  HAL_ADC_IRQHandler(ADConverter::pADC1->getHandle());
-}
-
 /**
   * @brief This function handles I2C1 event interrupt.
   * in DMA mode it is called after completed transmission (not reception!)

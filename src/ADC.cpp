@@ -66,10 +66,6 @@ ADConverter::ADConverter()
 
     pADC1 = this;
 
-    /* ADC1 interrupt Init */ //XXX possibly not needed
-    HAL_NVIC_SetPriority(ADC_IRQn, 3, 1);
-    HAL_NVIC_EnableIRQ(ADC_IRQn);
-
     /* DMA2_Stream0_IRQn interrupt configuration */
     HAL_NVIC_SetPriority(DMA2_Stream0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(DMA2_Stream0_IRQn);
