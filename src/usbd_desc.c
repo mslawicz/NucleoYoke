@@ -28,7 +28,7 @@
 /* Private define ------------------------------------------------------------*/
 #define USBD_VID                      0x0483 // STMicroelectronics
 //#define USBD_PID                    0x5740 // Virtual COM Port
-#define USBD_PID                      0x5711 // Joystick in FS Mode
+#define USBD_PID                      0x5711 // Joystick in FS Mode (normally 0x5710)
 #define USBD_LANGID_STRING            0x409
 #define USBD_MANUFACTURER_STRING      "Marcin Slawicz"
 #define USBD_PRODUCT_HS_STRING        "Nucleo Yoke"
