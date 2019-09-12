@@ -45,7 +45,6 @@ void Yoke::handler(void)
         waitingForImuData = true;
         // request data transmission from IMU sensor
         imu.getData();
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
     }
 
     if(imu.isNewDataReceived())
@@ -53,13 +52,16 @@ void Yoke::handler(void)
         // new data from IMU sensor has been just received
         imu.markNewDataReceived(false);
         waitingForImuData = false;
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
         // copy IMU data from reception vector to IMU raw data structure
         memcpy(&imuRawData, &imu.getReceivedData()[0], imu.getReceivedData().size());
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
-        sendJoystickData();
+        if(interface.isActive())
+        {
+            System::getInstance().testPin1.toggle(); //XXX
+            sendJoystickData();
+        }
         // start new AD conversion set
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
         adc.startConversions();

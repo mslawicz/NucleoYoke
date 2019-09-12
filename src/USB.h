@@ -18,8 +18,7 @@ class Device
 public:
     Device();
     ~Device();
-    void test(void);
-private:
+    bool isActive();
 };
 
 } /* namespace USB */
