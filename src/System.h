@@ -14,10 +14,10 @@
 #include "I2C.h"
 //#include "display.h"
 
-#define TEST1_PORT   GPIOC
-#define TEST1_PIN    GPIO_PIN_10
-#define TEST2_PORT   GPIOC
-#define TEST2_PIN    GPIO_PIN_11
+#define TEST1_PORT   GPIOD
+#define TEST1_PIN    GPIO_PIN_0
+#define TEST2_PORT   GPIOD
+#define TEST2_PIN    GPIO_PIN_1
 
 
 class System
