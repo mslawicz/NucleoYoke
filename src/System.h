@@ -12,7 +12,7 @@
 #include "GPIO.h"
 #include "Yoke.h"
 #include "I2C.h"
-//#include "display.h"
+#include "SPI.h"
 
 #define TEST1_PORT   GPIOD
 #define TEST1_PIN    GPIO_PIN_0
@@ -44,8 +44,7 @@ private:
     Yoke* pYoke;
     I2cBus* pI2C1;
     I2cBus* pI2C2;
-//    Display* pDisplay;
-//    SpiBus* pSpi3;
+    SpiBus* pSPI3;
 };
 
 #endif /* SYSTEM_H_ */

@@ -11,6 +11,7 @@
 #include "stm32f4xx_hal.h"
 #include "GPIO.h"
 #include <vector>
+#include <string>
 
 class SpiDevice;
 
@@ -21,12 +22,14 @@ public:
     ~SpiBus();
     SPI_HandleTypeDef* getHandle(void) const { return const_cast<__SPI_HandleTypeDef*>(&hSpi); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaTx); }
+    void handler(void);
     static SpiBus* pSpi3;
     friend SpiDevice;
 private:
     SPI_HandleTypeDef hSpi;
     SPI_TypeDef* instance;
     DMA_HandleTypeDef hDmaTx;
+    std::string name;
 };
 
 class SpiDevice

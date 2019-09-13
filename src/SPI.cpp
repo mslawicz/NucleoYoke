@@ -13,7 +13,19 @@ SpiBus* SpiBus::pSpi3 = nullptr;
 SpiBus::SpiBus(SPI_TypeDef* instance) :
     instance(instance)
 {
-    std::string name;
+    if(instance == SPI3)
+    {
+        name = "SPI3";
+        /* Peripheral clock enable */
+        __HAL_RCC_SPI3_CLK_ENABLE();
+        /* DMA controller clock enable */
+        __HAL_RCC_DMA1_CLK_ENABLE();
+        // MOSI pin
+        GPIO(GPIOC, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+        // SCK pin
+        GPIO(GPIOC, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+    }
+
     hSpi.Instance = instance;
     hSpi.Init.Mode = SPI_MODE_MASTER;
     hSpi.Init.Direction = SPI_DIRECTION_2LINES;
@@ -37,15 +49,6 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
 
     if(instance == SPI3)
     {
-        name = "SPI3";
-        /* Peripheral clock enable */
-        __HAL_RCC_SPI3_CLK_ENABLE();
-        /* DMA controller clock enable */
-        __HAL_RCC_DMA1_CLK_ENABLE();
-        // MOSI pin
-        GPIO(GPIOC, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
-        // SCK pin
-        GPIO(GPIOC, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
         /* Peripheral interrupt init */
         HAL_NVIC_SetPriority(SPI3_IRQn, 1, 1);
         HAL_NVIC_EnableIRQ(SPI3_IRQn);
@@ -55,7 +58,7 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
         HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
 
-        /* SPI3_TX Init */
+        /* SPI3_DMA TX Init */
         hDmaTx.Instance = DMA1_Stream5;
         hDmaTx.Init.Channel = DMA_CHANNEL_0;
         hDmaTx.Init.Direction = DMA_MEMORY_TO_PERIPH;
@@ -74,7 +77,6 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
 
         pSpi3 = this;
     }
-
 }
 
 SpiBus::~SpiBus()
@@ -82,6 +84,14 @@ SpiBus::~SpiBus()
     // TODO Auto-generated destructor stub
 }
 
+/*
+ * handler of the SpiBus object
+ * to be called periodically in the main loop
+ */
+void SpiBus::handler(void)
+{
+
+}
 
 SpiDevice::SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS, bool autoCS) :
         pBus(pBus),

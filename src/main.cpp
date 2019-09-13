@@ -39,6 +39,7 @@ int main(void)
         System::getInstance().getConsole()->handler();
         I2cBus::pI2c1->handler();
         I2cBus::pI2c2->handler();
+        SpiBus::pSpi3->handler();
         System::getInstance().getYoke()->handler();
 
 //        System::getInstance().getDisplay()->test();

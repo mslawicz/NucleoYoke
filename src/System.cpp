@@ -22,10 +22,9 @@ System::System() :
 {
     pI2C1 = nullptr;
     pI2C2 = nullptr;
-    //pSpi3 = nullptr;
+    pSPI3 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
-    //pDisplay = nullptr;
 }
 
 System::~System()
@@ -122,7 +121,7 @@ void System::config(void)
     pI2C2 = new I2cBus(I2C2);
     pYoke = new Yoke;
     // SPI3 is used for display
-//    pSpi3 = new SpiBus(SPI3);
+    pSPI3 = new SpiBus(SPI3);
 //    pDisplay = new Display(SpiBus::pSpi3, DISPLAY_CS_PORT, DISPLAY_CS_PIN);
 }
 
