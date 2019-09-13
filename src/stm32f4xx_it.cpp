@@ -15,6 +15,7 @@
 #include "UART.h"
 #include "USB.h"
 #include "I2C.h"
+#include "SPI.h"
 #include "ADC.h"
 #include "System.h" //XXX
 
