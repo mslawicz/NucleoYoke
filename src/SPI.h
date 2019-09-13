@@ -12,9 +12,6 @@
 #include "GPIO.h"
 #include <vector>
 
-#define DISPLAY_CS_PORT GPIOD
-#define DISPLAY_CS_PIN  GPIO_PIN_2
-
 class SpiDevice;
 
 class SpiBus
@@ -24,17 +21,11 @@ public:
     ~SpiBus();
     SPI_HandleTypeDef* getHandle(void) const { return const_cast<__SPI_HandleTypeDef*>(&hSpi); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaTx); }
-    void markAsBusy(void) { busy = true; }
-    void markAsFree(void);
-    void markNewDataReady(void);
-    bool isBusy(void) const { return busy; }
     static SpiBus* pSpi3;
     friend SpiDevice;
 private:
     SPI_HandleTypeDef hSpi;
     SPI_TypeDef* instance;
-    volatile bool busy;      // true if SPI bus is busy
-    SpiDevice* pLastServedDevice;
     DMA_HandleTypeDef hDmaTx;
 };
 

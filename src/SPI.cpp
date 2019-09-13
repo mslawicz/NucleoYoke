@@ -75,26 +75,11 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         pSpi3 = this;
     }
 
-    busy = false;
-    pLastServedDevice = nullptr;
 }
 
 SpiBus::~SpiBus()
 {
     // TODO Auto-generated destructor stub
-}
-
-/*
- * mark the SPI bus inactive and release chip select of the current device
- */
-void SpiBus::markAsFree(void)
-{
-    busy = false;
-    if((pLastServedDevice != nullptr) && (pLastServedDevice->autoCS))
-    {
-        // current served device chip select inactive
-        pLastServedDevice->chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
-    }
 }
 
 
@@ -121,17 +106,17 @@ void SpiDevice::send(std::vector<uint8_t> data)
     {
         chipSelect.write(GPIO_PinState::GPIO_PIN_RESET);
     }
-    pBus->markAsBusy();
+    //pBus->markAsBusy();
     if(HAL_SPI_Transmit_DMA(pBus->getHandle(), &dataToSend[0], dataToSend.size()) == HAL_OK)
     {
-        pBus->pLastServedDevice = this;
+        //pBus->pLastServedDevice = this;
     }
     else
     {
         // no transmission started
         chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
-        pBus->pLastServedDevice = nullptr;
-        pBus->markAsFree();
+        //pBus->pLastServedDevice = nullptr;
+        //pBus->markAsFree();
     }
 }
 
@@ -147,14 +132,14 @@ void SpiDevice::receiveRequest(uint16_t size)
     }
     if(HAL_SPI_Receive_DMA(pBus->getHandle(), &receptionBuffer[0], size) == HAL_OK)
     {
-        pBus->markAsBusy();
-        pBus->pLastServedDevice = this;
+        //pBus->markAsBusy();
+        //pBus->pLastServedDevice = this;
     }
     else
     {
         // no reception started
         chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
-        pBus->pLastServedDevice = nullptr;
+        //pBus->pLastServedDevice = nullptr;
     }
 }
 
@@ -171,14 +156,14 @@ void SpiDevice::sendReceiveRequest(std::vector<uint8_t> data)
     }
     if(HAL_SPI_TransmitReceive_DMA(pBus->getHandle(), &dataToSend[0], &receptionBuffer[0], data.size()) == HAL_OK)
     {
-        pBus->markAsBusy();
-        pBus->pLastServedDevice = this;
+        //pBus->markAsBusy();
+        //pBus->pLastServedDevice = this;
     }
     else
     {
         // no reception started
         chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
-        pBus->pLastServedDevice = nullptr;
+        //pBus->pLastServedDevice = nullptr;
     }
 }
 
@@ -193,7 +178,7 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
     if(hspi->Instance == SPI3)
     {
         // mark this SPI bus as free
-        SpiBus::pSpi3->markAsFree();
+        //SpiBus::pSpi3->markAsFree();
     }
 }
 
@@ -210,7 +195,7 @@ void HAL_SPI_RxCpltCallback(SPI_HandleTypeDef *hspi)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, "Unexpected RxCpltCallback called in SPI3");
         // mark this SPI bus as free
-        SpiBus::pSpi3->markAsFree();
+        //SpiBus::pSpi3->markAsFree();
     }
 }
 
@@ -226,20 +211,10 @@ void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, "Unexpected TxRxCpltCallback called in SPI3");
         // mark this SPI bus as free
-        SpiBus::pSpi3->markAsFree();
+        //SpiBus::pSpi3->markAsFree();
     }
 }
 
-/*
- * mark that new received data is ready in the device buffer
- */
-void SpiBus::markNewDataReady(void)
-{
-    if(pLastServedDevice != nullptr)
-    {
-        pLastServedDevice->newDataReady = true;
-    }
-}
 
 /**
   * @brief  SPI error callback.
