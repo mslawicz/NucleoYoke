@@ -14,6 +14,27 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
     instance(instance)
 {
     std::string name;
+    hSpi.Instance = instance;
+    hSpi.Init.Mode = SPI_MODE_MASTER;
+    hSpi.Init.Direction = SPI_DIRECTION_2LINES;
+    hSpi.Init.DataSize = SPI_DATASIZE_8BIT;
+    hSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
+    hSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
+    hSpi.Init.NSS = SPI_NSS_SOFT;
+    hSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;    // clock 666 kHz
+    hSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
+    hSpi.Init.TIMode = SPI_TIMODE_DISABLE;
+    hSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
+    hSpi.Init.CRCPolynomial = 10;
+    if (HAL_SPI_Init(&hSpi) == HAL_OK)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SPI, name + " initialized");
+    }
+    else
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, name + " initialization failed");
+    }
+
     if(instance == SPI3)
     {
         name = "SPI3";
@@ -22,9 +43,9 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         /* DMA controller clock enable */
         __HAL_RCC_DMA1_CLK_ENABLE();
         // MOSI pin
-        GPIO(GPIOC, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_PULLDOWN, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+        GPIO(GPIOC, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
         // SCK pin
-        GPIO(GPIOC, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_PULLDOWN, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+        GPIO(GPIOC, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
         /* Peripheral interrupt init */
         HAL_NVIC_SetPriority(SPI3_IRQn, 1, 1);
         HAL_NVIC_EnableIRQ(SPI3_IRQn);
@@ -53,26 +74,7 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
 
         pSpi3 = this;
     }
-    hSpi.Instance = instance;
-    hSpi.Init.Mode = SPI_MODE_MASTER;
-    hSpi.Init.Direction = SPI_DIRECTION_2LINES;
-    hSpi.Init.DataSize = SPI_DATASIZE_8BIT;
-    hSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
-    hSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
-    hSpi.Init.NSS = SPI_NSS_SOFT;
-    hSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_64;    // clock 666 kHz
-    hSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
-    hSpi.Init.TIMode = SPI_TIMODE_DISABLE;
-    hSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
-    hSpi.Init.CRCPolynomial = 10;
-    if (HAL_SPI_Init(&hSpi) == HAL_OK)
-    {
-        System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SPI, name + " initialized");
-    }
-    else
-    {
-        System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, name + " initialization failed");
-    }
+
     busy = false;
     pLastServedDevice = nullptr;
 }

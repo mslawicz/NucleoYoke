@@ -153,6 +153,7 @@ void DMA1_Stream2_IRQHandler(void)
 
 /**
   * @brief This function handles DMA1 stream5 global interrupt.
+  * it is called after completed SPI3 transmission
   */
 void DMA1_Stream5_IRQHandler(void)
 {
