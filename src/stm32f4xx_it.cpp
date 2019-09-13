@@ -17,7 +17,6 @@
 #include "I2C.h"
 #include "ADC.h"
 #include "System.h" //XXX
-#include "SPI.h"
 
 /* Private typedef -----------------------------------------------------------*/
 /* Private define ------------------------------------------------------------*/
@@ -219,15 +218,6 @@ void I2C2_ER_IRQHandler(void)
 void USART3_IRQHandler(void)
 {
   HAL_UART_IRQHandler(UART::pUSART3->getUartHandle());
-}
-
-/**
-  * @brief This function handles SPI3 global interrupt.
-  */
-void SPI3_IRQHandler(void)
-{
-    HAL_SPI_IRQHandler(SpiBus::pSpi3->getHandle());
-    System::getInstance().testPin2.toggle();    //XXX
 }
 
 /**

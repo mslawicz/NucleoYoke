@@ -50,10 +50,6 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
 
     if(instance == SPI3)
     {
-        /* Peripheral interrupt init */
-        HAL_NVIC_SetPriority(SPI3_IRQn, 1, 1);
-        HAL_NVIC_EnableIRQ(SPI3_IRQn);
-
         /* DMA interrupt init */
         /* DMA1_Stream5_IRQn interrupt configuration */
         HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
