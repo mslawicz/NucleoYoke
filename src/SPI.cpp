@@ -7,6 +7,7 @@
 
 #include "SPI.h"
 #include "System.h"
+#include "timer.h" //XXX
 
 SpiBus* SpiBus::pSpi3 = nullptr;
 
@@ -90,7 +91,19 @@ SpiBus::~SpiBus()
  */
 void SpiBus::handler(void)
 {
-
+    static Timer tm;
+    if(tm.elapsed(100000))
+    {
+        tm.reset();
+        dataToSend = std::vector<uint8_t>{1,2,3,4,5,6,7,8};
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
+        HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
+    }
 }
 
 SpiDevice::SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS, bool autoCS) :
@@ -189,6 +202,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
     {
         // mark this SPI bus as free
         //SpiBus::pSpi3->markAsFree();
+        // it can be used for CS inactivation
+        System::getInstance().testPin1.toggle(); //XXX
     }
 }
 

@@ -227,6 +227,7 @@ void USART3_IRQHandler(void)
 void SPI3_IRQHandler(void)
 {
     HAL_SPI_IRQHandler(SpiBus::pSpi3->getHandle());
+    System::getInstance().testPin2.toggle();    //XXX
 }
 
 /**

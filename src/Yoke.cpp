@@ -59,11 +59,9 @@ void Yoke::handler(void)
         // send yoke data to PC using USB HID joystick report
         if(interface.isActive())
         {
-            System::getInstance().testPin1.toggle(); //XXX
             sendJoystickData();
         }
         // start new AD conversion set
-        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
         adc.startConversions();
     }
 }

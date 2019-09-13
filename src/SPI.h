@@ -30,6 +30,7 @@ private:
     SPI_TypeDef* instance;
     DMA_HandleTypeDef hDmaTx;
     std::string name;
+    std::vector<uint8_t> dataToSend;
 };
 
 class SpiDevice

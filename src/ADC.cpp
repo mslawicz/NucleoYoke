@@ -118,7 +118,6 @@ void ADConverter::registerChannel(uint32_t channel, uint32_t samplingTime)
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef* hADC)
 {
     // nothing must be done here
-    System::getInstance().testPin2.toggle();    //XXX
 }
 
 /*
