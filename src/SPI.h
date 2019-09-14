@@ -51,21 +51,14 @@ private:
 class SpiDevice
 {
 public:
-    void send(std::vector<uint8_t> data);
-    void receiveRequest(uint16_t size);
-    void sendReceiveRequest(std::vector<uint8_t> data);
-    void select(void) { chipSelect.write(GPIO_PinState::GPIO_PIN_RESET); }
-    void unselect(void) { chipSelect.write(GPIO_PinState::GPIO_PIN_SET); }
+    void sendRequest(std::vector<uint8_t> data, bool itisCommand = false);
     friend SpiBus;
 protected:
     SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS);
     virtual ~SpiDevice();
     SpiBus* pBus;       // SPI bus for this device
-    std::vector<uint8_t> receptionBuffer;    // vector of data being received
 private:
-    std::vector<uint8_t> dataToSend;    // vector of data to send
     GPIO chipSelect;
-    bool newDataReady;
 };
 
 #endif /* SPI_H_ */

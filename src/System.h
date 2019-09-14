@@ -13,6 +13,7 @@
 #include "Yoke.h"
 #include "I2C.h"
 #include "SPI.h"
+#include "Display.h"
 
 #define TEST1_PORT   GPIOD
 #define TEST1_PIN    GPIO_PIN_0
@@ -32,7 +33,7 @@ public:
     void blinkSystemLED(void);
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
-//    Display* getDisplay(void) const { return pDisplay; }
+    Display* getDisplay(void) const { return pDisplay; }
     GPIO systemLED;
     GPIO errorLED;
     GPIO systemPushbutton;
@@ -45,6 +46,7 @@ private:
     I2cBus* pI2C1;
     I2cBus* pI2C2;
     SpiBus* pSPI3;
+    Display* pDisplay;
 };
 
 #endif /* SYSTEM_H_ */

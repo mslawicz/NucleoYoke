@@ -25,6 +25,7 @@ System::System() :
     pSPI3 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
+    pDisplay = nullptr;
 }
 
 System::~System()
