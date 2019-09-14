@@ -72,13 +72,14 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         }
         __HAL_LINKDMA(&hSpi,hdmatx,hDmaTx);
 
+        pPinCD = new GPIO(SPI3_CD_PORT, SPI3_CD_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW);
         pSpi3 = this;
     }
 }
 
 SpiBus::~SpiBus()
 {
-    // TODO Auto-generated destructor stub
+    delete pPinCD;
 }
 
 /*
@@ -94,12 +95,16 @@ void SpiBus::handler(void)
         // there is something to send
         auto sendRequest = sendRequestQueue.front();
         sendRequestQueue.pop();
+        // copy requested data to send buffer
         this->dataToSend = sendRequest.dataToSend;
+        // set command/data signal
+        pPinCD->write(sendRequest.isCommand ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
+        // start DMA transmission
         HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
     }
 
 
-    if(tm.elapsed(100000)) //XXX
+    if(tm.elapsed(10000)) //XXX
     {
         tm.reset();
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
@@ -108,7 +113,8 @@ void SpiBus::handler(void)
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
-        sendRequestContainer newRequest = {nullptr, true, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
+        bool isThisCommand = (bool)(rand() & 0x01);
+        sendRequestContainer newRequest = {nullptr, isThisCommand, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
         sendRequestQueue.push(newRequest);
     }
 }

@@ -14,6 +14,9 @@
 #include <string>
 #include <queue>
 
+#define SPI3_CD_PORT    GPIOC
+#define SPI3_CD_PIN     GPIO_PIN_9
+
 class SpiDevice;
 
 struct sendRequestContainer
@@ -31,15 +34,16 @@ public:
     SPI_HandleTypeDef* getHandle(void) const { return const_cast<__SPI_HandleTypeDef*>(&hSpi); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaTx); }
     void handler(void);
-    static SpiBus* pSpi3;
+    static SpiBus* pSpi3;       // global pointer for SPI3 bus
     friend SpiDevice;
 private:
-    SPI_HandleTypeDef hSpi;
-    SPI_TypeDef* instance;
-    DMA_HandleTypeDef hDmaTx;
-    std::string name;
-    std::vector<uint8_t> dataToSend;
-    std::queue<sendRequestContainer> sendRequestQueue;
+    SPI_HandleTypeDef hSpi;     // SPI handle structure
+    SPI_TypeDef* instance;      // instance of SPI bus
+    DMA_HandleTypeDef hDmaTx;   // SPI DMA handle structure
+    std::string name;           // name of this SPI bus
+    std::vector<uint8_t> dataToSend;        // buffer for data being sent
+    std::queue<sendRequestContainer> sendRequestQueue;      // queue of send requests from devices
+    GPIO* pPinCD;     // command/data pin for this SPI bus
 };
 
 class SpiDevice
