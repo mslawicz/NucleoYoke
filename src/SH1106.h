@@ -54,6 +54,7 @@ private:
         0x8B,
         0xC0    //scan from 0 to N-1
     };
+    const uint8_t NoOfPages = 8;
 };
 
 #endif /* SH1106_H_ */

@@ -70,8 +70,14 @@ void SH1106::handler(void)
         state = DCS_clear_screen;
         break;
     case DCS_clear_screen:
-        sendRequest(std::vector<uint8_t>{0x00, 0x11, 0xB2}, true);
-        sendRequest(std::vector<uint8_t>(30, 0));
+        {
+            std::vector<uint8_t> pageOfZeroes(128, 0);
+            for(uint8_t page = 0; page < NoOfPages; page++)
+            {
+                sendRequest(std::vector<uint8_t>{0x02, 0x10, static_cast<uint8_t>(0xB0 | page)}, true);
+                sendRequest(pageOfZeroes);
+            }
+        }
         state = DCS_display_on;
         break;
     case DCS_display_on:
