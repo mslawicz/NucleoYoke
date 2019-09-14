@@ -24,6 +24,8 @@ enum DisplayControllerState
     DCS_wait_before_init,
     DCS_initialize,
     DCS_wait_after_init,
+    DCS_clear_screen,
+    DCS_display_on,
     DCS_send_loop
 };
 
@@ -50,8 +52,7 @@ private:
         0xA6,   //display normal indication
         0xAD,   //DC pump on
         0x8B,
-        0xC0,   //scan from 0 to N-1
-        0xAF,   //display on
+        0xC0    //scan from 0 to N-1
     };
 };
 

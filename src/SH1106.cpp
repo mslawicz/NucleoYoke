@@ -67,6 +67,15 @@ void SH1106::handler(void)
         //send the initialization data
         sendRequest(SH1106InitData, true);
         controllerTimer.reset();
+        state = DCS_clear_screen;
+        break;
+    case DCS_clear_screen:
+        sendRequest(std::vector<uint8_t>{0x00, 0x11, 0xB2}, true);
+        sendRequest(std::vector<uint8_t>(30, 0));
+        state = DCS_display_on;
+        break;
+    case DCS_display_on:
+        sendRequest(std::vector<uint8_t>{0xAF}, true);   //display on
         state = DCS_wait_after_init;
         break;
     case DCS_wait_after_init:
