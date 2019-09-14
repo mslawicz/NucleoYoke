@@ -36,6 +36,7 @@ public:
     void test(void); //XXX
     void handler(void);
 private:
+    void refreshDisplay(void);
     DisplayControllerState state;
     GPIO resetPin;
     Timer controllerTimer;
@@ -54,7 +55,10 @@ private:
         0x8B,
         0xC0    //scan from 0 to N-1
     };
-    const uint8_t NoOfPages = 8;
+    static const uint8_t NoOfPages = 8;
+    static const uint8_t NoOfRows = 128;
+    uint8_t displayBuffer[NoOfPages][NoOfRows];     // buffer of display data
+    uint8_t refreshRange[NoOfPages][2];     // array of from-to raws to be refreshed; value 0 means 'not to be refreshed'
 };
 
 #endif /* SH1106_H_ */

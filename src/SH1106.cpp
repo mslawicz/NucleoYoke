@@ -11,7 +11,9 @@
 
 SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
     SpiDevice(pBus, portCS, pinCS),
-    resetPin(SH1106_RESET_PORT, SH1106_RESET_PIN, GPIO_MODE_OUTPUT_PP, GPIO_SPEED_LOW)
+    resetPin(SH1106_RESET_PORT, SH1106_RESET_PIN, GPIO_MODE_OUTPUT_PP, GPIO_SPEED_LOW),
+    displayBuffer{},
+    refreshRange{}
 {
     state = DisplayControllerState::DCS_start;
 }
@@ -70,14 +72,13 @@ void SH1106::handler(void)
         state = DCS_clear_screen;
         break;
     case DCS_clear_screen:
+        for(uint8_t page = 0; page < NoOfPages; page++)
         {
-            std::vector<uint8_t> pageOfZeroes(128, 0);
-            for(uint8_t page = 0; page < NoOfPages; page++)
-            {
-                sendRequest(std::vector<uint8_t>{0x02, 0x10, static_cast<uint8_t>(0xB0 | page)}, true);
-                sendRequest(pageOfZeroes);
-            }
+            // declare the whole row to be refreshed
+            refreshRange[page][0] = 2;
+            refreshRange[page][1] = 129;
         }
+        refreshDisplay();
         state = DCS_display_on;
         break;
     case DCS_display_on:
@@ -95,5 +96,29 @@ void SH1106::handler(void)
         break;
     default:
         break;
+    }
+}
+
+/*
+ * updates display according to refreshRange array content
+ */
+void SH1106::refreshDisplay(void)
+{
+    for(uint8_t page = 0; page < NoOfPages; page++)
+    {
+        if(refreshRange[page][0] && refreshRange[page][1] && (refreshRange[page][1] >= refreshRange[page][0]))
+        {
+            std::vector<uint8_t> coordinateData =
+            {
+                    static_cast<uint8_t>(refreshRange[page][0] & 0x0F),     // lower part of column value
+                    static_cast<uint8_t>(0x10 | ((refreshRange[page][0] >> 4) & 0x0F)),     // higher part of column value
+                    static_cast<uint8_t>(0xB0 | page)       // page value
+            };
+            sendRequest(coordinateData, true);
+            std::vector<uint8_t> data(&displayBuffer[page][refreshRange[page][0]], &displayBuffer[page][refreshRange[page][1]+1]);
+            sendRequest(data);
+            // clear range to mark the update has been done
+            refreshRange[page][0] = refreshRange[page][1] = 0;
+        }
     }
 }
