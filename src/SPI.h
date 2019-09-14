@@ -34,6 +34,7 @@ public:
     SPI_HandleTypeDef* getHandle(void) const { return const_cast<__SPI_HandleTypeDef*>(&hSpi); }
     DMA_HandleTypeDef* getDmaTxHandle(void) const { return const_cast<DMA_HandleTypeDef*>(&hDmaTx); }
     void setBusy(bool state) { busy = state; }
+    bool isBusy(void) const { return busy; }
     void handler(void);
     static SpiBus* pSpi3;       // global pointer for SPI3 bus
     SpiDevice* pCurrentlyServedDevice;
@@ -46,7 +47,7 @@ private:
     std::vector<uint8_t> dataToSend;        // buffer for data being sent
     std::queue<sendRequestContainer> sendRequestQueue;      // queue of send requests from devices
     GPIO* pPinCD;     // command/data pin for this SPI bus
-    bool busy;          // true if SPI is busy transmitting
+    volatile bool busy;          // true if SPI is busy transmitting
 };
 
 class SpiDevice

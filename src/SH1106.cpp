@@ -10,10 +10,10 @@
 #include "System.h" //XXX
 
 SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
-    SpiDevice(pBus, portCS, pinCS)
+    SpiDevice(pBus, portCS, pinCS),
+    resetPin(SH1106_RESET_PORT, SH1106_RESET_PIN, GPIO_MODE_OUTPUT_PP, GPIO_SPEED_LOW)
 {
-    // TODO Auto-generated constructor stub
-
+    state = DisplayControllerState::DCS_start;
 }
 
 void SH1106::test(void)
@@ -31,5 +31,54 @@ void SH1106::test(void)
 
         sendRequest(std::vector<uint8_t>{10,11,12}, true);
         sendRequest(std::vector<uint8_t>{1,2,3,4,5,6,7,8});
+    }
+}
+
+/*
+ * SC1106 controller handler
+ * state machine for initializing and display refreshing
+ */
+void SH1106::handler(void)
+{
+    switch(state)
+    {
+    case DCS_start:
+        resetPin.write(GPIO_PinState::GPIO_PIN_RESET);
+        //send a dummy byte to get SPI ready
+        sendRequest(std::vector<uint8_t>{0x00}, true);
+        state = DCS_reset_off;
+        break;
+    case DCS_reset_off:
+        //wait for end of transmission
+        if(!pBus->isBusy())
+        {
+            resetPin.write(GPIO_PinState::GPIO_PIN_SET);
+            controllerTimer.reset();
+            state = DCS_wait_before_init;
+        }
+        break;
+    case DCS_wait_before_init:
+        if(controllerTimer.elapsed(WaitBeforeInitTime))
+        {
+            state = DCS_initialize;
+        }
+        break;
+    case DCS_initialize:
+        //send the initialization data
+        sendRequest(SH1106InitData, true);
+        controllerTimer.reset();
+        state = DCS_wait_after_init;
+        break;
+    case DCS_wait_after_init:
+        if(controllerTimer.elapsed(WaitAfterInitTime))
+        {
+            state = DCS_send_loop;
+        }
+        break;
+    case DCS_send_loop:
+
+        break;
+    default:
+        break;
     }
 }
