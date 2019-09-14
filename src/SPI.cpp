@@ -90,8 +90,6 @@ SpiBus::~SpiBus()
  */
 void SpiBus::handler(void)
 {
-    static Timer tm;//XXX
-
     if((!sendRequestQueue.empty()) && (!busy))
     {
         // there is something to send and SPI is free
@@ -104,23 +102,6 @@ void SpiBus::handler(void)
         // start DMA transmission
         busy = true;
         HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
-    }
-
-
-    if(tm.elapsed(10000)) //XXX
-    {
-        tm.reset();
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
-
-        sendRequestContainer newRequest = {nullptr, true, std::vector<uint8_t>{10,11,12}};
-        sendRequestQueue.push(newRequest);
-        newRequest = {nullptr, false, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
-        sendRequestQueue.push(newRequest);
     }
 }
 
