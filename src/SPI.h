@@ -12,8 +12,16 @@
 #include "GPIO.h"
 #include <vector>
 #include <string>
+#include <queue>
 
 class SpiDevice;
+
+struct sendRequestContainer
+{
+    SpiDevice* pDevice;
+    bool isCommand;
+    std::vector<uint8_t> dataToSend;
+};
 
 class SpiBus
 {
@@ -31,6 +39,7 @@ private:
     DMA_HandleTypeDef hDmaTx;
     std::string name;
     std::vector<uint8_t> dataToSend;
+    std::queue<sendRequestContainer> sendRequestQueue;
 };
 
 class SpiDevice

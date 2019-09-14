@@ -87,18 +87,29 @@ SpiBus::~SpiBus()
  */
 void SpiBus::handler(void)
 {
-    static Timer tm;
-    if(tm.elapsed(100000))
+    static Timer tm;//XXX
+
+    if(!sendRequestQueue.empty())
+    {
+        // there is something to send
+        auto sendRequest = sendRequestQueue.front();
+        sendRequestQueue.pop();
+        this->dataToSend = sendRequest.dataToSend;
+        HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
+    }
+
+
+    if(tm.elapsed(100000)) //XXX
     {
         tm.reset();
-        dataToSend = std::vector<uint8_t>{1,2,3,4,5,6,7,8};
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
-        HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
+        sendRequestContainer newRequest = {nullptr, true, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
+        sendRequestQueue.push(newRequest);
     }
 }
 
