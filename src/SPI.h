@@ -36,6 +36,7 @@ public:
     void setBusy(bool state) { busy = state; }
     void handler(void);
     static SpiBus* pSpi3;       // global pointer for SPI3 bus
+    SpiDevice* pCurrentlyServedDevice;
     friend SpiDevice;
 private:
     SPI_HandleTypeDef hSpi;     // SPI handle structure
@@ -52,6 +53,7 @@ class SpiDevice
 {
 public:
     void sendRequest(std::vector<uint8_t> data, bool itisCommand = false);
+    void unselect(void) { chipSelect.write(GPIO_PinState::GPIO_PIN_SET); }
     friend SpiBus;
 protected:
     SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS);

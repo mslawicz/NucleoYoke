@@ -76,6 +76,7 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         pSpi3 = this;
     }
 
+    pCurrentlyServedDevice = nullptr;
     busy = false;
 }
 
@@ -99,7 +100,10 @@ void SpiBus::handler(void)
         this->dataToSend = sendRequest.dataToSend;
         // set command/data signal
         pPinCD->write(sendRequest.isCommand ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
+        // set active CS signal
+        sendRequest.pDevice->chipSelect.write(GPIO_PinState::GPIO_PIN_RESET);
         // start DMA transmission
+        pCurrentlyServedDevice = sendRequest.pDevice;
         busy = true;
         HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
     }
@@ -135,6 +139,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
     if(hspi->Instance == SPI3)
     {
+        // unselect device
+        SpiBus::pSpi3->pCurrentlyServedDevice->unselect();
         // mark this SPI bus as free
         SpiBus::pSpi3->setBusy(false);
 
