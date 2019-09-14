@@ -8,10 +8,14 @@
 #ifndef DISPLAY_H_
 #define DISPLAY_H_
 
+#include "SH1106.h"
+
 class Display
 {
 public:
     Display();
+private:
+    SH1106 controller;
 };
 
 #endif /* DISPLAY_H_ */

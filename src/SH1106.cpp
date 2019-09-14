@@ -7,8 +7,8 @@
 
 #include "SH1106.h"
 
-SH1106::SH1106() :
-    SpiDevice(SpiBus::pSpi3, SH1106_CS_PORT, SH1106_CS_PIN)
+SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
+    SpiDevice(pBus, portCS, pinCS)
 {
     // TODO Auto-generated constructor stub
 

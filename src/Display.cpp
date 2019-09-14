@@ -7,9 +7,9 @@
 
 #include "Display.h"
 
-Display::Display()
+Display::Display() :
+    controller(SpiBus::pSpi3, SH1106_CS_PORT, SH1106_CS_PIN)
 {
-    // TODO Auto-generated constructor stub
 
 }
 
