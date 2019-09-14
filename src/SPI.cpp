@@ -75,6 +75,8 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         pPinCD = new GPIO(SPI3_CD_PORT, SPI3_CD_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW);
         pSpi3 = this;
     }
+
+    busy = false;
 }
 
 SpiBus::~SpiBus()
@@ -90,9 +92,9 @@ void SpiBus::handler(void)
 {
     static Timer tm;//XXX
 
-    if(!sendRequestQueue.empty())
+    if((!sendRequestQueue.empty()) && (!busy))
     {
-        // there is something to send
+        // there is something to send and SPI is free
         auto sendRequest = sendRequestQueue.front();
         sendRequestQueue.pop();
         // copy requested data to send buffer
@@ -100,6 +102,7 @@ void SpiBus::handler(void)
         // set command/data signal
         pPinCD->write(sendRequest.isCommand ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
         // start DMA transmission
+        busy = true;
         HAL_SPI_Transmit_DMA(&hSpi, &dataToSend[0], dataToSend.size());
     }
 
@@ -113,8 +116,10 @@ void SpiBus::handler(void)
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET);    //XXX
-        bool isThisCommand = (bool)(rand() & 0x01);
-        sendRequestContainer newRequest = {nullptr, isThisCommand, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
+
+        sendRequestContainer newRequest = {nullptr, true, std::vector<uint8_t>{10,11,12}};
+        sendRequestQueue.push(newRequest);
+        newRequest = {nullptr, false, std::vector<uint8_t>{1,2,3,4,5,6,7,8}};
         sendRequestQueue.push(newRequest);
     }
 }
@@ -214,7 +219,8 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
     if(hspi->Instance == SPI3)
     {
         // mark this SPI bus as free
-        //SpiBus::pSpi3->markAsFree();
+        SpiBus::pSpi3->setBusy(false);
+
         // it can be used for CS inactivation
         System::getInstance().testPin1.toggle(); //XXX
     }
