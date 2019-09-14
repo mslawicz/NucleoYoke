@@ -120,10 +120,10 @@ void System::config(void)
     // I2C1 is used for stepper motor controllers
     pI2C1 = new I2cBus(I2C1);
     pI2C2 = new I2cBus(I2C2);
-    pYoke = new Yoke;
     // SPI3 is used for display
     pSPI3 = new SpiBus(SPI3);
-//    pDisplay = new Display(SpiBus::pSpi3, DISPLAY_CS_PORT, DISPLAY_CS_PIN);
+    pDisplay = new Display;
+    pYoke = new Yoke;
 }
 
 /*
@@ -131,11 +131,11 @@ void System::config(void)
  */
 void System::terminate(void)
 {
-//    delete pDisplay;
     delete pYoke;
+    delete pDisplay;
     delete pConsole;
+    delete pSPI3;
     delete pI2C1;
-//    delete pSpi3;
 }
 
 /*
