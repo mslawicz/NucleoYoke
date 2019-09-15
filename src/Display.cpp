@@ -13,4 +13,15 @@ Display::Display() :
 
 }
 
-
+/*
+ * displays character on the screen
+ * ch - ascii code
+ * X,Y - upper left corner of character placement
+ * font - font array from fonts.h
+ * inverted - clears pixels if true
+ * refresh - request for screen update
+ */
+uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh)
+{
+    return X;
+}

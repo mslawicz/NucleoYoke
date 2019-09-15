@@ -41,6 +41,7 @@
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/ST/STM32_USB_Device_Library/Class/Template/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F4xx_Nucleo_144&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/fonts&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/CMSIS/device&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/HAL_Driver/Inc/Legacy&quot;"/>
@@ -68,6 +69,7 @@
 								</option>
 								<option id="gnu.cpp.compiler.option.include.paths.2067022624" name="Include paths (-I)" superClass="gnu.cpp.compiler.option.include.paths" useByScannerDiscovery="false" valueType="includePath">
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/ST/STM32_USB_Device_Library/Core/Inc&quot;"/>
+									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/fonts&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/ST/STM32_USB_Device_Library/Class/HID/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Middlewares/ST/STM32_USB_Device_Library/Class/Template/Inc&quot;"/>
 									<listOptionValue builtIn="false" value="&quot;${ProjDirPath}/Utilities/STM32F4xx_Nucleo_144&quot;"/>

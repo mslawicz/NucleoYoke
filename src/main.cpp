@@ -11,6 +11,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
+#include "Display.h"
 #include "Timer.h"//XXX
 
 			
@@ -47,11 +48,10 @@ int main(void)
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) && (tm.elapsed(1000000)))
         {
             tm.reset();
-            uint8_t startX = rand() % 64;
-            for(uint8_t k=0; k<64; k++)
-            {
-                System::getInstance().getDisplay()->getController().setPoint(startX+k, k);
-            }
+            uint8_t X = rand() % 110;
+            uint8_t Y = rand() % 45;
+            uint8_t ch = 0x21 + rand() % 30;
+            System::getInstance().getDisplay()->putChar(ch, X, Y, FontTahoma16b);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }
