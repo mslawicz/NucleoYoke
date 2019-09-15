@@ -14,7 +14,6 @@ class Display
 {
 public:
     Display();
-    void test(void) { controller.test(); } //XXX
     void handler(void) { controller.handler(); }
 private:
     SH1106 controller;

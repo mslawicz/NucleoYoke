@@ -42,8 +42,6 @@ int main(void)
         SpiBus::pSpi3->handler();
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
-//        System::getInstance().getDisplay()->handler();
-
     }
 
     System::getInstance().terminate();

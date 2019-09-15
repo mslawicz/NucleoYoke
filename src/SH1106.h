@@ -33,7 +33,6 @@ class SH1106 : public SpiDevice
 {
 public:
     SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS);
-    void test(void); //XXX
     void handler(void);
 private:
     void refreshDisplay(void);
