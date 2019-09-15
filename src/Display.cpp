@@ -23,6 +23,8 @@ Display::Display() :
  */
 uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh)
 {
+    bool isSpace = false;
+
     if((ch < font[4]) || (ch >= font[4]+font[5]))
     {
         // ascii code out of this font range
@@ -31,6 +33,11 @@ uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, 
 
     // width of this char
     uint8_t charWidth = font[6 + ch - font[4]];
+    if(charWidth == 0)
+    {
+        isSpace = true;
+        charWidth = font[2];
+    }
 
     // height of this char
     uint8_t charHeight = font[3];
@@ -48,7 +55,7 @@ uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, 
         // for every horizontal row
         for(uint8_t iy = 0; iy < charHeight; iy++)
         {
-            uint8_t bitPattern = font[charDefinitionIndex + ix + (iy / 8) * charWidth];
+            uint8_t bitPattern = isSpace ? 0 : font[charDefinitionIndex + ix + (iy / 8) * charWidth];
             controller.setPoint(X + ix, Y + iy, ((bitPattern >> (iy % 8)) & 0x01) != inverted);
         }
     }

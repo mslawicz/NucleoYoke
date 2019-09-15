@@ -41,7 +41,7 @@
 
 const uint8_t FontTahoma16b[] = {
     0x32, 0xD6, // size
-    0x0A, // width
+    0x08, // width
     0x10, // height
     0x20, // first char
     0x60, // char count
