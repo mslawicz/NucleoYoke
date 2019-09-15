@@ -21,7 +21,7 @@ Display::Display() :
  * inverted - clears pixels if true
  * refresh - request for screen update
  */
-uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh)
+uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, bool inverted, bool refresh)
 {
     bool isSpace = false;
 
@@ -100,4 +100,22 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
     }
 
     return X + charWidth;
+}
+
+/*
+ * displays string on the screen
+ * text - string to be displayed
+ * X,Y - upper left corner of character placement
+ * font - font array from fonts.h
+ * inverted - clears pixels if true
+ * refresh - request for screen update
+ */
+uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted, bool refresh)
+{
+    for(auto ch : text)
+    {
+        X = putChar(X, Y, ch, font, inverted, refresh);
+        X = putChar2CharSpace(X, Y, font, inverted, refresh);
+    }
+    return X;
 }

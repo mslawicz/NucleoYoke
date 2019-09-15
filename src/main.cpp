@@ -34,7 +34,7 @@ int main(void)
 
     Timer tm; //XXX
     tm.reset();
-    uint8_t ch = 0x2B;
+
     // main loop
     while(1)
     {
@@ -49,9 +49,8 @@ int main(void)
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) && (tm.elapsed(1000000)))
         {
             tm.reset();
-            uint8_t X = rand() % 110;
-            uint8_t Y = rand() % 45;
-            System::getInstance().getDisplay()->putChar(ch++, X, Y, FontTahoma16b);
+            System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
+            System::getInstance().getDisplay()->print(10, 22, "by Marcin Slawicz", FontTahoma11);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }

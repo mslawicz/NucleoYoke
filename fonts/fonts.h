@@ -8,7 +8,8 @@
 #ifndef FONTS_FONTS_H_
 #define FONTS_FONTS_H_
 
-#include <Tahoma16b.h>
+#include "Tahoma11.h"
+#include "Tahoma16b.h"
 
 extern const uint8_t FontTahoma11[];
 extern const uint8_t FontTahoma11b[];

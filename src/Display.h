@@ -10,6 +10,7 @@
 
 #include "SH1106.h"
 #include "fonts.h"
+#include <string>
 
 class Display
 {
@@ -17,7 +18,8 @@ public:
     Display();
     void handler(void) { controller.handler(); }
     SH1106& getController(void) { return controller; }
-    uint8_t putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, bool inverted = false, bool refresh = false);
+    uint8_t putChar(uint8_t X, uint8_t Y, uint8_t ch, const uint8_t* font, bool inverted = false, bool refresh = false);
+    uint8_t print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted = false, bool refresh = false);
 private:
     uint8_t putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bool inverted = false, bool refresh = false);
     SH1106 controller;
