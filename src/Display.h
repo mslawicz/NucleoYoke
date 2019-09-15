@@ -19,6 +19,7 @@ public:
     SH1106& getController(void) { return controller; }
     uint8_t putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, bool inverted = false, bool refresh = false);
 private:
+    uint8_t putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bool inverted = false, bool refresh = false);
     SH1106 controller;
 };
 

@@ -67,3 +67,37 @@ uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, 
 
     return X + charWidth;
 }
+
+/*
+ * displays character on the screen
+ * ch - ascii code
+ * X,Y - upper left corner of character placement
+ * font - font array from fonts.h
+ * inverted - clears pixels if true
+ * refresh - request for screen update
+ */
+uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh)
+{
+    // height of this space
+    uint8_t charHeight = font[3];
+
+    // width of this space
+    uint8_t charWidth = 1 + charHeight / 8;
+
+    // for every column
+    for(uint8_t ix = 0; ix < charWidth; ix++)
+    {
+        // for every horizontal row
+        for(uint8_t iy = 0; iy < charHeight; iy++)
+        {
+            controller.setPoint(X + ix, Y + iy, inverted);
+        }
+    }
+
+    if(refresh)
+    {
+        controller.requestUpdate();
+    }
+
+    return X + charWidth;
+}
