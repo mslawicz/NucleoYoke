@@ -36,10 +36,10 @@ uint8_t Display::putChar(uint8_t ch, uint8_t X, uint8_t Y, const uint8_t* font, 
     uint8_t charHeight = font[3];
 
     // calculate index of this char definition in array
-    uint8_t charDefinitionIndex = 6 + font[5];
+    uint16_t charDefinitionIndex = 6 + font[5];
     for(uint8_t i = 0; i < ch - font[4]; i++)
     {
-        charDefinitionIndex += font[6 + i];
+        charDefinitionIndex += font[6 + i] * (1 + (charHeight - 1) / 8);
     }
 
     // for every column

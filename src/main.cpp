@@ -34,6 +34,7 @@ int main(void)
 
     Timer tm; //XXX
     tm.reset();
+    uint8_t ch = 0x2B;
     // main loop
     while(1)
     {
@@ -50,8 +51,7 @@ int main(void)
             tm.reset();
             uint8_t X = rand() % 110;
             uint8_t Y = rand() % 45;
-            uint8_t ch = 0x22;// + (rand() % 30);
-            System::getInstance().getDisplay()->putChar(ch, X, Y, FontTahoma16b);
+            System::getInstance().getDisplay()->putChar(ch++, X, Y, FontTahoma16b);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }
