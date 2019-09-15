@@ -26,7 +26,7 @@ enum DisplayControllerState
     DCS_wait_after_init,
     DCS_clear_screen,
     DCS_display_on,
-    DCS_send_loop
+    DCS_refresh_loop
 };
 
 class SH1106 : public SpiDevice
@@ -58,6 +58,7 @@ private:
     static const uint8_t NoOfRows = 128;
     uint8_t displayBuffer[NoOfPages][NoOfRows];     // buffer of display data
     uint8_t refreshRange[NoOfPages][2];     // array of from-to raws to be refreshed; value 0 means 'not to be refreshed'
+    bool refreshRequest;
 };
 
 #endif /* SH1106_H_ */

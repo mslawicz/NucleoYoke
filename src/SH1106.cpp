@@ -16,6 +16,7 @@ SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
     refreshRange{}
 {
     state = DisplayControllerState::DCS_start;
+    refreshRequest = false;
 }
 
 /*
@@ -70,11 +71,15 @@ void SH1106::handler(void)
     case DCS_wait_after_init:
         if(controllerTimer.elapsed(WaitAfterInitTime))
         {
-            state = DCS_send_loop;
+            state = DCS_refresh_loop;
         }
         break;
-    case DCS_send_loop:
-
+    case DCS_refresh_loop:
+        if(refreshRequest)
+        {
+            refreshRequest = false;
+            refreshDisplay();
+        }
         break;
     default:
         break;
