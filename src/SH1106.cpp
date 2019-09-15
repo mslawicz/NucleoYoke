@@ -109,3 +109,37 @@ void SH1106::refreshDisplay(void)
         }
     }
 }
+
+/*
+ * sets (set==true) or clears (set==false) point in X,Y coordinates
+ * if refresh==true the display will be refreshed soon
+ */
+void SH1106::setPoint(uint8_t X, uint8_t Y, bool set, bool refresh)
+{
+    uint8_t page = Y / 8;
+    uint8_t mask = 1 << (Y % 8);
+
+    // set or clear point in display buffer
+    if(set)
+    {
+        displayBuffer[page][X] |= mask;
+    }
+    else
+    {
+        displayBuffer[page][X] &= ~mask;
+    }
+
+    // set lower limit of refreshing range
+    if((refreshRange[page][0] == 0) || (refreshRange[page][0] > X+2))
+    {
+        refreshRange[page][0] = X+2;
+    }
+    // set upper limit of refreshing range
+    if(refreshRange[page][1] < X+2)
+    {
+        refreshRange[page][1] = X+2;
+    }
+
+    //refresh display if required
+    refreshRequest = refresh;
+}

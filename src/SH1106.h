@@ -34,6 +34,8 @@ class SH1106 : public SpiDevice
 public:
     SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS);
     void handler(void);
+    void requestUpdate(void) { refreshRequest = true; }
+    void setPoint(uint8_t X, uint8_t Y, bool set = true, bool refresh = false);
 private:
     void refreshDisplay(void);
     DisplayControllerState state;
