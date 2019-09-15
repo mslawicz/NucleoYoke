@@ -56,7 +56,9 @@ uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, b
         for(uint8_t iy = 0; iy < charHeight; iy++)
         {
             uint8_t bitPattern = isSpace ? 0 : font[charDefinitionIndex + ix + (iy / 8) * charWidth];
-            controller.setPoint(X + ix, Y + iy, ((bitPattern >> (iy % 8)) & 0x01) != inverted);
+            bool lastByte = iy / 8 == charHeight / 8;
+            uint8_t extraShift = lastByte ? 8 - charHeight % 8 : 0;
+            controller.setPoint(X + ix, Y + iy, ((bitPattern >> (extraShift + iy % 8)) & 0x01) != inverted);
         }
     }
 
