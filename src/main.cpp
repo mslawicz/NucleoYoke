@@ -11,6 +11,7 @@
 #include "stm32f4xx.h"
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
+#include "Timer.h"//XXX
 
 			
 int main(void)
@@ -30,7 +31,7 @@ int main(void)
     // reset essential yoke parameters before first handler call
     System::getInstance().getYoke()->resetParameters();
 
-    static Timer tm;
+    Timer tm; //XXX
     tm.reset();
     // main loop
     while(1)
@@ -42,6 +43,17 @@ int main(void)
         SpiBus::pSpi3->handler();
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
+
+        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) && (tm.elapsed(1000000)))
+        {
+            tm.reset();
+            uint8_t startX = rand() % 64;
+            for(uint8_t k=0; k<64; k++)
+            {
+                System::getInstance().getDisplay()->getController().setPoint(startX+k, k);
+            }
+            System::getInstance().getDisplay()->getController().requestUpdate();
+        }
     }
 
     System::getInstance().terminate();

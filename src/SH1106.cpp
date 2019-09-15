@@ -102,7 +102,8 @@ void SH1106::refreshDisplay(void)
                     static_cast<uint8_t>(0xB0 | page)       // page value
             };
             sendRequest(coordinateData, true);
-            std::vector<uint8_t> data(&displayBuffer[page][refreshRange[page][0]], &displayBuffer[page][refreshRange[page][1]+1]);
+            // refresh range a..b causes sending data from displaBuffer indexes a-2...b-2
+            std::vector<uint8_t> data(&displayBuffer[page][refreshRange[page][0]-2], &displayBuffer[page][refreshRange[page][1]-1]);
             sendRequest(data);
             // clear range to mark the update has been done
             refreshRange[page][0] = refreshRange[page][1] = 0;
@@ -116,6 +117,11 @@ void SH1106::refreshDisplay(void)
  */
 void SH1106::setPoint(uint8_t X, uint8_t Y, bool set, bool refresh)
 {
+    if((X>127) || (Y>63))
+    {
+        // out of range
+        return;
+    }
     uint8_t page = Y / 8;
     uint8_t mask = 1 << (Y % 8);
 

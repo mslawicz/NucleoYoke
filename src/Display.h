@@ -15,6 +15,7 @@ class Display
 public:
     Display();
     void handler(void) { controller.handler(); }
+    SH1106& getController(void) { return controller; }
 private:
     SH1106 controller;
 };
