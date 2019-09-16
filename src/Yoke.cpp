@@ -140,11 +140,11 @@ void Yoke::computeParameters(void)
  */
 void Yoke::sendJoystickData(void)
 {
-    int16_t deflectionX = toInt16(phi * phiGain, JoystickXyzMaxValue);
-    int16_t deflectionY = toInt16(theta * thetaGain, JoystickXyzMaxValue);
+    int16_t deflectionX = System::scaleValue(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
+    int16_t deflectionY = System::scaleValue(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     // rudder is derived from the first converted value
     // it must be converted from 12-bit unsigned to 13-bit signed
-    int16_t deflectionZ = (adc.getConvertedValues()[0] << 1) - 0xFFF;
+    int16_t deflectionZ = System::scaleValue(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, static_cast<int16_t>(adc.getConvertedValues()[0]));
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID

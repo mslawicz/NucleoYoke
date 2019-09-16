@@ -154,17 +154,33 @@ void System::blinkSystemLED(void)
 /*
  * scale input value in the given int16_t input range to output value in the given output range
  */
-int16_t System::scaleValue(int16_t inputMin, int16_t inputMax,
-        int16_t outputMin, int16_t outputMax, int16_t inputValue)
+int16_t System::scaleValue(int16_t inputMin, int16_t inputMax, int16_t outputMin, int16_t outputMax, int16_t inputValue)
 {
-    return static_cast<int16_t>(1.0f * (inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    auto outputValue = static_cast<int16_t>(1.0f * (inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    if(outputValue > outputMax)
+    {
+        outputValue = outputMax;
+    }
+    else if(outputValue < outputMin)
+    {
+        outputValue = outputMin;
+    }
+    return outputValue;
 }
 
 /*
  * scale input value in the given float input range to output value in the given output range
  */
-int16_t System::scaleValue(float inputMin, float inputMax, int16_t outputMin,
-        int16_t outputMax, float inputValue)
+int16_t System::scaleValue(float inputMin, float inputMax, int16_t outputMin, int16_t outputMax, float inputValue)
 {
-    return static_cast<int16_t>((inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    auto outputValue = static_cast<int16_t>((inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    if(outputValue > outputMax)
+    {
+        outputValue = outputMax;
+    }
+    else if(outputValue < outputMin)
+    {
+        outputValue = outputMin;
+    }
+    return outputValue;
 }

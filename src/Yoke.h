@@ -68,8 +68,6 @@ private:
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
-    const float thetaGain = 5000.0f;    // multiplier for achieving elevator deflection full scale
-    const float phiGain = 6000.0f;      // multiplier for achieving aileron deflection full scale
     ADConverter adc;                // ADC converter object
     bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
 };
