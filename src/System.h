@@ -31,6 +31,8 @@ public:
     void config(void);
     void terminate(void);
     void blinkSystemLED(void);
+    static int16_t scaleValue(int16_t inputMin, int16_t inputMax, int16_t outputMin, int16_t outputMax, int16_t inputValue);
+    static int16_t scaleValue(float inputMin, float inputMax, int16_t outputMin, int16_t outputMax, float inputValue);
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
