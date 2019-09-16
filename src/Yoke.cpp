@@ -16,7 +16,6 @@ float gThetaA; //XXX
 float gPhiA; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
-uint8_t gConv1; //XXX
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
@@ -160,7 +159,6 @@ void Yoke::sendJoystickData(void)
             0,0,0,0,0,0,0
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
-    gConv1 = LOBYTE(System::scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1])); //XXX
 }
 
 /*
