@@ -8,9 +8,11 @@
 #ifndef FONTS_FONTS_H_
 #define FONTS_FONTS_H_
 
+#include "Arial9.h"
 #include "Tahoma11.h"
 #include "Tahoma16b.h"
 
+extern const uint8_t FontArial9[];
 extern const uint8_t FontTahoma11[];
 extern const uint8_t FontTahoma11b[];
 extern const uint8_t FontTahoma14b[];

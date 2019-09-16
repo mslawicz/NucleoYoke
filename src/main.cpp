@@ -51,6 +51,7 @@ int main(void)
             tm.reset();
             System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
             System::getInstance().getDisplay()->print(10, 22, "by Marcin Slawicz", FontTahoma11);
+            System::getInstance().getDisplay()->print(0, 38, "Arial9 +345*6", FontArial9);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }
