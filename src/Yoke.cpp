@@ -140,11 +140,11 @@ void Yoke::computeParameters(void)
  */
 void Yoke::sendJoystickData(void)
 {
-    int16_t deflectionX = System::scaleValue(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
-    int16_t deflectionY = System::scaleValue(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
+    int16_t deflectionX = System::scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
+    int16_t deflectionY = System::scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     // rudder is derived from the first converted value
     // it must be converted from 12-bit unsigned to 13-bit signed
-    int16_t deflectionZ = System::scaleValue(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, static_cast<int16_t>(adc.getConvertedValues()[0]));
+    int16_t deflectionZ = System::scaleValue<int16_t>(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, adc.getConvertedValues()[0]);
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
@@ -155,7 +155,7 @@ void Yoke::sendJoystickData(void)
             LOBYTE(deflectionZ),
             HIBYTE(deflectionZ),
             0,0,0,
-            LOBYTE(adc.getConvertedValues()[1] >> 4),
+            LOBYTE(System::scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1])),
             0,0,0,0,0,0,0
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
