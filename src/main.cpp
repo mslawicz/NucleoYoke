@@ -14,6 +14,8 @@
 #include "Display.h"
 #include "Timer.h"//XXX
 
+extern uint8_t gConv1;
+
 			
 int main(void)
 {
@@ -46,12 +48,13 @@ int main(void)
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
 
-        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) && (tm.elapsed(1000000)))
+        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(100000))) //XXX
         {
             tm.reset();
-            System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
-            System::getInstance().getDisplay()->print(10, 22, "by Marcin Slawicz", FontTahoma11);
-            System::getInstance().getDisplay()->print(0, 38, "Arial9 +345*6", FontArial9);
+            System::getInstance().getDisplay()->getController().setContrast(gConv1);
+            System::getInstance().getDisplay()->print(0, 0, std::to_string((uint16_t)(gConv1))+"   ", FontTahoma16b);
+            System::getInstance().getDisplay()->print(10, 22, "Hello Nucleo!", FontTahoma11);
+            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }

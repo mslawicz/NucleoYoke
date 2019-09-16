@@ -36,6 +36,7 @@ public:
     void handler(void);
     void requestUpdate(void) { refreshRequest = true; }
     void setPoint(uint8_t X, uint8_t Y, bool set = true, bool refresh = false);
+    void setContrast(uint8_t value) {sendRequest(std::vector<uint8_t>{0x81, value}, true);}
 private:
     void refreshDisplay(void);
     DisplayControllerState state;
