@@ -62,6 +62,13 @@ void StepperMotor::setForce(float force)
         turnOn = 2048 - delta;
         turnOff = 2048 + delta;
         channelData.emplace(DriverChannel[motorIndex][0][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+
+        //XXX ad channels 3-12
+        for(uint8_t i=3; i<13; i++)
+        {
+            channelData.emplace(i, pDriver->ChannelLow);
+        }
+
         // data for channel 1 input IN1
         turnOn = (force > 0 ? 1024 : 3072) - delta;
         turnOff = (force > 0 ? 1024 : 3072) + delta;
