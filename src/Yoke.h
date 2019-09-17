@@ -14,6 +14,7 @@
 #include "Timer.h"
 #include "ADC.h"
 #include "PCA9685.h"
+#include "StepperMotor.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -72,7 +73,7 @@ private:
     ADConverter adc;                // ADC converter object
     bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
     PCA9685 motorDriver1;       // stepper motor controller for pitch and roll force feedback motors
-
+    StepperMotor pitchMotor;    // force feedback motor of pitch control
 };
 
 #endif /* YOKE_H_ */

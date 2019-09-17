@@ -23,7 +23,8 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 Yoke::Yoke() :
     interface(),
     imu(I2cBus::pI2c2),
-    motorDriver1(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD)
+    motorDriver1(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
+    pitchMotor(&motorDriver1, 0)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -65,6 +66,8 @@ void Yoke::handler(void)
         }
         // start new AD conversion set
         adc.startConversions();
+        //XXX test
+        pitchMotor.setForce(0.5f);
     }
 }
 
