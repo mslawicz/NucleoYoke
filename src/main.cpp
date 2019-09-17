@@ -14,9 +14,7 @@
 #include "Display.h"
 #include "Timer.h"//XXX
 
-extern uint8_t gConv1;
 
-			
 int main(void)
 {
     // HAL and clock initialization

@@ -22,7 +22,8 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    imu(I2cBus::pI2c2)
+    imu(I2cBus::pI2c2),
+    motorDriver1(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;

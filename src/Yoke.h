@@ -13,6 +13,7 @@
 #include "LSM6DS3.h"
 #include "Timer.h"
 #include "ADC.h"
+#include "PCA9685.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -70,6 +71,8 @@ private:
     const int16_t JoystickXyzMaxValue = 0x0FFF;
     ADConverter adc;                // ADC converter object
     bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
+    PCA9685 motorDriver1;       // stepper motor controller for pitch and roll force feedback motors
+
 };
 
 #endif /* YOKE_H_ */
