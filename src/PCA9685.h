@@ -10,9 +10,6 @@
 
 #include "I2C.h"
 
-#define LOBYTE(x)  ((uint8_t)(x & 0x00FFU))
-#define HIBYTE(x)  ((uint8_t)((x & 0xFF00U) >> 8U))
-
 enum PCA9685Register
 {
     MODE1 = 0x00,

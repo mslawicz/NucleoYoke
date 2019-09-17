@@ -31,20 +31,6 @@ public:
     void config(void);
     void terminate(void);
     void blinkSystemLED(void);
-    // scale input value in the given type T input range to output value in the given output range
-    template<typename T> static int16_t scaleValue(T inputMin, T inputMax, int16_t outputMin, int16_t outputMax, T inputValue)
-    {
-        auto outputValue = static_cast<int16_t>(1.0f * (inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
-        if(outputValue > outputMax)
-        {
-            outputValue = outputMax;
-        }
-        else if(outputValue < outputMin)
-        {
-            outputValue = outputMin;
-        }
-        return outputValue;
-    }
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }

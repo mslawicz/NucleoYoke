@@ -6,6 +6,7 @@
  */
 
 #include "PCA9685.h"
+#include "Conversion.h"
 #include <vector>
 
 PCA9685::PCA9685(I2cBus* pBus, DeviceAddress deviceAddress) :

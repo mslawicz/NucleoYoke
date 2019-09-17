@@ -7,6 +7,7 @@
 
 #include "StepperMotor.h"
 #include "System.h"
+#include "Conversion.h"
 #include <map>
 #include <vector>
 #include <cmath>
@@ -51,7 +52,7 @@ void StepperMotor::setForce(float force)
         // set PWM input of both channels to constant high
         channelData.emplace(DriverChannel[motorIndex][0][0], pDriver->ChannelHigh);
         channelData.emplace(DriverChannel[motorIndex][1][0], pDriver->ChannelHigh);
-        auto delta = System::scaleValue<float>(0.0f, 1.0f, 1, 1023, fabs(force));
+        auto delta = scaleValue<float>(0.0f, 1.0f, 1, 1023, fabs(force));
         uint16_t turnOn, turnOff;
         // data for channel 0 input IN1
         turnOn = 4096 - delta;
