@@ -14,6 +14,7 @@ class StepperMotor
 {
 public:
     StepperMotor(PCA9685* pDriver, uint8_t motorIndex);
+    void setForce(float force);
 private:
     PCA9685* pDriver;
     uint8_t motorIndex;

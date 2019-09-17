@@ -45,24 +45,9 @@ void PCA9685::setPwmFrequency(uint16_t frequency)
 }
 
 /*
- * set PWM signal in the channel
+ * set channels
  */
-void PCA9685::setChannel(uint8_t channel, uint16_t turnOn, uint16_t turnOff)
+void PCA9685::setChannels(uint8_t firstChannel, std::vector<uint8_t> data)
 {
-    writeRequest(deviceAddress, PCA9685Register::LED0_ON_L + channel * 4, std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
-}
-
-/*
- * set channel to constant on or off state
- */
-void PCA9685::setChannel(uint8_t channel, ChannelState state)
-{
-    if(state == ChannelState::ChannelOn)
-    {
-        writeRequest(deviceAddress, PCA9685Register::LED0_ON_L + channel * 4, std::vector<uint8_t>{0x00, 0x08, 0x00, 0x00});
-    }
-    else
-    {
-        writeRequest(deviceAddress, PCA9685Register::LED0_ON_L + channel * 4, std::vector<uint8_t>{0x00, 0x00, 0x00, 0x08});
-    }
+    writeRequest(deviceAddress, PCA9685Register::LED0_ON_L + firstChannel * 4, data);
 }

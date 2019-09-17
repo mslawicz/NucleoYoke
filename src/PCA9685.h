@@ -32,8 +32,9 @@ class PCA9685 : public I2cDevice
 public:
     PCA9685(I2cBus* pBus, DeviceAddress deviceAddress);
     void setPwmFrequency(uint16_t frequency);
-    void setChannel(uint8_t channel, uint16_t turnOn, uint16_t turnOff);
-    void setChannel(uint8_t channel, ChannelState state);
+    void setChannels(uint8_t firstChannel, std::vector<uint8_t> data);
+    const std::vector<uint8_t> ChannelHigh{0x00, 0x10, 0x00, 0x00};
+    const std::vector<uint8_t> ChannelLow{0x00, 0x00, 0x00, 0x10};
 private:
     DeviceAddress deviceAddress;
 };
