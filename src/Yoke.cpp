@@ -29,6 +29,7 @@ Yoke::Yoke() :
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     waitingForImuData = false;
+    pitchMotor.setForce(0.0f); //XXX
 }
 
 Yoke::~Yoke()
@@ -52,6 +53,7 @@ void Yoke::handler(void)
 
     if(imu.isNewDataReceived())
     {
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         // new data from IMU sensor has been just received
         imu.markNewDataReceived(false);
         waitingForImuData = false;
@@ -67,7 +69,8 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
         //XXX test
-        pitchMotor.setForce(0.5f);
+        pitchMotor.setForce(0.75f);
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }
 

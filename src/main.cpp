@@ -46,12 +46,12 @@ int main(void)
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
 
-        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(100000))) //XXX
+        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(1000000))) //XXX
         {
             tm.reset();
             System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
-            System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
-            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
+//            System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
+//            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
             System::getInstance().getDisplay()->getController().requestUpdate();
         }
     }

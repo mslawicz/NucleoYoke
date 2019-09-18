@@ -143,9 +143,6 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
         SpiBus::pSpi3->pCurrentlyServedDevice->unselect();
         // mark this SPI bus as free
         SpiBus::pSpi3->setBusy(false);
-
-        // it can be used for CS inactivation
-        System::getInstance().testPin1.toggle(); //XXX
     }
 }
 
