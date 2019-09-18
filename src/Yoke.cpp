@@ -69,7 +69,7 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
         //XXX test
-        pitchMotor.setForce(0.75f);
+        pitchMotor.setForce(0.48f);
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }

@@ -23,35 +23,35 @@ private:
     // value in array = number of PCA9685 PWM channel (0..15)
     const uint8_t DriverChannel[2][2][3] =
     {
-//        // motorIndex 0
-//        {
-//            // output A
-//            {8, 10, 9},
-//            // output B
-//            {13, 11, 12}
-//        },
-//        // motorIndex 1
-//        {
-//            // output A
-//            {2, 4, 3},
-//            // output B
-//            {7, 5, 6}
-//        }
+        // motorIndex 0
+        {
+            // output A
+            {8, 10, 9},
+            // output B
+            {13, 11, 12}
+        },
+        // motorIndex 1
+        {
+            // output A
+            {2, 4, 3},
+            // output B
+            {7, 5, 6}
+        }
 // XXX data for testing:
-            // motorIndex 0
-            {
-                // output A
-                {2, 0, 1},
-                // output B
-                {13, 14, 15}
-            },
-            // motorIndex 1
-            {
-                // output A
-                {2, 4, 3},
-                // output B
-                {7, 5, 6}
-            }
+//            // motorIndex 0
+//            {
+//                // output A
+//                {2, 0, 1},
+//                // output B
+//                {13, 14, 15}
+//            },
+//            // motorIndex 1
+//            {
+//                // output A
+//                {2, 4, 3},
+//                // output B
+//                {7, 5, 6}
+//            }
     };
 };
 

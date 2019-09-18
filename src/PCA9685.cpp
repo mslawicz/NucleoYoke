@@ -16,7 +16,9 @@ PCA9685::PCA9685(I2cBus* pBus, DeviceAddress deviceAddress) :
 {
     // set initial PWM frequency, and also these parameters:
     // address autoincrement enabled, all-call enabled
-    setPwmFrequency(1000);
+    setPwmFrequency(100);
+    // output logic not inverted; change on STOP, totem pole
+    writeRequest(deviceAddress, PCA9685Register::MODE2, std::vector<uint8_t>{0x0C});
 }
 
 /*

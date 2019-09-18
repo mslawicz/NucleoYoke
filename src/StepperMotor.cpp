@@ -55,27 +55,27 @@ void StepperMotor::setForce(float force)
         auto delta = scaleValue<float>(0.0f, 1.0f, 1, 1023, fabs(force));
         uint16_t turnOn, turnOff;
         // data for channel 0 input IN1
-        turnOn = 4096 - delta;
-        turnOff = delta;
+        turnOn = 0;
+        turnOff = delta * 2;
         channelData.emplace(DriverChannel[motorIndex][0][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
         // data for channel 0 input IN2
-        turnOn = 2048 - delta;
-        turnOff = 2048 + delta;
+        turnOn = 2048;
+        turnOff = 2048 + delta * 2;
         channelData.emplace(DriverChannel[motorIndex][0][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
 
-        //XXX ad channels 3-12
-        for(uint8_t i=3; i<13; i++)
-        {
-            channelData.emplace(i, pDriver->ChannelLow);
-        }
+//        //XXX ad channels 3-12
+//        for(uint8_t i=3; i<13; i++)
+//        {
+//            channelData.emplace(i, pDriver->ChannelLow);
+//        }
 
         // data for channel 1 input IN1
-        turnOn = (force > 0 ? 1024 : 3072) - delta;
-        turnOff = (force > 0 ? 1024 : 3072) + delta;
+        turnOn = (force > 0 ? 1024 : 3072);
+        turnOff = ((force > 0 ? 1024 : 3072) + delta * 2) & 0xFFF;
         channelData.emplace(DriverChannel[motorIndex][1][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
         // data for channel 1 input IN2
-        turnOn = (force > 0 ? 3072 : 1024) - delta;
-        turnOff = (force > 0 ? 3072 : 1024) + delta;
+        turnOn = (force > 0 ? 3072 : 1024);
+        turnOff = ((force > 0 ? 3072 : 1024) + delta * 2) & 0xFFF;
         channelData.emplace(DriverChannel[motorIndex][1][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
     }
 
