@@ -47,7 +47,7 @@ int main(void)
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
 
-        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(1000000))) //XXX
+        if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(500000))) //XXX
         {
             tm.reset();
             System::getInstance().getDisplay()->print(0, 0, std::to_string(gTheta)+"   ", FontTahoma16b);
