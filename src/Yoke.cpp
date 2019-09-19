@@ -29,7 +29,7 @@ Yoke::Yoke() :
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     waitingForImuData = false;
-    pitchMotor.setForce(0.0f); //XXX
+    pitchMotor.setForce(0.75f); //XXX
 }
 
 Yoke::~Yoke()
@@ -69,7 +69,22 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
         //XXX test
-        pitchMotor.setForce(0.48f);
+        if(System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET)
+        {
+            motorDriver1.setPwmFrequency(LOBYTE(scaleValue<float>(0.0f, 1.0f, 24, 1500, fabs(gTheta))));
+            if(gTheta > 0.05)
+            {
+                pitchMotor.setForce(0.75f);
+            }
+            else if(gTheta < -0.05)
+            {
+                pitchMotor.setForce(-0.75f);
+            }
+            else
+            {
+                pitchMotor.setForce(0.0f);
+            }
+        }
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }
