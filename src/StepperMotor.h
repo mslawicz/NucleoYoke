@@ -37,21 +37,6 @@ private:
             // output B
             {7, 5, 6}
         }
-// XXX data for testing:
-//            // motorIndex 0
-//            {
-//                // output A
-//                {2, 0, 1},
-//                // output B
-//                {13, 14, 15}
-//            },
-//            // motorIndex 1
-//            {
-//                // output A
-//                {2, 4, 3},
-//                // output B
-//                {7, 5, 6}
-//            }
     };
 };
 
