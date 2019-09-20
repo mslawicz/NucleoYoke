@@ -14,7 +14,7 @@
 #include "Timer.h"
 #include "ADC.h"
 #include "PCA9685.h"
-#include "StepperMotor.h"
+#include "Electromagnet.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -72,8 +72,8 @@ private:
     const int16_t JoystickXyzMaxValue = 0x0FFF;
     ADConverter adc;                // ADC converter object
     bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
-    PCA9685 motorDriver1;       // stepper motor controller for pitch and roll force feedback motors
-    StepperMotor pitchMotor;    // force feedback motor of pitch control
+    PCA9685 motorDriver;        // DC motor PWM controller for pitch and roll force feedback electromagnets
+    Electromagnet pitchMagnet;    // force feedback electromagnet of pitch control
 };
 
 #endif /* YOKE_H_ */

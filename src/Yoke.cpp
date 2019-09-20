@@ -23,13 +23,13 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 Yoke::Yoke() :
     interface(),
     imu(I2cBus::pI2c2),
-    motorDriver1(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
-    pitchMotor(&motorDriver1, 0)
+    motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
+    pitchMagnet(&motorDriver, 0)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     waitingForImuData = false;
-    pitchMotor.setForce(0.05f); //XXX
+    pitchMagnet.setForce(0.0f);
 }
 
 Yoke::~Yoke()
@@ -69,7 +69,7 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
 
-        pitchMotor.setForce(gTheta);    //XXX
+        pitchMagnet.setForce(gTheta);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }
@@ -141,8 +141,8 @@ void Yoke::computeParameters(void)
     gTheta = theta; //XXX
     gPhi = phi; //XXX
 
-    //XXX
-    gTheta = adc.getConvertedValues()[0] / 4096.0f;
+
+    gTheta = scaleValue<uint16_t>(0, 4095, -1000, 1000, adc.getConvertedValues()[0]) / 1000.0f;    //XXX
 }
 
 
