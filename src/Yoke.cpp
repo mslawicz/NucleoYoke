@@ -29,7 +29,7 @@ Yoke::Yoke() :
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     waitingForImuData = false;
-    pitchMotor.setForce(0.5f); //XXX
+    pitchMotor.setForce(0.05f); //XXX
 }
 
 Yoke::~Yoke()
@@ -69,6 +69,7 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
 
+        pitchMotor.setForce(gTheta);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }

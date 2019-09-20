@@ -49,34 +49,38 @@ void StepperMotor::setForce(float force)
     }
     else
     {
-        // set PWM input of both channels to constant high
-        channelData.emplace(DriverChannel[motorIndex][0][0], pDriver->ChannelHigh);
-        channelData.emplace(DriverChannel[motorIndex][1][0], pDriver->ChannelHigh);
-        auto delta = scaleValue<float>(0.0f, 1.0f, 1, 1023, fabs(force));
-        uint16_t turnOn, turnOff;
-        // data for channel 0 input IN1
+          uint16_t turnOn, turnOff;
+//        // set PWM input of both channels to constant high
+//        channelData.emplace(DriverChannel[motorIndex][0][0], pDriver->ChannelHigh);
+//        channelData.emplace(DriverChannel[motorIndex][1][0], pDriver->ChannelHigh);
+//        auto delta = scaleValue<float>(0.0f, 1.0f, 1, 1023, fabs(force));
+//        // data for channel 0 input IN1
+//        turnOn = 0;
+//        turnOff = delta * 2;
+//        channelData.emplace(DriverChannel[motorIndex][0][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+//        // data for channel 0 input IN2
+//        turnOn = 2048;
+//        turnOff = 2048 + delta * 2;
+//        channelData.emplace(DriverChannel[motorIndex][0][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+//        // data for channel 1 input IN1
+//        turnOn = (force > 0 ? 1024 : 3072);
+//        turnOff = ((force > 0 ? 1024 : 3072) + delta * 2) & 0xFFF;
+//        channelData.emplace(DriverChannel[motorIndex][1][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+//        // data for channel 1 input IN2
+//        turnOn = (force > 0 ? 3072 : 1024);
+//        turnOff = ((force > 0 ? 3072 : 1024) + delta * 2) & 0xFFF;
+//        channelData.emplace(DriverChannel[motorIndex][1][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+
+        // XXX test of driving a coil with PWM - to be removed when checked
+        // driving motorIndex=0, output=0 (named Motor1 on the board)
+        // set PWM input to desired duty cycle
         turnOn = 0;
-        turnOff = delta * 2;
-        channelData.emplace(DriverChannel[motorIndex][0][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
-        // data for channel 0 input IN2
-        turnOn = 2048;
-        turnOff = 2048 + delta * 2;
-        channelData.emplace(DriverChannel[motorIndex][0][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
-
-//        //XXX ad channels 3-12
-//        for(uint8_t i=3; i<13; i++)
-//        {
-//            channelData.emplace(i, pDriver->ChannelLow);
-//        }
-
-        // data for channel 1 input IN1
-        turnOn = (force > 0 ? 1024 : 3072);
-        turnOff = ((force > 0 ? 1024 : 3072) + delta * 2) & 0xFFF;
-        channelData.emplace(DriverChannel[motorIndex][1][1], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
-        // data for channel 1 input IN2
-        turnOn = (force > 0 ? 3072 : 1024);
-        turnOff = ((force > 0 ? 3072 : 1024) + delta * 2) & 0xFFF;
-        channelData.emplace(DriverChannel[motorIndex][1][2], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+        turnOff = scaleValue<float>(0.0f, 1.0f, 1, 4095, force);
+        channelData.emplace(DriverChannel[motorIndex][0][0], std::vector<uint8_t>{LOBYTE(turnOn), HIBYTE(turnOn), LOBYTE(turnOff), HIBYTE(turnOff)});
+        // data for channel 0 input IN1 - set to high
+        channelData.emplace(DriverChannel[motorIndex][0][1], pDriver->ChannelHigh);
+        // data for channel 0 input IN2 - set to low
+        channelData.emplace(DriverChannel[motorIndex][0][2], pDriver->ChannelLow);
     }
 
     uint8_t firstChannel = channelData.begin()->first;
