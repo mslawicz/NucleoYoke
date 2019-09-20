@@ -28,8 +28,7 @@ Yoke::Yoke() :
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
-    waitingForImuData = false;
-    pitchMagnet.setForce(0.0f);
+    pitchMagnet.setForce(0.0f); //XXX
 }
 
 Yoke::~Yoke()
@@ -43,20 +42,12 @@ Yoke::~Yoke()
  */
 void Yoke::handler(void)
 {
-    if(imu.isDataReady() && !waitingForImuData)
+    if(loopTimer.elapsed(loopPeriod))
     {
-        // new data ready in IMU sensor which has not been yet requested
-        waitingForImuData = true;
-        // request data transmission from IMU sensor
-        imu.getData();
-    }
-
-    if(imu.isNewDataReceived())
-    {
+        loopTimer.reset();
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         // new data from IMU sensor has been just received
         imu.markNewDataReceived(false);
-        waitingForImuData = false;
         // copy IMU data from reception vector to IMU raw data structure
         memcpy(&imuRawData, &imu.getReceivedData()[0], imu.getReceivedData().size());
         // compute yoke parameters after reception of new sensor data
@@ -68,8 +59,9 @@ void Yoke::handler(void)
         }
         // start new AD conversion set
         adc.startConversions();
+        // request data transmission from IMU sensor
+        imu.getData();
 
-        pitchMagnet.setForce(gTheta);    //XXX
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }
@@ -140,9 +132,6 @@ void Yoke::computeParameters(void)
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
     gTheta = theta; //XXX
     gPhi = phi; //XXX
-
-
-    gTheta = scaleValue<uint16_t>(0, 4095, -1000, 1000, adc.getConvertedValues()[0]) / 1000.0f;    //XXX
 }
 
 

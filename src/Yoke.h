@@ -71,9 +71,10 @@ private:
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
     ADConverter adc;                // ADC converter object
-    bool waitingForImuData;         // true when yoke is waiting for new data from INU sensor
     PCA9685 motorDriver;        // DC motor PWM controller for pitch and roll force feedback electromagnets
     Electromagnet pitchMagnet;    // force feedback electromagnet of pitch control
+    Timer loopTimer;        // timer for triggering main Yoke handler loop
+    const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
 };
 
 #endif /* YOKE_H_ */

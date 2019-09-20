@@ -15,10 +15,10 @@
 #include "SPI.h"
 #include "Display.h"
 
-#define TEST1_PORT   GPIOF
-#define TEST1_PIN    GPIO_PIN_4
-#define TEST2_PORT   GPIOF
-#define TEST2_PIN    GPIO_PIN_5
+#define TEST1_PORT   GPIOG
+#define TEST1_PIN    GPIO_PIN_9
+#define TEST2_PORT   GPIOG
+#define TEST2_PIN    GPIO_PIN_12
 
 
 class System
