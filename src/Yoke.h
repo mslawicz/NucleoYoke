@@ -33,6 +33,9 @@ struct ImuRawData
     int16_t accelerometerX;
     int16_t accelerometerY;
     int16_t accelerometerZ;
+    int16_t magnetometerX;
+    int16_t magnetometerY;
+    int16_t magnetometerZ;
 };
 
 struct FloatVector

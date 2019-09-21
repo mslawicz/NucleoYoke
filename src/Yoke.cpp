@@ -47,8 +47,9 @@ void Yoke::handler(void)
     {
         loopTimer.reset();
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        // copy IMU data from reception vector to IMU raw data structure
-//        memcpy(&imuRawData, &sensorAG.getReceivedData()[0], sensorAG.getReceivedData().size());
+        // copy accelerometer and gyroscope data from reception vector to IMU raw data structure
+        memcpy(&imuRawData, &sensorAG.getReceivedData()[0], sensorAG.getReceivedData().size());
+        memcpy(((int16_t*)&imuRawData + 6), &sensorAG.getReceivedData()[0], sensorM.getReceivedData().size());
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
@@ -58,8 +59,9 @@ void Yoke::handler(void)
         }
         // start new AD conversion set
         adc.startConversions();
-        // request data transmission from IMU sensor
-//        sensorAG.getData();
+        // request data transmission from IMU sensors
+        sensorAG.getData();
+        sensorM.getData();
 
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
