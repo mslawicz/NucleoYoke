@@ -16,8 +16,10 @@ FloatVector gAcc; //XXX
 FloatVector gMag; //XXX
 float gThetaA; //XXX
 float gPhiA; //XXX
+float gPsiM; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
+float gPsi; //XXX
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
@@ -28,7 +30,7 @@ Yoke::Yoke() :
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
     pitchMagnet(&motorDriver, 0)
 {
-    theta = phi = dTheta = dPhi = 0.0f;
+    theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
 }
@@ -99,37 +101,46 @@ int16_t Yoke::toInt16(float value, int16_t maxValue)
  */
 void Yoke::computeParameters(void)
 {
-    // IMU sensor should return data in north-east-down orientation and right hand rule
-    // angular rate and acceleration value calculations should reflect the sensor orientation
-    // acceleration.Z == 1 when yoke is neutral
-    // acceleration.Y > 0 when yoke is pulled (elevator up)
-    // acceleration.X > 0 when yoke is turned right (right wing down)
-    // angular rate sign must reflect acceleration sign
+    // IMU sensor must return data in north-east-down orientation and right hand rule
     angularRate = sensorAG.getAngularRate();
     acceleration = sensorAG.getAcceleration();
     magneticField = sensorM.getMagneticField();
     gGyro = angularRate; //XXX
     gAcc = acceleration; //XXX
     gMag = magneticField; //XXX
+
     // calculate pitch angle derivative [rad/s]
-    dTheta = angularRate.Y * cos(phi) + angularRate.Z * sin(phi);
+    dTheta = angularRate.Y * cos(psi) + angularRate.X * sin(psi);
     // calculate roll angle derivative [rad/s]
-    dPhi = angularRate.X;
+    dPhi = angularRate.X * cos(psi) + angularRate.Y * sin(psi);
+    // yaw angle derivative [rad/s]
+    dPsi = angularRate.Z;
+
     // calculate pitch angle from accelerometer data
-    float thetaA = atan2(acceleration.X, sqrt(acceleration.Z * acceleration.Z + acceleration.Y * acceleration.Y));
+    float thetaA = atan2(acceleration.X * cos(psi) + acceleration.Y * sin(psi), acceleration.Z);
     // calculate roll angle from accelerometer data
-    float phiA = atan2(acceleration.Y, acceleration.Z);
+    float phiA = atan2(acceleration.Y * cos(psi) + acceleration.X * sin(psi), acceleration.Z);
+    // calculate yaw angle from magnetometer data
+    float psiM = atan2(magneticField.X * cos(theta) + magneticField.Z * sin(theta), magneticField.Y * cos(phi) + magneticField.Z * sin(phi));
+
     gThetaA = thetaA; //XXX
     gPhiA = phiA; //XXX
+    gPsiM = psiM; //XXX
+
     // time elapsed since the last calculation [s]
     float dt = 1e-6f * calculationTimer.elapsed();
     calculationTimer.reset();
+
     // calculate pitch angle using complementary filter [rad]
     theta = (1-alpha) * (theta + dTheta * dt) + alpha * thetaA;
     // calculate roll angle using complementary filter [rad]
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
+    // calculate yaw angle using complementary filter [rad]
+    psi = (1-alpha) * (psi + dPsi * dt) + alpha * psiM;
+
     gTheta = theta; //XXX
     gPhi = phi; //XXX
+    gPsi = psi; //XXX
 }
 
 
@@ -140,9 +151,7 @@ void Yoke::sendJoystickData(void)
 {
     int16_t deflectionX = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
-    // rudder is derived from the first converted value
-    // it must be converted from 12-bit unsigned to 13-bit signed
-    int16_t deflectionZ = scaleValue<int16_t>(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, adc.getConvertedValues()[0]);
+    int16_t deflectionZ = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, psi);
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
@@ -164,6 +173,6 @@ void Yoke::sendJoystickData(void)
  */
 void Yoke::resetParameters(void)
 {
-    theta = phi = dTheta = dPhi = 0.0f;
+    theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
     calculationTimer.reset();
 }

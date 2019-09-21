@@ -48,8 +48,10 @@ private:
     FloatVector magneticField;  // magnetic field measured [gauss]
     float dTheta;   // pitch angle derivative [rad/s]
     float dPhi;     // roll angle derivative [rad/s]
-    float theta;    // yoke pitch angle [rad]
-    float phi;      // yoke roll angle [rad]
+    float dPsi;     // yaw angle derivative [rad/s]
+    float theta;    // joystick pitch angle [rad]
+    float phi;      // joystick roll angle [rad]
+    float psi;      // joystick yaw angle [rad]
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
