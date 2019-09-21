@@ -34,6 +34,8 @@ class LSM6DSL : public I2cDevice
 public:
     LSM6DSL(I2cBus* pBus, DeviceAddress deviceAddress);
     void getData(void) { readRequest(deviceAddress, LSM6DSLRegister::LSM6DSL_OUTX_L_G, 12); }
+    const float gyroscopeFullScaleValue = 4.363323f;  // full scale value [rad/s]
+    const float accelerometerFullScaleValue = 2.0f;  // full scale value [g]
 private:
     DeviceAddress deviceAddress;
 };
@@ -46,6 +48,7 @@ class LSM303AGR : public I2cDevice
 public:
     LSM303AGR(I2cBus* pBus, DeviceAddress deviceAddress);
     void getData(void) { readRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_OUTX_L_REG_M, 6); }
+    const float magnetometerFullScaleValue = 50.0f;  // full scale value [gauss]
 private:
     DeviceAddress deviceAddress;
 };

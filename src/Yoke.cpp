@@ -13,6 +13,7 @@
 
 FloatVector gGyro; //XXX
 FloatVector gAcc; //XXX
+FloatVector gMag; //XXX
 float gThetaA; //XXX
 float gPhiA; //XXX
 float gTheta; //XXX
@@ -106,14 +107,18 @@ void Yoke::computeParameters(void)
     // acceleration.Y > 0 when yoke is pulled (elevator up)
     // acceleration.X > 0 when yoke is turned right (right wing down)
     // angular rate sign must reflect acceleration sign
-    angularRate.Y = static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-    angularRate.X = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-    angularRate.Z = -static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * AngularRateFullScale;
-    acceleration.Y = -static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
-    acceleration.X = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
-    acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * AccelerationFullScale;
+    angularRate.Y = static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
+    angularRate.X = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
+    angularRate.Z = -static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
+    acceleration.Y = -static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
+    acceleration.X = static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
+    acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
+    magneticField.X = static_cast<float>(imuRawData.magnetometerX) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
+    magneticField.Y = static_cast<float>(imuRawData.magnetometerY) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
+    magneticField.Y = static_cast<float>(imuRawData.magnetometerZ) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
     gGyro = angularRate; //XXX
     gAcc = acceleration; //XXX
+    gMag = magneticField; //XXX
     // calculate pitch angle derivative [rad/s]
     dTheta = angularRate.Y * cos(phi) + angularRate.Z * sin(phi);
     // calculate roll angle derivative [rad/s]
