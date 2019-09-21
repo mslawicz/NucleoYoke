@@ -13,11 +13,12 @@
 
 enum LSM9DS1Register
 {
-    CTRL_REG1_G = 0x10,
-    OUT_X_L_G = 0x18,
-    CTRL_REG6_XL = 0x20,
-    CTRL_REG1_M = 0x20,
-    OUT_X_L_M = 0x28
+    LSM9DS1_INT1_CTRL = 0x0C,
+    LSM9DS1_CTRL_REG1_G = 0x10,
+    LSM9DS1_OUT_X_L_G = 0x18,
+    LSM9DS1_CTRL_REG6_XL = 0x20,
+    LSM9DS1_CTRL_REG1_M = 0x20,
+    LSM9DS1_OUT_X_L_M = 0x28
 };
 
 /*
@@ -27,7 +28,7 @@ class LSM9DS1AG : public I2cDevice
 {
 public:
     LSM9DS1AG(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::OUT_X_L_G, 12); }
+    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::LSM9DS1_OUT_X_L_G, 12); }
 private:
     DeviceAddress deviceAddress;
 };
@@ -39,7 +40,7 @@ class LSM9DS1M : public I2cDevice
 {
 public:
     LSM9DS1M(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::OUT_X_L_M, 6); }
+    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::LSM9DS1_OUT_X_L_M, 6); }
 private:
     DeviceAddress deviceAddress;
 };

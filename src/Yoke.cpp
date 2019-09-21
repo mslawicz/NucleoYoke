@@ -22,7 +22,8 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    imu(I2cBus::pI2c2),
+    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM9DS1_AG_ADD),
+    //sensorM(I2cBus::pI2c2, DeviceAddress::LSM9DS1_M_ADD),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
     pitchMagnet(&motorDriver, 0)
 {
@@ -46,10 +47,8 @@ void Yoke::handler(void)
     {
         loopTimer.reset();
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        // new data from IMU sensor has been just received
-        imu.markNewDataReceived(false);
         // copy IMU data from reception vector to IMU raw data structure
-        memcpy(&imuRawData, &imu.getReceivedData()[0], imu.getReceivedData().size());
+//        memcpy(&imuRawData, &sensorAG.getReceivedData()[0], sensorAG.getReceivedData().size());
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
@@ -60,7 +59,7 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
         // request data transmission from IMU sensor
-        imu.getData();
+//        sensorAG.getData();
 
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
