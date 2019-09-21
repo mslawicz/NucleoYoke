@@ -69,16 +69,15 @@ class I2cDevice
 public:
     void markNewDataReceived(bool state) { newDataReceived = state; }
     bool isNewDataReceived(void) const { return newDataReceived; }
-    std::vector<uint8_t> getReceivedData(void) const { return receiveBuffer; }
     friend I2cBus;
 protected:
     I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress);
     void writeRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, std::vector<uint8_t> data);
     void readRequest(DeviceAddress deviceAddress, uint8_t deviceRegister, uint16_t size);
+    std::vector<uint8_t> receiveBuffer;     // buffer for reveived data
 private:
     I2cBus* pBus;       // I2C bus for this device
     DeviceAddress deviceAddress;        // I2C device address (7-bit left aligned)
-    std::vector<uint8_t> receiveBuffer;     // buffer for reveived data
     volatile bool newDataReceived;
 };
 

@@ -25,25 +25,6 @@ struct ForceFeedbackData
     float yawForce;
 };
 
-struct ImuRawData
-{
-    int16_t gyroscopeX;
-    int16_t gyroscopeY;
-    int16_t gyroscopeZ;
-    int16_t accelerometerX;
-    int16_t accelerometerY;
-    int16_t accelerometerZ;
-    int16_t magnetometerX;
-    int16_t magnetometerY;
-    int16_t magnetometerZ;
-};
-
-struct FloatVector
-{
-    float X;
-    float Y;
-    float Z;
-};
 
 class Yoke
 {
@@ -62,11 +43,9 @@ private:
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DSL sensorAG;     // gyroscope and accelerometer sensor
     LSM303AGR sensorM;       // magnetometer sensor
-    ImuRawData imuRawData;      // raw data read from IMU sensor
     FloatVector angularRate;    // angular rate measured [rad/s]
     FloatVector acceleration;   // acceleration measured [g]
     FloatVector magneticField;  // magnetic field measured [gauss]
-    const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // IMU measurement full scale value
     float dTheta;   // pitch angle derivative [rad/s]
     float dPhi;     // roll angle derivative [rad/s]
     float theta;    // yoke pitch angle [rad]

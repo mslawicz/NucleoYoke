@@ -10,6 +10,7 @@
 
 #include "I2C.h"
 #include "GPIO.h"
+#include "Conversion.h"
 
 enum LSM6DSLRegister
 {
@@ -33,11 +34,14 @@ class LSM6DSL : public I2cDevice
 {
 public:
     LSM6DSL(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM6DSLRegister::LSM6DSL_OUTX_L_G, 12); }
-    const float gyroscopeFullScaleValue = 4.363323f;  // full scale value [rad/s]
-    const float accelerometerFullScaleValue = 2.0f;  // full scale value [g]
+    void readNewData(void) { readRequest(deviceAddress, LSM6DSLRegister::LSM6DSL_OUTX_L_G, 12); }
+    FloatVector getAngularRate(void);
+    FloatVector getAcceleration(void);
 private:
     DeviceAddress deviceAddress;
+    const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // sensor measurement full scale value
+    const float gyroscopeFullScaleValue = 4.363323f;  // full scale value [rad/s]
+    const float accelerometerFullScaleValue = 2.0f;  // full scale value [g]
 };
 
 /*
@@ -47,10 +51,12 @@ class LSM303AGR : public I2cDevice
 {
 public:
     LSM303AGR(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_OUTX_L_REG_M, 6); }
-    const float magnetometerFullScaleValue = 50.0f;  // full scale value [gauss]
+    void readNewData(void) { readRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_OUTX_L_REG_M, 6); }
+    FloatVector getMagneticField(void);
 private:
     DeviceAddress deviceAddress;
+    const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // sensor measurement full scale value
+    const float magnetometerFullScaleValue = 50.0f;  // full scale value [gauss]
 };
 
 #endif /* IKS01A2_H_ */

@@ -29,3 +29,42 @@ LSM303AGR::LSM303AGR(I2cBus* pBus, DeviceAddress deviceAddress) :
     // asynchronous data always valid
     writeRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_CFG_REG_C_M, std::vector<uint8_t>{0x10});
 }
+
+/*
+ * returns float vector of measured angular rate in rad/s
+ */
+FloatVector LSM6DSL::getAngularRate(void)
+{
+    return FloatVector
+    {
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue
+    };
+}
+
+/*
+ * returns float vector of measured acceleration in g
+ */
+FloatVector LSM6DSL::getAcceleration(void)
+{
+    return FloatVector
+    {
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[6])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[8])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[10])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue
+    };
+}
+
+/*
+ * returns float vector of measured magnetic field in gauss
+ */
+FloatVector LSM303AGR::getMagneticField(void)
+{
+    return FloatVector
+    {
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue
+    };
+}

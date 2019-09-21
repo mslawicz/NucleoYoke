@@ -48,10 +48,6 @@ void Yoke::handler(void)
     {
         loopTimer.reset();
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        // copy accelerometer and gyroscope data from reception vector to IMU raw data structure
-        memcpy(&imuRawData, &sensorAG.getReceivedData()[0], sensorAG.getReceivedData().size());
-        //memcpy(((int16_t*)&imuRawData + 6), &sensorM.getReceivedData()[0], sensorM.getReceivedData().size());
-        memcpy(&imuRawData.magnetometerX, &sensorM.getReceivedData()[0], sensorM.getReceivedData().size());
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
@@ -62,8 +58,8 @@ void Yoke::handler(void)
         // start new AD conversion set
         adc.startConversions();
         // request data transmission from IMU sensors
-        sensorAG.getData();
-        sensorM.getData();
+        sensorAG.readNewData();
+        sensorM.readNewData();
 
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
@@ -103,20 +99,15 @@ int16_t Yoke::toInt16(float value, int16_t maxValue)
  */
 void Yoke::computeParameters(void)
 {
+    // IMU sensor should return data in north-east-down orientation and right hand rule
     // angular rate and acceleration value calculations should reflect the sensor orientation
     // acceleration.Z == 1 when yoke is neutral
     // acceleration.Y > 0 when yoke is pulled (elevator up)
     // acceleration.X > 0 when yoke is turned right (right wing down)
     // angular rate sign must reflect acceleration sign
-    angularRate.X = -static_cast<float>(imuRawData.gyroscopeX) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
-    angularRate.Y = static_cast<float>(imuRawData.gyroscopeY) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
-    angularRate.Z = -static_cast<float>(imuRawData.gyroscopeZ) / MeasurementRegisterFullScaleValue * sensorAG.gyroscopeFullScaleValue;
-    acceleration.X = static_cast<float>(imuRawData.accelerometerX) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
-    acceleration.Y = -static_cast<float>(imuRawData.accelerometerY) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
-    acceleration.Z = static_cast<float>(imuRawData.accelerometerZ) / MeasurementRegisterFullScaleValue * sensorAG.accelerometerFullScaleValue;
-    magneticField.X = static_cast<float>(imuRawData.magnetometerX) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
-    magneticField.Y = -static_cast<float>(imuRawData.magnetometerY) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
-    magneticField.Z = static_cast<float>(imuRawData.magnetometerZ) / MeasurementRegisterFullScaleValue * sensorM.magnetometerFullScaleValue;
+    angularRate = sensorAG.getAngularRate();
+    acceleration = sensorAG.getAcceleration();
+    magneticField = sensorM.getMagneticField();
     gGyro = angularRate; //XXX
     gAcc = acceleration; //XXX
     gMag = magneticField; //XXX
