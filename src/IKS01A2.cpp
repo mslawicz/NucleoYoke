@@ -32,6 +32,7 @@ LSM303AGR::LSM303AGR(I2cBus* pBus, DeviceAddress deviceAddress) :
 
 /*
  * returns float vector of measured angular rate in rad/s
+ * returned values must reflect right hand rule of XYZ->north-east-down oriented axis
  */
 FloatVector LSM6DSL::getAngularRate(void)
 {
@@ -45,6 +46,7 @@ FloatVector LSM6DSL::getAngularRate(void)
 
 /*
  * returns float vector of measured acceleration in g
+ * returned values must reflect XYZ->north-east-down oriented axis
  */
 FloatVector LSM6DSL::getAcceleration(void)
 {
@@ -58,13 +60,14 @@ FloatVector LSM6DSL::getAcceleration(void)
 
 /*
  * returns float vector of measured magnetic field in gauss
+ * returned values must reflect XYZ->north-east-down oriented axis
  */
 FloatVector LSM303AGR::getMagneticField(void)
 {
     return FloatVector
     {
         static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
-        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
         static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue
     };
 }

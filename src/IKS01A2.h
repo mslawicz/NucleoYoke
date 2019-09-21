@@ -40,8 +40,8 @@ public:
 private:
     DeviceAddress deviceAddress;
     const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // sensor measurement full scale value
-    const float gyroscopeFullScaleValue = 4.363323f;  // full scale value [rad/s]
-    const float accelerometerFullScaleValue = 2.0f;  // full scale value [g]
+    const float gyroscopeFullScaleValue = 4.363323f;  // gyroscope read full scale value [rad/s]
+    const float accelerometerFullScaleValue = 2.0f;  // accelerometer read full scale value [g]
 };
 
 /*
@@ -56,7 +56,7 @@ public:
 private:
     DeviceAddress deviceAddress;
     const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // sensor measurement full scale value
-    const float magnetometerFullScaleValue = 50.0f;  // full scale value [gauss]
+    const float magnetometerFullScaleValue = 50.0f;  // magnetometer read full scale value [gauss]
 };
 
 #endif /* IKS01A2_H_ */
