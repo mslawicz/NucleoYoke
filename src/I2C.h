@@ -19,7 +19,9 @@ enum DeviceAddress
     LSM9DS1_AG_ADD = 0xD6,
     LSM9DS1_M_ADD = 0x3C,
     LSM6DS3_ADD = 0xD6,
-    PCA9685_ADD = 0xC0
+    PCA9685_ADD = 0xC0,
+    LSM6DSL_ADD = 0xD6,
+    LSM303AGR_M_ADDR = 0x3C
 };
 
 enum ActionType
