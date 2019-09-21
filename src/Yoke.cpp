@@ -22,8 +22,8 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM9DS1_AG_ADD),
-    //sensorM(I2cBus::pI2c2, DeviceAddress::LSM9DS1_M_ADD),
+    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DSL_ADD),
+    sensorM(I2cBus::pI2c2, DeviceAddress::LSM303AGR_M_ADDR),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
     pitchMagnet(&motorDriver, 0)
 {

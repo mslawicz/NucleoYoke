@@ -10,8 +10,8 @@
 #define YOKE_H_
 
 #include "USB.h"
-#include "LSM9DS1.h"
-#include "LSM6DS3.h" //XXX
+//#include "LSM9DS1.h"
+#include "IKS01A2.h"
 #include "Timer.h"
 #include "ADC.h"
 #include "PCA9685.h"
@@ -57,8 +57,8 @@ private:
     void sendJoystickData(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
-    LSM9DS1AG sensorAG;     // gyroscope and accelerometer sensor
-    //LSM9DS1M sensorM;       // magnetometer sensor
+    LSM6DSL sensorAG;     // gyroscope and accelerometer sensor
+    LSM303AGR sensorM;       // magnetometer sensor
     ImuRawData imuRawData;      // raw data read from IMU sensor
     FloatVector angularRate;    // angular rate measured [rad/s]
     FloatVector acceleration;   // acceleration measured [g]

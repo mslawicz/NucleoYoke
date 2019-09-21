@@ -13,12 +13,17 @@
 
 enum LSM6DSLRegister
 {
-    LSM6DSL_INT1_CTRL = 0x00
+    LSM6DSL_INT1_CTRL = 0x0D,
+    LSM6DSL_CTRL1_XL = 0x10,
+    LSM6DSL_CTRL7_G = 0x16,
+    LSM6DSL_OUTX_L_G = 0x22
 };
 
 enum LSM303AGRRegister
 {
-    LSM303AGR_REG = 0x00
+    LSM303AGR_CFG_REG_A_M = 0x60,
+    LSM303AGR_CFG_REG_C_M = 0x62,
+    LSM303AGR_OUTX_L_REG_M = 0x68
 };
 
 /*
@@ -28,7 +33,7 @@ class LSM6DSL : public I2cDevice
 {
 public:
     LSM6DSL(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM6DSLRegister::LSM6DSL_INT1_CTRL, 12); }
+    void getData(void) { readRequest(deviceAddress, LSM6DSLRegister::LSM6DSL_OUTX_L_G, 12); }
 private:
     DeviceAddress deviceAddress;
 };
@@ -40,7 +45,7 @@ class LSM303AGR : public I2cDevice
 {
 public:
     LSM303AGR(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_REG, 6); }
+    void getData(void) { readRequest(deviceAddress, LSM303AGRRegister::LSM303AGR_OUTX_L_REG_M, 6); }
 private:
     DeviceAddress deviceAddress;
 };
