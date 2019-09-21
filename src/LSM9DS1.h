@@ -8,10 +8,40 @@
 #ifndef LSM9DS1_H_
 #define LSM9DS1_H_
 
-class LSM9DS1
+#include "I2C.h"
+#include "GPIO.h"
+
+enum LSM9DS1Register
+{
+    CTRL_REG1_G = 0x10,
+    OUT_X_L_G = 0x18,
+    CTRL_REG6_XL = 0x20,
+    CTRL_REG1_M = 0x20,
+    OUT_X_L_M = 0x28
+};
+
+/*
+ * LSM9DS1 gyroscope and accelerometer class
+ */
+class LSM9DS1AG : public I2cDevice
 {
 public:
-    LSM9DS1();
+    LSM9DS1AG(I2cBus* pBus, DeviceAddress deviceAddress);
+    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::OUT_X_L_G, 12); }
+private:
+    DeviceAddress deviceAddress;
+};
+
+/*
+ * LSM9DS1 magnetometer class
+ */
+class LSM9DS1M : public I2cDevice
+{
+public:
+    LSM9DS1M(I2cBus* pBus, DeviceAddress deviceAddress);
+    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::OUT_X_L_M, 6); }
+private:
+    DeviceAddress deviceAddress;
 };
 
 #endif /* LSM9DS1_H_ */
