@@ -52,6 +52,7 @@ private:
     float theta;    // joystick pitch angle [rad]
     float phi;      // joystick roll angle [rad]
     float psi;      // joystick yaw angle [rad]
+    float psiMRef;  // reference magnetic psi value for calibration
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;

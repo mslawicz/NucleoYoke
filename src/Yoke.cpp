@@ -31,6 +31,7 @@ Yoke::Yoke() :
     pitchMagnet(&motorDriver, 0)
 {
     theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
+    psiMRef = 0.0f;
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
 }
@@ -121,7 +122,15 @@ void Yoke::computeParameters(void)
     // calculate roll angle from accelerometer data
     float phiA = atan2(acceleration.Y * cos(psi) + acceleration.X * sin(psi), acceleration.Z);
     // calculate yaw angle from magnetometer data
-    float psiM = atan2(magneticField.X * cos(theta) + magneticField.Z * sin(theta), magneticField.Y * cos(phi) + magneticField.Z * sin(phi));
+    //float psiM = atan2(magneticField.X * cos(theta) + magneticField.Z * sin(theta), magneticField.Y * cos(phi) + magneticField.Z * sin(phi));
+    float magX = magneticField.X * cos(thetaA) + magneticField.Z * sin(thetaA);
+    float magY = /*magneticField.X * sin(phiA) * sin(thetaA) +*/ magneticField.Y * cos(thetaA) - magneticField.Z * sin(thetaA) * cos(phiA);
+    float psiM = atan2(magY, magX);
+    if(System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET)
+    {
+        psiMRef = psiM;
+    }
+    psiM -= psiMRef;
 
     gThetaA = thetaA; //XXX
     gPhiA = phiA; //XXX
