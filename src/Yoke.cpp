@@ -112,12 +112,12 @@ void Yoke::computeParameters(void)
     // calculate pitch angle derivative [rad/s]
     dTheta = angularRate.Y * cos(psi) + angularRate.X * sin(psi);
     // calculate roll angle derivative [rad/s]
-    dPhi = angularRate.X * cos(psi) + angularRate.Y * sin(psi);
+    dPhi = angularRate.X * cos(psi) - angularRate.Y * sin(psi);
     // yaw angle derivative [rad/s]
     dPsi = angularRate.Z;
 
     // calculate pitch angle from accelerometer data
-    float thetaA = -atan2(acceleration.X * cos(psi) + acceleration.Y * sin(psi), acceleration.Z);
+    float thetaA = -atan2(acceleration.X * cos(psi) - acceleration.Y * sin(psi), acceleration.Z);
     // calculate roll angle from accelerometer data
     float phiA = atan2(acceleration.Y * cos(psi) + acceleration.X * sin(psi), acceleration.Z);
     // calculate yaw angle from magnetometer data
@@ -136,7 +136,8 @@ void Yoke::computeParameters(void)
     // calculate roll angle using complementary filter [rad]
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
     // calculate yaw angle using complementary filter [rad]
-    psi = (1-alpha) * (psi + dPsi * dt) + alpha * psiM;
+    //XXX psi = (1-alpha) * (psi + dPsi * dt) + alpha * psiM;
+    psi = 3.14159 * scaleValue<int16_t>(0, 0xFFF, -90, 90, adc.getConvertedValues()[1]) / 180.0f; //XXX
 
     gTheta = theta; //XXX
     gPhi = phi; //XXX
