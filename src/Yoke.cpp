@@ -111,26 +111,19 @@ void Yoke::computeParameters(void)
     gMag = magneticField; //XXX
 
     // calculate pitch angle derivative [rad/s]
-    dTheta = angularRate.Y * cos(psi) + angularRate.X * sin(psi);
+    dTheta = angularRate.Y;
     // calculate roll angle derivative [rad/s]
-    dPhi = angularRate.X * cos(psi) - angularRate.Y * sin(psi);
+    dPhi = angularRate.X;
     // yaw angle derivative [rad/s]
     dPsi = angularRate.Z;
 
     // calculate pitch angle from accelerometer data
-    float thetaA = -atan2(acceleration.X * cos(psi) - acceleration.Y * sin(psi), acceleration.Z);
+    float thetaA = -atan2(acceleration.X, acceleration.Z);
     // calculate roll angle from accelerometer data
-    float phiA = atan2(acceleration.Y * cos(psi) + acceleration.X * sin(psi), acceleration.Z);
+    float phiA = atan2(acceleration.Y, acceleration.Z);
     // calculate yaw angle from magnetometer data
     //float psiM = atan2(magneticField.X * cos(theta) + magneticField.Z * sin(theta), magneticField.Y * cos(phi) + magneticField.Z * sin(phi));
-    float magX = magneticField.X * cos(thetaA) + magneticField.Z * sin(thetaA);
-    float magY = /*magneticField.X * sin(phiA) * sin(thetaA) +*/ magneticField.Y * cos(thetaA) - magneticField.Z * sin(thetaA) * cos(phiA);
-    float psiM = atan2(magY, magX);
-    if(System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET)
-    {
-        psiMRef = psiM;
-    }
-    psiM -= psiMRef;
+    float psiM = atan2(magneticField.Y, -magneticField.Z);
 
     gThetaA = thetaA; //XXX
     gPhiA = phiA; //XXX
@@ -145,8 +138,8 @@ void Yoke::computeParameters(void)
     // calculate roll angle using complementary filter [rad]
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
     // calculate yaw angle using complementary filter [rad]
-    //XXX psi = (1-alpha) * (psi + dPsi * dt) + alpha * psiM;
-    psi = 3.14159 * scaleValue<int16_t>(0, 0xFFF, -90, 90, adc.getConvertedValues()[1]) / 180.0f; //XXX
+    psi = (1-alpha) * (psi/* + dPsi * dt*/) + alpha * psiM;
+    //psi = 3.14159 * scaleValue<int16_t>(0, 0xFFF, -90, 90, adc.getConvertedValues()[1]) / 180.0f; //XXX
 
     gTheta = theta; //XXX
     gPhi = phi; //XXX

@@ -66,8 +66,8 @@ FloatVector LSM303AGR::getMagneticField(void)
 {
     return FloatVector
     {
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
         -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue,
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * magnetometerFullScaleValue
     };
 }
