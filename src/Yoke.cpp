@@ -31,7 +31,6 @@ Yoke::Yoke() :
     pitchMagnet(&motorDriver, 0)
 {
     theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
-    psiMRef = 0.0f;
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
 }
@@ -138,7 +137,7 @@ void Yoke::computeParameters(void)
     // calculate roll angle using complementary filter [rad]
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
     // calculate yaw angle using complementary filter [rad]
-    psi = (1-alpha) * (psi/* + dPsi * dt*/) + alpha * psiM;
+    psi = filteredPsi.getFilteredValue(psiM);
     //psi = 3.14159 * scaleValue<int16_t>(0, 0xFFF, -90, 90, adc.getConvertedValues()[1]) / 180.0f; //XXX
 
     gTheta = theta; //XXX

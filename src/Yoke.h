@@ -16,6 +16,7 @@
 #include "ADC.h"
 #include "PCA9685.h"
 #include "Electromagnet.h"
+#include "Filter.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -52,7 +53,7 @@ private:
     float theta;    // joystick pitch angle [rad]
     float phi;      // joystick roll angle [rad]
     float psi;      // joystick yaw angle [rad]
-    float psiMRef;  // reference magnetic psi value for calibration
+    EMA filteredPsi;    // EMA filter of Psi value
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
