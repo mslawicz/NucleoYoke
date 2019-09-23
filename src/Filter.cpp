@@ -6,15 +6,31 @@
  */
 
 #include "Filter.h"
+#include <cmath>
 
 EMA::EMA()
 {
     filteredValue = 0.0f;
-    strength = 0.98f;
+    alpha = 0.02f;
+    averageDelta = 0.0f;
 }
 
 float EMA::getFilteredValue(float input)
 {
-    filteredValue = strength * filteredValue + (1-strength) * input;
+    float delta = input - filteredValue;
+    averageDelta = 0.98 * averageDelta + 0.02 * fabs(delta);
+    if(averageDelta != 0)
+    {
+        alpha = 0.2f * fabs(delta) / averageDelta;
+    }
+    else
+    {
+        alpha = 1.0f;
+    }
+    if(alpha > 1.0f)
+    {
+        alpha = 1.0f;
+    }
+    filteredValue += alpha * delta;
     return filteredValue;
 }

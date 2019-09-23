@@ -15,7 +15,8 @@ public:
     float getFilteredValue(float input);
 private:
     float filteredValue;
-    float strength;     // filter strength parameter, 0..1
+    float alpha;     // filter strength parameter: 0-max filtering, 1-no filtering
+    float averageDelta;
 };
 
 #endif /* FILTER_H_ */
