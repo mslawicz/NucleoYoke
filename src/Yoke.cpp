@@ -13,24 +13,20 @@
 
 FloatVector gGyro; //XXX
 FloatVector gAcc; //XXX
-FloatVector gMag; //XXX
 float gThetaA; //XXX
 float gPhiA; //XXX
-float gPsiM; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
-float gPsi; //XXX
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DSL_ADD),
-    sensorM(I2cBus::pI2c2, DeviceAddress::LSM303AGR_M_ADDR),
+    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
     pitchMagnet(&motorDriver, 0)
 {
-    theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
+    theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
 }
@@ -61,7 +57,6 @@ void Yoke::handler(void)
         adc.startConversions();
         // request data transmission from IMU sensors
         sensorAG.readNewData();
-        sensorM.readNewData();
 
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
@@ -104,29 +99,21 @@ void Yoke::computeParameters(void)
     // IMU sensor must return data in north-east-down orientation and right hand rule
     angularRate = sensorAG.getAngularRate();
     acceleration = sensorAG.getAcceleration();
-    magneticField = sensorM.getMagneticField();
     gGyro = angularRate; //XXX
     gAcc = acceleration; //XXX
-    gMag = magneticField; //XXX
 
     // calculate pitch angle derivative [rad/s]
     dTheta = angularRate.Y;
     // calculate roll angle derivative [rad/s]
     dPhi = angularRate.X;
-    // yaw angle derivative [rad/s]
-    dPsi = angularRate.Z;
 
     // calculate pitch angle from accelerometer data
     float thetaA = -atan2(acceleration.X, acceleration.Z);
     // calculate roll angle from accelerometer data
     float phiA = atan2(acceleration.Y, acceleration.Z);
-    // calculate yaw angle from magnetometer data
-    //float psiM = atan2(magneticField.X * cos(theta) + magneticField.Z * sin(theta), magneticField.Y * cos(phi) + magneticField.Z * sin(phi));
-    float psiM = atan2(magneticField.Y, -magneticField.Z);
 
     gThetaA = thetaA; //XXX
     gPhiA = phiA; //XXX
-    gPsiM = psiM; //XXX
 
     // time elapsed since the last calculation [s]
     float dt = 1e-6f * calculationTimer.elapsed();
@@ -136,13 +123,9 @@ void Yoke::computeParameters(void)
     theta = (1-alpha) * (theta + dTheta * dt) + alpha * thetaA;
     // calculate roll angle using complementary filter [rad]
     phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
-    // calculate yaw angle using complementary filter [rad]
-    psi = filteredPsi.getFilteredValue(psiM);
-    //psi = 3.14159 * scaleValue<int16_t>(0, 0xFFF, -90, 90, adc.getConvertedValues()[1]) / 180.0f; //XXX
 
     gTheta = theta; //XXX
     gPhi = phi; //XXX
-    gPsi = psi; //XXX
 }
 
 
@@ -153,7 +136,7 @@ void Yoke::sendJoystickData(void)
 {
     int16_t deflectionX = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
-    int16_t deflectionZ = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, psi);
+    int16_t deflectionZ = scaleValue<uint16_t>(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, adc.getConvertedValues()[0]);
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
@@ -175,6 +158,6 @@ void Yoke::sendJoystickData(void)
  */
 void Yoke::resetParameters(void)
 {
-    theta = phi = psi = dTheta = dPhi = dPsi = 0.0f;
+    theta = phi = dTheta = dPhi = 0.0f;
     calculationTimer.reset();
 }

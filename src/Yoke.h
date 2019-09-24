@@ -10,8 +10,7 @@
 #define YOKE_H_
 
 #include "USB.h"
-//#include "LSM9DS1.h"
-#include "IKS01A2.h"
+#include "LSM6DS3.h"
 #include "Timer.h"
 #include "ADC.h"
 #include "PCA9685.h"
@@ -42,18 +41,13 @@ private:
     void sendJoystickData(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
-    LSM6DSL sensorAG;     // gyroscope and accelerometer sensor
-    LSM303AGR sensorM;       // magnetometer sensor
+    LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
     FloatVector angularRate;    // angular rate measured [rad/s]
     FloatVector acceleration;   // acceleration measured [g]
-    FloatVector magneticField;  // magnetic field measured [gauss]
     float dTheta;   // pitch angle derivative [rad/s]
     float dPhi;     // roll angle derivative [rad/s]
-    float dPsi;     // yaw angle derivative [rad/s]
     float theta;    // joystick pitch angle [rad]
     float phi;      // joystick roll angle [rad]
-    float psi;      // joystick yaw angle [rad]
-    EMA filteredPsi;    // EMA filter of Psi value
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;

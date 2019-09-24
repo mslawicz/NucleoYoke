@@ -14,8 +14,6 @@
 #include "Display.h"
 #include "Timer.h"//XXX
 
-extern float gPsi; //XXX
-
 int main(void)
 {
     // HAL and clock initialization
@@ -50,7 +48,7 @@ int main(void)
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(500000))) //XXX
         {
             tm.reset();
-            System::getInstance().getDisplay()->print(0, 0, std::to_string((int16_t)(gPsi * 180.0f / 3.14159))+"   ", FontTahoma16b);
+            System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
 //            System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
 //            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
             System::getInstance().getDisplay()->getController().requestUpdate();

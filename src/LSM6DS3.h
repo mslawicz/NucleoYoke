@@ -10,9 +10,7 @@
 
 #include "I2C.h"
 #include "GPIO.h"
-
-#define LSM6DS3_INT1_PORT   GPIOF
-#define LSM6DS3_INT1_PIN    GPIO_PIN_2
+#include "Conversion.h"
 
 enum LSM6DS3Register
 {
@@ -25,12 +23,15 @@ enum LSM6DS3Register
 class LSM6DS3 : public I2cDevice
 {
 public:
-    LSM6DS3(I2cBus* pBus);
-    ~LSM6DS3();
-    bool isDataReady(void) { return int1Pin.read() == GPIO_PinState::GPIO_PIN_SET; }
-    void getData(void) { readRequest(DeviceAddress::LSM6DS3_ADD, LSM6DS3Register::LSM6DS3_OUTX_L_G, 12); }
+    LSM6DS3(I2cBus* pBus, DeviceAddress deviceAddress);
+    void readNewData(void) { readRequest(deviceAddress, LSM6DS3Register::LSM6DS3_OUTX_L_G, 12); }
+    FloatVector getAngularRate(void);
+    FloatVector getAcceleration(void);
 private:
-    GPIO int1Pin;
+    DeviceAddress deviceAddress;
+    const int16_t MeasurementRegisterFullScaleValue = 0x7FFF;     // sensor measurement full scale value
+    const float gyroscopeFullScaleValue = 4.363323f;  // gyroscope read full scale value [rad/s]
+    const float accelerometerFullScaleValue = 2.0f;  // accelerometer read full scale value [g]
 };
 
 #endif /* LSM6DS3_H_ */
