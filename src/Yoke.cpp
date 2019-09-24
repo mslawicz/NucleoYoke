@@ -108,7 +108,7 @@ void Yoke::computeParameters(void)
     dPhi = angularRate.X;
 
     // calculate pitch angle from accelerometer data
-    float thetaA = -atan2(acceleration.X, acceleration.Z);
+    float thetaA = atan2(acceleration.X, acceleration.Z);
     // calculate roll angle from accelerometer data
     float phiA = atan2(acceleration.Y, acceleration.Z);
 

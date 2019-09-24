@@ -28,8 +28,8 @@ FloatVector LSM6DS3::getAngularRate(void)
 {
     return FloatVector
     {
-        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
         -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue
     };
 }
@@ -43,7 +43,7 @@ FloatVector LSM6DS3::getAcceleration(void)
     return FloatVector
     {
         static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[6])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
-        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[8])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[8])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
         static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[10])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue
     };
 }
