@@ -41,11 +41,6 @@ void Console::handler(void)
         auto message = interface.getReceivedString();
         // execute the console command
         executeCommand(message);
-        // echo CR LF
-        interface.send("\r\n");
-
-        // interpret command here
-
         // send the prompt character
         sendPrompt();
     }
@@ -106,14 +101,18 @@ void Console::executeCommand(std::string commandString)
 {
     interface.send("\r\n");
     auto commandVector = splitString(commandString);
-    auto commandIt = commands.find(commandVector[0]);
-    if(commandIt == commands.end())
+    if(!commandVector[0].empty())
     {
-        sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "unknown command");
-    }
-    else
-    {
-        commandIt->second.second(commandVector);
+        // command not empty
+        auto commandIt = commands.find(commandVector[0]);
+        if(commandIt == commands.end())
+        {
+            sendMessage(Severity::Info,LogChannel::LC_CONSOLE, "unknown command");
+        }
+        else
+        {
+            commandIt->second.second(commandVector);
+        }
     }
 }
 
