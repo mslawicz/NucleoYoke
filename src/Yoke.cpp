@@ -161,3 +161,13 @@ void Yoke::resetParameters(void)
     theta = phi = dTheta = dPhi = 0.0f;
     calculationTimer.reset();
 }
+
+/*
+ * displays force feedback data in the console window
+ */
+void Yoke::displayForceFeedbackData(void)
+{
+    System::getInstance().getConsole()->getInterface().send("pitch force = " + std::to_string(forceFeedbackData.pitchForce) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("roll force = " + std::to_string(forceFeedbackData.rollForce) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("yaw force = " + std::to_string(forceFeedbackData.yawForce) + "\r\n");
+}

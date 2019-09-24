@@ -35,6 +35,7 @@ public:
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
+    void displayForceFeedbackData(void);
 private:
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);

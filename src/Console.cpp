@@ -6,6 +6,8 @@
  */
 
 #include "Console.h"
+#include "System.h"
+#include "Yoke.h"
 
 #include <unordered_map>
 
@@ -23,6 +25,7 @@ Console::Console() :
 {
     // register console commands
     commands.emplace("help", std::pair<std::string, std::function<void(StringVector)>>({"help - command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
+    commands.emplace("ff", std::pair<std::string, std::function<void(StringVector)>>({"ff - display force feedback current data", std::bind(&Yoke::displayForceFeedbackData, System::getInstance().getYoke())}));
 }
 
 Console::~Console()
