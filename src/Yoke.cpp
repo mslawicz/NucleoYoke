@@ -167,7 +167,13 @@ void Yoke::resetParameters(void)
  */
 void Yoke::displayForceFeedbackData(void)
 {
+    System::getInstance().getConsole()->getInterface().send("frame counter = " + std::to_string(forceFeedbackData.counter) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("pitch force = " + std::to_string(forceFeedbackData.pitchForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("roll force = " + std::to_string(forceFeedbackData.rollForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("yaw force = " + std::to_string(forceFeedbackData.yawForce) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("flaps deflection = " + std::to_string(forceFeedbackData.flapsDeflection) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("is retractable? = " + std::to_string(forceFeedbackData.isRetractable) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gear1Deflection) + ", "
+         + std::to_string(forceFeedbackData.gear2Deflection) + ", "
+         + std::to_string(forceFeedbackData.gear3Deflection) + "\r\n");
 }
