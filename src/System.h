@@ -36,6 +36,7 @@ public:
     Display* getDisplay(void) const { return pDisplay; }
     GPIO systemLED;
     GPIO errorLED;
+    GPIO trafficLED;
     GPIO systemPushbutton;
     GPIO testPin1; //XXX
     GPIO testPin2; //XXX

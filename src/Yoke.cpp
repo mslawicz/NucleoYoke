@@ -69,7 +69,15 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
     if(buffer[0] == 0x03)
     {
-        memcpy(&forceFeedbackData, buffer+1, sizeof(ForceFeedbackData));
+        for(uint8_t k=14; k<18; k++)
+        {
+            System::getInstance().getConsole()->getInterface().send(Console::toHex(buffer[k], 2, false));
+        }
+        float flaps = *((float*)(buffer+14));
+        System::getInstance().getConsole()->getInterface().send("   " + std::to_string(flaps) + "\r\n");
+        System::getInstance().trafficLED.write(GPIO_PinState::GPIO_PIN_SET);
+        //memcpy(&forceFeedbackData, buffer+1, sizeof(ForceFeedbackData));
+        forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+14);
     }
     else
     {
