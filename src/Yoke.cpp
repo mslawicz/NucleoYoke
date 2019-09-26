@@ -69,15 +69,22 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
     if(buffer[0] == 0x03)
     {
-        for(uint8_t k=14; k<18; k++)
-        {
-            System::getInstance().getConsole()->getInterface().send(Console::toHex(buffer[k], 2, false));
-        }
-        float flaps = *((float*)(buffer+14));
-        System::getInstance().getConsole()->getInterface().send("   " + std::to_string(flaps) + "\r\n");
-        System::getInstance().trafficLED.write(GPIO_PinState::GPIO_PIN_SET);
-        //memcpy(&forceFeedbackData, buffer+1, sizeof(ForceFeedbackData));
+        forceFeedbackData.pitchForce = *reinterpret_cast<float*>(buffer+2);
+        forceFeedbackData.rollForce = *reinterpret_cast<float*>(buffer+6);
+        forceFeedbackData.yawForce = *reinterpret_cast<float*>(buffer+10);
         forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+14);
+        forceFeedbackData.isRetractable = *reinterpret_cast<int32_t*>(buffer+18);
+        forceFeedbackData.gearDeflection[0] = *reinterpret_cast<float*>(buffer+22);
+        forceFeedbackData.gearDeflection[1] = *reinterpret_cast<float*>(buffer+26);
+        forceFeedbackData.gearDeflection[2] = *reinterpret_cast<float*>(buffer+30);
+        System::getInstance().getConsole()->getInterface().send(std::to_string(forceFeedbackData.pitchForce) + "  " //XXX
+                + std::to_string(forceFeedbackData.rollForce) + "  "
+                + std::to_string(forceFeedbackData.yawForce) + "  "
+                + std::to_string(forceFeedbackData.flapsDeflection) + "  "
+                + std::to_string(forceFeedbackData.isRetractable) + "  "
+                + std::to_string(forceFeedbackData.gearDeflection[0]) + "  "
+                + std::to_string(forceFeedbackData.gearDeflection[1]) + "  "
+                + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
     }
     else
     {
@@ -175,13 +182,12 @@ void Yoke::resetParameters(void)
  */
 void Yoke::displayForceFeedbackData(void)
 {
-    System::getInstance().getConsole()->getInterface().send("frame counter = " + std::to_string(forceFeedbackData.counter) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("pitch force = " + std::to_string(forceFeedbackData.pitchForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("roll force = " + std::to_string(forceFeedbackData.rollForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("yaw force = " + std::to_string(forceFeedbackData.yawForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("flaps deflection = " + std::to_string(forceFeedbackData.flapsDeflection) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("is retractable? = " + std::to_string(forceFeedbackData.isRetractable) + "\r\n");
-    System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gear1Deflection) + ", "
-         + std::to_string(forceFeedbackData.gear2Deflection) + ", "
-         + std::to_string(forceFeedbackData.gear3Deflection) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
+         + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
+         + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
 }
