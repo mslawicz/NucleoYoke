@@ -29,6 +29,7 @@ Yoke::Yoke() :
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
+    forceFeedbackDataTimer.reset();
 }
 
 Yoke::~Yoke()
@@ -57,6 +58,11 @@ void Yoke::handler(void)
         adc.startConversions();
         // request data transmission from IMU sensors
         sensorAG.readNewData();
+        // switch data LED off if no force feedback data are being received during 0.5 sec
+        if(forceFeedbackDataTimer.elapsed(500000))
+        {
+            System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
+        }
 
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
@@ -77,6 +83,23 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
         forceFeedbackData.gearDeflection[0] = *reinterpret_cast<float*>(buffer+22);
         forceFeedbackData.gearDeflection[1] = *reinterpret_cast<float*>(buffer+26);
         forceFeedbackData.gearDeflection[2] = *reinterpret_cast<float*>(buffer+30);
+
+        if((forceFeedbackData.pitchForce != 0.0f) || (forceFeedbackData.rollForce != 0.0f))
+        {
+            // yoke force data are received
+            System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
+            forceFeedbackDataTimer.reset();
+        }
+        else
+        {
+            // force data is zero (not supported in this aircraft)
+            if(forceFeedbackDataTimer.elapsed(250000))
+            {
+                // data LED is blinking in this scenario
+                System::getInstance().dataLED.toggle();
+                forceFeedbackDataTimer.reset();
+            }
+        }
     }
     else
     {

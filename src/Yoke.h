@@ -60,6 +60,7 @@ private:
     Electromagnet pitchMagnet;    // force feedback electromagnet of pitch control
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
+    Timer forceFeedbackDataTimer;
 };
 
 #endif /* YOKE_H_ */
