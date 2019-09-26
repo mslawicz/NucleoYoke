@@ -125,6 +125,7 @@ void System::config(void)
     pSPI3 = new SpiBus(SPI3);
     pDisplay = new Display;
     pYoke = new Yoke;
+    pConsole->registerCommands();
 }
 
 /*

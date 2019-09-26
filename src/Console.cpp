@@ -23,9 +23,7 @@ const bool Console::IsChannelActive[] = {
 Console::Console() :
     interface(USART3, 115200)
 {
-    // register console commands
-    commands.emplace("help", std::pair<std::string, std::function<void(StringVector)>>({"help - command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
-    commands.emplace("ff", std::pair<std::string, std::function<void(StringVector)>>({"ff - display force feedback current data", std::bind(&Yoke::displayForceFeedbackData, System::getInstance().getYoke())}));
+
 }
 
 Console::~Console()
@@ -151,4 +149,14 @@ void Console::displayHelp(StringVector arguments)
     {
         interface.send(command.second.first + "\r\n");
     }
+}
+
+/*
+ * register console commands
+ * it must be called after creation of all essential objects
+ */
+void Console::registerCommands(void)
+{
+    commands.emplace("help", std::pair<std::string, std::function<void(StringVector)>>({"help - command help", [&](StringVector arguments){this->displayHelp(arguments);}}));
+    commands.emplace("ff", std::pair<std::string, std::function<void(StringVector)>>({"ff - display force feedback current data", std::bind(&Yoke::displayForceFeedbackData, System::getInstance().getYoke())}));
 }

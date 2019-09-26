@@ -30,6 +30,7 @@ Yoke::Yoke() :
     alpha = 0.02;
     pitchMagnet.setForce(0.0f); //XXX
     forceFeedbackDataTimer.reset();
+    forceFeedbackData = {0.0f, 0.0f, 0.0f, 0.0f, false, {0.0f, 0.0f, 0.0f}};
 }
 
 Yoke::~Yoke()
@@ -86,7 +87,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 
         if((forceFeedbackData.pitchForce != 0.0f) || (forceFeedbackData.rollForce != 0.0f))
         {
-            // yoke force data are received
+            // yoke force data is received
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
             forceFeedbackDataTimer.reset();
         }
