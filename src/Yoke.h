@@ -24,7 +24,7 @@ struct ForceFeedbackData
     float rollForce;    // roll force to yoke expressed in lbs
     float yawForce;     // yaw force to yoke expressed in lbs
     float flapsDeflection;  // flaps deflection ratio 0..1
-    int32_t isRetractable;  // !=0 if any gear is retractable
+    bool isRetractable;  // true if any gear is retractable
     float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 units
 };
 

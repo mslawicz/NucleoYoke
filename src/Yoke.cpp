@@ -73,18 +73,10 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
         forceFeedbackData.rollForce = *reinterpret_cast<float*>(buffer+6);
         forceFeedbackData.yawForce = *reinterpret_cast<float*>(buffer+10);
         forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+14);
-        forceFeedbackData.isRetractable = *reinterpret_cast<int32_t*>(buffer+18);
+        forceFeedbackData.isRetractable = (*reinterpret_cast<int32_t*>(buffer+18) != 0);
         forceFeedbackData.gearDeflection[0] = *reinterpret_cast<float*>(buffer+22);
         forceFeedbackData.gearDeflection[1] = *reinterpret_cast<float*>(buffer+26);
         forceFeedbackData.gearDeflection[2] = *reinterpret_cast<float*>(buffer+30);
-        System::getInstance().getConsole()->getInterface().send(std::to_string(forceFeedbackData.pitchForce) + "  " //XXX
-                + std::to_string(forceFeedbackData.rollForce) + "  "
-                + std::to_string(forceFeedbackData.yawForce) + "  "
-                + std::to_string(forceFeedbackData.flapsDeflection) + "  "
-                + std::to_string(forceFeedbackData.isRetractable) + "  "
-                + std::to_string(forceFeedbackData.gearDeflection[0]) + "  "
-                + std::to_string(forceFeedbackData.gearDeflection[1]) + "  "
-                + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
     }
     else
     {
@@ -186,7 +178,8 @@ void Yoke::displayForceFeedbackData(void)
     System::getInstance().getConsole()->getInterface().send("roll force = " + std::to_string(forceFeedbackData.rollForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("yaw force = " + std::to_string(forceFeedbackData.yawForce) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("flaps deflection = " + std::to_string(forceFeedbackData.flapsDeflection) + "\r\n");
-    System::getInstance().getConsole()->getInterface().send("is retractable? = " + std::to_string(forceFeedbackData.isRetractable) + "\r\n");
+    std::string isRetractableString = forceFeedbackData.isRetractable ? "yes" : "no";
+    System::getInstance().getConsole()->getInterface().send("is retractable? = " + isRetractableString + "\r\n");
     System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
