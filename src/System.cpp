@@ -23,7 +23,7 @@ System::System() :
 {
     pI2C1 = nullptr;
     pI2C2 = nullptr;
-    pSPI3 = nullptr;
+    pSPI4 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
     pDisplay = nullptr;
@@ -121,8 +121,8 @@ void System::config(void)
     // I2C1 is used for stepper motor controllers
     pI2C1 = new I2cBus(I2C1);
     pI2C2 = new I2cBus(I2C2);
-    // SPI3 is used for display
-    pSPI3 = new SpiBus(SPI3);
+    // SPI4 is used for display
+    pSPI4 = new SpiBus(SPI4);
     pDisplay = new Display;
     pYoke = new Yoke;
     pConsole->registerCommands();
@@ -136,7 +136,7 @@ void System::terminate(void)
     delete pYoke;
     delete pDisplay;
     delete pConsole;
-    delete pSPI3;
+    delete pSPI4;
     delete pI2C1;
 }
 

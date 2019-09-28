@@ -46,7 +46,7 @@ private:
     Yoke* pYoke;
     I2cBus* pI2C1;
     I2cBus* pI2C2;
-    SpiBus* pSPI3;
+    SpiBus* pSPI4;
     Display* pDisplay;
 };
 
