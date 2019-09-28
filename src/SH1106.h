@@ -12,10 +12,10 @@
 #include "GPIO.h"
 #include "Timer.h"
 
-#define SH1106_CS_PORT    GPIOC
-#define SH1106_CS_PIN     GPIO_PIN_8
-#define SH1106_RESET_PORT    GPIOD
-#define SH1106_RESET_PIN     GPIO_PIN_2
+#define SH1106_CS_PORT    GPIOF
+#define SH1106_CS_PIN     GPIO_PIN_13
+#define SH1106_RESET_PORT    GPIOE
+#define SH1106_RESET_PIN     GPIO_PIN_15
 
 enum DisplayControllerState
 {

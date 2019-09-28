@@ -8,7 +8,7 @@
 #include "Display.h"
 
 Display::Display() :
-    controller(SpiBus::pSpi3, SH1106_CS_PORT, SH1106_CS_PIN)
+    controller(SpiBus::pSpi4, SH1106_CS_PORT, SH1106_CS_PIN)
 {
 
 }

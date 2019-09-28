@@ -14,8 +14,8 @@
 #include <string>
 #include <queue>
 
-#define SPI3_CD_PORT    GPIOC
-#define SPI3_CD_PIN     GPIO_PIN_9
+#define SPI4_CD_PORT    GPIOE
+#define SPI4_CD_PIN     GPIO_PIN_13
 
 class SpiDevice;
 
@@ -36,7 +36,7 @@ public:
     void setBusy(bool state) { busy = state; }
     bool isBusy(void) const { return busy; }
     void handler(void);
-    static SpiBus* pSpi3;       // global pointer for SPI3 bus
+    static SpiBus* pSpi4;       // global pointer for SPI4 bus
     SpiDevice* pCurrentlyServedDevice;
     friend SpiDevice;
 private:

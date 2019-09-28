@@ -9,22 +9,22 @@
 #include "System.h"
 #include "timer.h" //XXX
 
-SpiBus* SpiBus::pSpi3 = nullptr;
+SpiBus* SpiBus::pSpi4 = nullptr;
 
 SpiBus::SpiBus(SPI_TypeDef* instance) :
     instance(instance)
 {
-    if(instance == SPI3)
+    if(instance == SPI4)
     {
-        name = "SPI3";
+        name = "SPI4";
         /* Peripheral clock enable */
-        __HAL_RCC_SPI3_CLK_ENABLE();
+        __HAL_RCC_SPI4_CLK_ENABLE();
         /* DMA controller clock enable */
-        __HAL_RCC_DMA1_CLK_ENABLE();
+        __HAL_RCC_DMA2_CLK_ENABLE();
         // MOSI pin
-        GPIO(GPIOC, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+        GPIO(GPIOE, GPIO_PIN_14, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI4);
         // SCK pin
-        GPIO(GPIOC, GPIO_PIN_10, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF6_SPI3);
+        GPIO(GPIOE, GPIO_PIN_12, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI4);
     }
 
     hSpi.Instance = instance;
@@ -48,16 +48,11 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, name + " initialization failed");
     }
 
-    if(instance == SPI3)
+    if(instance == SPI4)
     {
-        /* DMA interrupt init */
-        /* DMA1_Stream5_IRQn interrupt configuration */
-        HAL_NVIC_SetPriority(DMA1_Stream5_IRQn, 0, 0);
-        HAL_NVIC_EnableIRQ(DMA1_Stream5_IRQn);
-
-        /* SPI3_DMA TX Init */
-        hDmaTx.Instance = DMA1_Stream5;
-        hDmaTx.Init.Channel = DMA_CHANNEL_0;
+        /* SPI4_DMA TX Init */
+        hDmaTx.Instance = DMA2_Stream1;
+        hDmaTx.Init.Channel = DMA_CHANNEL_4;
         hDmaTx.Init.Direction = DMA_MEMORY_TO_PERIPH;
         hDmaTx.Init.PeriphInc = DMA_PINC_DISABLE;
         hDmaTx.Init.MemInc = DMA_MINC_ENABLE;
@@ -66,14 +61,20 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         hDmaTx.Init.Mode = DMA_NORMAL;
         hDmaTx.Init.Priority = DMA_PRIORITY_LOW;
         hDmaTx.Init.FIFOMode = DMA_FIFOMODE_DISABLE;
-        if (HAL_DMA_Init(&hDmaTx) != HAL_OK)
+        if (HAL_DMA_Init(&hDmaTx) == HAL_OK)
+        {
+            /* DMA2_Stream1_IRQn interrupt configuration */
+            HAL_NVIC_SetPriority(DMA2_Stream1_IRQn, 0, 0);
+            HAL_NVIC_EnableIRQ(DMA2_Stream1_IRQn);
+            __HAL_LINKDMA(&hSpi,hdmatx,hDmaTx);
+        }
+        else
         {
             System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_SPI, name + " TX DMA initialization failed");
         }
-        __HAL_LINKDMA(&hSpi,hdmatx,hDmaTx);
 
-        pPinCD = new GPIO(SPI3_CD_PORT, SPI3_CD_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW);
-        pSpi3 = this;
+        pPinCD = new GPIO(SPI4_CD_PORT, SPI4_CD_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW);
+        pSpi4 = this;
     }
 
     pCurrentlyServedDevice = nullptr;
@@ -137,12 +138,12 @@ void SpiDevice::sendRequest(std::vector<uint8_t> data, bool itisCommand)
   */
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
-    if(hspi->Instance == SPI3)
+    if(hspi->Instance == SPI4)
     {
         // unselect device
-        SpiBus::pSpi3->pCurrentlyServedDevice->unselect();
+        SpiBus::pSpi4->pCurrentlyServedDevice->unselect();
         // mark this SPI bus as free
-        SpiBus::pSpi3->setBusy(false);
+        SpiBus::pSpi4->setBusy(false);
     }
 }
 
