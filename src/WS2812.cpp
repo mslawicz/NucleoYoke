@@ -7,7 +7,8 @@
 
 #include "WS2812.h"
 
-WS2812::WS2812()
+WS2812::WS2812(SpiBus* pBus) :
+    SpiDevice(pBus)
 {
     // TODO Auto-generated constructor stub
 

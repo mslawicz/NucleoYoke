@@ -13,7 +13,7 @@
 class WS2812 : public SpiDevice
 {
 public:
-    WS2812();
+    WS2812(SpiBus* pBus);
 };
 
 #endif /* WS2812_H_ */

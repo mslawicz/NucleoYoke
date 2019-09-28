@@ -55,14 +55,16 @@ class SpiDevice
 {
 public:
     void sendRequest(std::vector<uint8_t> data, bool itisCommand = false);
-    void unselect(void) { chipSelect.write(GPIO_PinState::GPIO_PIN_SET); }
+    void unselect(void);
     friend SpiBus;
 protected:
     SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS);
+    SpiDevice(SpiBus* pBus);
     virtual ~SpiDevice();
     SpiBus* pBus;       // SPI bus for this device
 private:
     GPIO chipSelect;
+    bool autoSelect;
 };
 
 #endif /* SPI_H_ */

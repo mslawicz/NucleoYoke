@@ -161,8 +161,11 @@ void SpiBus::handler(void)
         {
             pPinCD->write(sendRequest.isCommand ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
         }
-        // set active CS signal
-        sendRequest.pDevice->chipSelect.write(GPIO_PinState::GPIO_PIN_RESET);
+        if(sendRequest.pDevice->autoSelect)
+        {
+            // set active CS signal
+            sendRequest.pDevice->chipSelect.write(GPIO_PinState::GPIO_PIN_RESET);
+        }
         // start DMA transmission
         pCurrentlyServedDevice = sendRequest.pDevice;
         busy = true;
@@ -170,13 +173,39 @@ void SpiBus::handler(void)
     }
 }
 
+/*
+ * SPI device constructor for a device with CS signal handling
+ */
 SpiDevice::SpiDevice(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
         pBus(pBus),
         chipSelect(portCS, pinCS, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_FREQ_VERY_HIGH)
 {
     System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SPI, "SPI device created, CS=" + Console::toHex(reinterpret_cast<uint32_t>(portCS)) + "/" + Console::toHex(pinCS));
-
+    autoSelect = true;
     chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
+}
+
+/*
+ * SPI device constructor for a device without CS signal handling
+ */
+SpiDevice::SpiDevice(SpiBus* pBus) :
+        pBus(pBus),
+        chipSelect(nullptr, 0, GPIO_MODE_INPUT)
+{
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SPI, "SPI device created with no CS signal");
+    autoSelect = false;
+}
+
+/*
+ * sets CS inactive
+ */
+void SpiDevice::unselect(void)
+{
+    if(autoSelect)
+    {
+        // unselect only devices with autoSelected flag set
+        chipSelect.write(GPIO_PinState::GPIO_PIN_SET);
+    }
 }
 
 SpiDevice::~SpiDevice() {}
