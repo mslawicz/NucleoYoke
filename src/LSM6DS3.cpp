@@ -8,16 +8,16 @@
 #include "LSM6DS3.h"
 
 LSM6DS3::LSM6DS3(I2cBus* pBus, DeviceAddress deviceAddress) :
-    I2cDevice(pBus, DeviceAddress::LSM6DS3_ADD),
-    deviceAddress(deviceAddress)
+    I2cDevice(pBus, deviceAddress),
+    address(deviceAddress)
 {
     // Gyroscope Data Ready to INT1 pin for test only
-    writeRequest(deviceAddress, LSM6DS3Register::LSM6DS3_INT1_CTRL, std::vector<uint8_t>{0x02});
+    writeRequest(address, LSM6DS3Register::LSM6DS3_INT1_CTRL, std::vector<uint8_t>{0x02});
     // Accelerometer ODR=52 Hz, full scale +-2g
     // Gyroscope ODR=52 Hz, full scale 250 dps
-    writeRequest(deviceAddress, LSM6DS3Register::LSM6DS3_CTRL1_XL, std::vector<uint8_t>{0x30, 0x30});
+    writeRequest(address, LSM6DS3Register::LSM6DS3_CTRL1_XL, std::vector<uint8_t>{0x30, 0x30});
     // Gyroscope digital high-pass filter enable, 0.0324 Hz
-    writeRequest(deviceAddress, LSM6DS3Register::LSM6DS3_CTRL7_G, std::vector<uint8_t>{0x50});
+    writeRequest(address, LSM6DS3Register::LSM6DS3_CTRL7_G, std::vector<uint8_t>{0x50});
 }
 
 /*

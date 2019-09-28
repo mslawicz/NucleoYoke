@@ -28,9 +28,9 @@ class LSM9DS1AG : public I2cDevice
 {
 public:
     LSM9DS1AG(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::LSM9DS1_OUT_X_L_G, 12); }
+    void getData(void) { readRequest(address, LSM9DS1Register::LSM9DS1_OUT_X_L_G, 12); }
 private:
-    DeviceAddress deviceAddress;
+    DeviceAddress address;
 };
 
 /*
@@ -40,9 +40,9 @@ class LSM9DS1M : public I2cDevice
 {
 public:
     LSM9DS1M(I2cBus* pBus, DeviceAddress deviceAddress);
-    void getData(void) { readRequest(deviceAddress, LSM9DS1Register::LSM9DS1_OUT_X_L_M, 6); }
+    void getData(void) { readRequest(address, LSM9DS1Register::LSM9DS1_OUT_X_L_M, 6); }
 private:
-    DeviceAddress deviceAddress;
+    DeviceAddress address;
 };
 
 #endif /* LSM9DS1_H_ */
