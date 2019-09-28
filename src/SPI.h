@@ -36,6 +36,7 @@ public:
     void setBusy(bool state) { busy = state; }
     bool isBusy(void) const { return busy; }
     void handler(void);
+    static SpiBus* pSpi2;       // global pointer for SPI2 bus
     static SpiBus* pSpi4;       // global pointer for SPI4 bus
     SpiDevice* pCurrentlyServedDevice;
     friend SpiDevice;
@@ -46,7 +47,7 @@ private:
     std::string name;           // name of this SPI bus
     std::vector<uint8_t> dataToSend;        // buffer for data being sent
     std::queue<sendRequestContainer> sendRequestQueue;      // queue of send requests from devices
-    GPIO* pPinCD;     // command/data pin for this SPI bus
+    GPIO* pPinCD;     // command/data pin for this SPI bus; set to nullptr if not used
     volatile bool busy;          // true if SPI is busy transmitting
 };
 

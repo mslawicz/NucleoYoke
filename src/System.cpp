@@ -23,6 +23,7 @@ System::System() :
 {
     pI2C1 = nullptr;
     pI2C2 = nullptr;
+    pSPI2 = nullptr;
     pSPI4 = nullptr;
     pConsole = nullptr;
     pYoke = nullptr;
@@ -121,6 +122,8 @@ void System::config(void)
     // I2C1 is used for stepper motor controllers
     pI2C1 = new I2cBus(I2C1);
     pI2C2 = new I2cBus(I2C2);
+    // SPI2 is used for RGB LEDs in 1-wire mode
+    pSPI2 = new SpiBus(SPI2);
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
     pDisplay = new Display;
@@ -137,6 +140,8 @@ void System::terminate(void)
     delete pDisplay;
     delete pConsole;
     delete pSPI4;
+    delete pSPI2;
+    delete pI2C2;
     delete pI2C1;
 }
 

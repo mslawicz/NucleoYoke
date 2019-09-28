@@ -152,6 +152,15 @@ void DMA1_Stream2_IRQHandler(void)
 }
 
 /**
+  * @brief This function handles DMA1 stream5 global interrupt.
+  * it is called after completed SPI2 transmission
+  */
+void DMA1_Stream4_IRQHandler(void)
+{
+    HAL_DMA_IRQHandler(SpiBus::pSpi2->getDmaTxHandle());
+}
+
+/**
   * @brief This function handles DMA1 stream7 global interrupt.
   * it is called two bytes before completed I2C transmission
   */
