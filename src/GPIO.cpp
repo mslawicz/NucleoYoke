@@ -11,6 +11,7 @@ GPIO::GPIO(GPIO_TypeDef* port, uint32_t pin, uint32_t mode, uint32_t pull, uint3
     port(port),
     pin(pin)
 {
+    if(port == nullptr) { return; } else
     if(port == GPIOA) {__HAL_RCC_GPIOA_CLK_ENABLE();} else
     if(port == GPIOB) {__HAL_RCC_GPIOB_CLK_ENABLE();} else
     if(port == GPIOC) {__HAL_RCC_GPIOC_CLK_ENABLE();} else
