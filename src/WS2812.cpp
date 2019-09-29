@@ -10,7 +10,24 @@
 WS2812::WS2812(SpiBus* pBus) :
     SpiDevice(pBus)
 {
-    // TODO Auto-generated constructor stub
 
 }
 
+/*
+ * sends data to daisy-chained LEDs
+ * data for a single LED contain 4 8-bit fields in format 0+G+R+B packed in uint32_t
+ */
+void WS2812::send(std::vector<uint32_t> chainData)
+{
+    std::vector<uint8_t> dataToSend;    // vector of data to be sent to SPI
+    for(auto ledData : chainData)
+    {
+        // loop for every led in the chain
+        for(uint8_t bit = 0; bit < 24; bit++)
+        {
+            // loop for every bit in the LED data
+            dataToSend.push_back((ledData >> (24-bit)) & 0x01 ? onebitPattern : zeroBitPattern);
+        }
+    }
+    sendRequest(dataToSend);
+}
