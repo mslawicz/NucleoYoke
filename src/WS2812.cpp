@@ -29,6 +29,6 @@ void WS2812::send(std::vector<uint32_t> chainData)
             dataToSend.push_back((ledData >> (23-bit)) & 0x01 ? onebitPattern : zeroBitPattern);
         }
     }
-    dataToSend.push_back(0x00);
+    dataToSend.push_back(0x00);     // a dummy byte to leave data in zero state
     sendRequest(dataToSend);
 }

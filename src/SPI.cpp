@@ -23,9 +23,9 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         /* DMA controller clock enable */
         __HAL_RCC_DMA1_CLK_ENABLE();
         // MOSI pin
-        GPIO(GPIOB, GPIO_PIN_15, GPIO_MODE_AF_PP, GPIO_PULLDOWN, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
-        // SCK pin
-        GPIO(GPIOB, GPIO_PIN_13, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
+        GPIO(GPIOB, GPIO_PIN_15, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
+        // SCK pin is not needed for 1-wire transmission
+        // GPIO(GPIOB, GPIO_PIN_13, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
 
         hSpi.Instance = instance;
         hSpi.Init.Mode = SPI_MODE_MASTER;

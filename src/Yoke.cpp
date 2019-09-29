@@ -55,6 +55,35 @@ void Yoke::handler(void)
         {
             sendJoystickData();
         }
+
+        {
+            //XXX test of RGB LEDs
+            static Timer ledTimer;
+            if(ledTimer.elapsed(1000000))
+            {
+                uint32_t v1 = adc.getConvertedValues()[0] >> 8;
+                uint32_t v2 = adc.getConvertedValues()[1] >> 8;
+                std::vector<uint32_t> dt =
+                {
+                        v1,
+                        v1 << 8,
+                        v1 << 16,
+                        v1 | (v2 << 8),
+                        v1 | (v2 << 16),
+                        (v1 << 8) | (v2 << 16),
+                        v1 | (v1 << 8) | (v1 << 16),
+                        0
+                };
+                System::getInstance().getRGBLeds()->send(dt);
+                for(auto led : dt)
+                {
+                    System::getInstance().getConsole()->getInterface().send(Console::toHex(led, 6, false) + " ");
+                }
+                System::getInstance().getConsole()->getInterface().send("\r\n");
+                ledTimer.reset();
+            }
+        }
+
         // start new AD conversion set
         adc.startConversions();
         // request data transmission from IMU sensors
