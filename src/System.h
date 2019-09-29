@@ -14,6 +14,7 @@
 #include "I2C.h"
 #include "SPI.h"
 #include "Display.h"
+#include "WS2812.h"
 
 #define TEST1_PORT   GPIOG
 #define TEST1_PIN    GPIO_PIN_9
@@ -49,6 +50,7 @@ private:
     SpiBus* pSPI2;
     SpiBus* pSPI4;
     Display* pDisplay;
+    WS2812* pRGBLeds;
 };
 
 #endif /* SYSTEM_H_ */

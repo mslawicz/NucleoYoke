@@ -28,6 +28,7 @@ System::System() :
     pConsole = nullptr;
     pYoke = nullptr;
     pDisplay = nullptr;
+    pRGBLeds = nullptr;
 }
 
 System::~System()
@@ -126,6 +127,7 @@ void System::config(void)
     pSPI2 = new SpiBus(SPI2);
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
+    pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;
     pConsole->registerCommands();
@@ -139,6 +141,7 @@ void System::terminate(void)
     delete pYoke;
     delete pDisplay;
     delete pConsole;
+    delete pRGBLeds;
     delete pSPI4;
     delete pSPI2;
     delete pI2C2;
