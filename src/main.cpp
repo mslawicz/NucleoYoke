@@ -49,6 +49,7 @@ int main(void)
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(500000))) //XXX
         {
             tm.reset();
+            System::getInstance().getRGBLeds()->send(std::vector<uint32_t>{0x200000, 0x002000, 0x000020, 0x001010, 0x100010, 0x101000});
             System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
 //            System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
 //            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);

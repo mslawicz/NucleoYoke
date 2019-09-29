@@ -23,7 +23,7 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         /* DMA controller clock enable */
         __HAL_RCC_DMA1_CLK_ENABLE();
         // MOSI pin
-        GPIO(GPIOB, GPIO_PIN_15, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
+        GPIO(GPIOB, GPIO_PIN_15, GPIO_MODE_AF_PP, GPIO_PULLDOWN, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
         // SCK pin
         GPIO(GPIOB, GPIO_PIN_13, GPIO_MODE_AF_PP, GPIO_NOPULL, GPIO_SPEED_FREQ_VERY_HIGH, GPIO_AF5_SPI2);
 
@@ -34,7 +34,7 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         hSpi.Init.CLKPolarity = SPI_POLARITY_LOW;
         hSpi.Init.CLKPhase = SPI_PHASE_1EDGE;
         hSpi.Init.NSS = SPI_NSS_SOFT;
-        hSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_32;
+        hSpi.Init.BaudRatePrescaler = SPI_BAUDRATEPRESCALER_8;
         hSpi.Init.FirstBit = SPI_FIRSTBIT_MSB;
         hSpi.Init.TIMode = SPI_TIMODE_DISABLE;
         hSpi.Init.CRCCalculation = SPI_CRCCALCULATION_DISABLE;
@@ -227,6 +227,13 @@ void SpiDevice::sendRequest(std::vector<uint8_t> data, bool itisCommand)
   */
 void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
 {
+    if(hspi->Instance == SPI2)
+    {
+        // SPI2 doesn't need CS handling (1-wire transmission)
+        // mark this SPI bus as free
+        SpiBus::pSpi2->setBusy(false);
+    }
+
     if(hspi->Instance == SPI4)
     {
         // unselect device

@@ -15,7 +15,7 @@ WS2812::WS2812(SpiBus* pBus) :
 
 /*
  * sends data to daisy-chained LEDs
- * data for a single LED contain 4 8-bit fields in format 0+G+R+B packed in uint32_t
+ * data for a single LED contain 4 8-bit fields in format 0+B+R+G packed in uint32_t
  */
 void WS2812::send(std::vector<uint32_t> chainData)
 {
@@ -26,8 +26,9 @@ void WS2812::send(std::vector<uint32_t> chainData)
         for(uint8_t bit = 0; bit < 24; bit++)
         {
             // loop for every bit in the LED data
-            dataToSend.push_back((ledData >> (24-bit)) & 0x01 ? onebitPattern : zeroBitPattern);
+            dataToSend.push_back((ledData >> (23-bit)) & 0x01 ? onebitPattern : zeroBitPattern);
         }
     }
+    dataToSend.push_back(0x00);
     sendRequest(dataToSend);
 }

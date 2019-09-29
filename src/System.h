@@ -35,6 +35,7 @@ public:
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
+    WS2812* getRGBLeds(void) const { return pRGBLeds; }
     GPIO systemLED;
     GPIO errorLED;
     GPIO dataLED;
