@@ -13,6 +13,7 @@
 #include "System.h"
 #include "Display.h"
 #include "Timer.h"//XXX
+#include "WS2812.h"
 
 int main(void)
 {
@@ -31,8 +32,9 @@ int main(void)
     // reset essential yoke parameters before first handler call
     System::getInstance().getYoke()->resetParameters();
 
-    Timer tm; //XXX
+    Timer tm, tl; //XXX
     tm.reset();
+    std::vector<uint32_t> ledData;
 
     // main loop
     while(1)
@@ -53,6 +55,24 @@ int main(void)
 //            System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
 //            System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
             System::getInstance().getDisplay()->getController().requestUpdate();
+        }
+        if(tl.elapsed(50000)) //XXX
+        {
+            static uint8_t step = 0;
+            tl.reset();
+            ledData =
+            {
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 0),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 3),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 6),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 9),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 12),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 15),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 18),
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 21)
+            };
+            System::getInstance().getRGBLeds()->send(ledData);
+            step = (step+1) % 24;
         }
     }
 
