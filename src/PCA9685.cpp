@@ -12,7 +12,6 @@
 PCA9685::PCA9685(I2cBus* pBus, DeviceAddress deviceAddress) :
     I2cDevice(pBus, deviceAddress),
     deviceAddress(deviceAddress)
-
 {
     // set initial PWM frequency, and also these parameters:
     // address autoincrement enabled, all-call enabled
