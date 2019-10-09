@@ -10,6 +10,13 @@
 
 #include "I2C.h"
 
+// caution! the following addressing reflects the default addressing scheme (IOCON.BANK = 0)
+enum MCP23017Register
+{
+    MCP23017_IODIRA = 0x00,
+    MCP23017_GPIOA = 0x12
+};
+
 class MCP23017 : public I2cDevice
 {
 public:
