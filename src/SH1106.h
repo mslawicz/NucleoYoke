@@ -50,12 +50,12 @@ private:
         0x40,   //display line for COM0 = 0
         0x81,   //contrast
         0x80,
-        0xA0,   //segment right rotation
+        0xA1,   //segment left rotation
         0xA4,   //display in normal mode
         0xA6,   //display normal indication
         0xAD,   //DC pump on
         0x8B,
-        0xC0    //scan from 0 to N-1
+        0xC8    //scan from N-1 to 0
     };
     static const uint8_t NoOfPages = 8;
     static const uint8_t NoOfRows = 128;
