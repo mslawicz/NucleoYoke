@@ -22,8 +22,8 @@ enum DeviceAddress
     PCA9685_ADD = 0xC0,
     LSM6DSL_ADD = 0xD6,
     LSM303AGR_M_ADD = 0x3C,
-    MCP23017_1_ADD = 0x40,
-    MCP23017_2_ADD = 0x42
+    MCP23017_0_ADD = 0x40,
+    MCP23017_1_ADD = 0x42
 };
 
 enum ActionType

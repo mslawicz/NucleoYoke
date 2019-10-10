@@ -47,7 +47,6 @@ void Yoke::handler(void)
     if(loopTimer.elapsed(loopPeriod))
     {
         loopTimer.reset();
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
@@ -64,8 +63,6 @@ void Yoke::handler(void)
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
-
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
     }
 }
 

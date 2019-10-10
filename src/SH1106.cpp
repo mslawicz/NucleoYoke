@@ -11,7 +11,7 @@
 
 SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
     SpiDevice(pBus, portCS, pinCS),
-    resetPin(SH1106_RESET_PORT, SH1106_RESET_PIN, GPIO_MODE_OUTPUT_PP, GPIO_SPEED_LOW),
+    resetPin(SH1106_RESET_PORT, SH1106_RESET_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW),
     displayBuffer{},
     refreshRange{}
 {

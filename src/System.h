@@ -15,6 +15,7 @@
 #include "SPI.h"
 #include "Display.h"
 #include "WS2812.h"
+#include "MCP23017.h"
 
 #define TEST1_PORT   GPIOG
 #define TEST1_PIN    GPIO_PIN_9
@@ -36,6 +37,7 @@ public:
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
     WS2812* getRGBLeds(void) const { return pRGBLeds; }
+    MCP23017& getGpioExpander(uint8_t instance) { return gpioExpander[instance]; }
     GPIO systemLED;
     GPIO errorLED;
     GPIO dataLED;
@@ -52,6 +54,7 @@ private:
     SpiBus* pSPI4;
     Display* pDisplay;
     WS2812* pRGBLeds;
+    std::vector<MCP23017> gpioExpander;
 };
 
 #endif /* SYSTEM_H_ */

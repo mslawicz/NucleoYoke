@@ -122,11 +122,13 @@ void System::config(void)
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
     // I2C1 is used for stepper motor controllers
     pI2C1 = new I2cBus(I2C1);
+    // I2C2 is used for IMU sensor and GPIO expanders
     pI2C2 = new I2cBus(I2C2);
     // SPI2 is used for RGB LEDs in 1-wire mode
     pSPI2 = new SpiBus(SPI2);
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
+    //gpioExpander.emplace_back(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN); XXX unblock expander
     pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;
