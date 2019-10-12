@@ -37,7 +37,7 @@ public:
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
     WS2812* getRGBLeds(void) const { return pRGBLeds; }
-    std::vector<MCP23017>& getGpioExpanders(void) { return gpioExpander; }
+    std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
     GPIO systemLED;
     GPIO errorLED;
     GPIO dataLED;
@@ -54,7 +54,7 @@ private:
     SpiBus* pSPI4;
     Display* pDisplay;
     WS2812* pRGBLeds;
-    std::vector<MCP23017> gpioExpander;
+    std::vector<MCP23017*> gpioExpanders;
 };
 
 #endif /* SYSTEM_H_ */
