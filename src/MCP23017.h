@@ -11,8 +11,8 @@
 #include "I2C.h"
 #include "GPIO.h"
 
-#define MCP23017_0_INT_PORT    GPIOA    //dummy value XXX
-#define MCP23017_0_INT_PIN     GPIO_PIN_0   //dummy value XXX
+#define MCP23017_0_INT_PORT    GPIOD    //temporary value XXX
+#define MCP23017_0_INT_PIN     GPIO_PIN_1   //temporary value XXX
 
 // caution! the following addressing reflects the default addressing scheme (IOCON.BANK = 0)
 enum MCP23017Register

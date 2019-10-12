@@ -34,9 +34,10 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
 void MCP23017::handler(void)
 {
     // read data if new interrupt appeared
-    if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) && !waitingForData)
+    if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) && (!waitingForData))
     {
         System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+        System::getInstance().testPin2.toggle();
         waitingForData = true;
         readRequest(deviceAddress, MCP23017Register::MCP23017_INTFA, 6);
     }
