@@ -37,7 +37,7 @@ public:
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
     WS2812* getRGBLeds(void) const { return pRGBLeds; }
-    MCP23017& getGpioExpander(uint8_t instance) { return gpioExpander[instance]; }
+    std::vector<MCP23017>& getGpioExpanders(void) { return gpioExpander; }
     GPIO systemLED;
     GPIO errorLED;
     GPIO dataLED;

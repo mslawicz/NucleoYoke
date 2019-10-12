@@ -24,7 +24,7 @@ enum MCP23017Register
 class MCP23017 : public I2cDevice
 {
 public:
-    MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* portINT, uint32_t pinINT);
+    MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* portINT, uint32_t pinINT, uint16_t pinMask);
     void handler(void);
 private:
     DeviceAddress deviceAddress;

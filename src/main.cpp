@@ -47,7 +47,10 @@ int main(void)
         SpiBus::pSpi4->handler();
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
-        //System::getInstance().getGpioExpander(0).handler(); XXX unblock expander
+        for(auto expander : System::getInstance().getGpioExpanders())
+        {
+            expander.handler();
+        }
 
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(500000))) //XXX
         {
