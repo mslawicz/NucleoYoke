@@ -17,13 +17,14 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
     std::vector<uint8_t> configurationData =
     {
             // every register consists of 2 bytes (for ports A and B)
+            0xFF, 0xFF, // inverted polarity
             LOBYTE(pinMask), HIBYTE(pinMask), // enable interrupt-on-change for particular pins
             0x00, 0x00, // default compare register
             0x00, 0x00, // interrupt control register
             0x42, 0x42, // configuration register: INT mirrored, INT active high
             LOBYTE(pinMask), HIBYTE(pinMask)  // pull-up register
     };
-    writeRequest(deviceAddress, MCP23017Register::MCP23017_GPINTENA, configurationData);
+    writeRequest(deviceAddress, MCP23017Register::MCP23017_IPOLA, configurationData);
     waitingForData = false;
 }
 

@@ -17,7 +17,7 @@
 // caution! the following addressing reflects the default addressing scheme (IOCON.BANK = 0)
 enum MCP23017Register
 {
-    MCP23017_GPINTENA = 0x04,
+    MCP23017_IPOLA = 0x02,
     MCP23017_INTFA = 0x0E
 };
 
