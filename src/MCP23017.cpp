@@ -6,7 +6,7 @@
  */
 
 #include "MCP23017.h"
-#include "System.h" //XXX
+#include "System.h"
 #include "Conversion.h"
 
 MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* portINT, uint32_t pinINT, uint16_t pinMask) :
@@ -44,8 +44,6 @@ void MCP23017::handler(void)
     case ES_wait_for_int:
         if(interruptPin.read() == GPIO_PinState::GPIO_PIN_SET)
         {
-            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-            System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET); //XXX
             // interrupt signal on - read expander data
             readRequest(deviceAddress, MCP23017Register::MCP23017_GPIOA, 2);
             eventTimer.reset();
@@ -56,7 +54,6 @@ void MCP23017::handler(void)
         if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) &&
                 (eventTimer.elapsed(RepeadPeriod)))
         {
-            System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
             // after RepeatPeriod time there is another INT signal - read data again
             state = ES_wait_for_int;
         }
@@ -67,14 +64,10 @@ void MCP23017::handler(void)
         }
         break;
     case ES_stable:
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
         if(isNewDataReceived())
         {
-            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
             inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
-
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_EXP, Console::toHex(inputRegister, 4)); //XXX
         }
         else
         {
