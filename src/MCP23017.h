@@ -42,7 +42,8 @@ private:
     uint8_t state;
     Timer eventTimer;
     const uint32_t RepeadPeriod = 1000;     // period of expander readout repetitions for debouncing
-    const uint32_t StabilityTime = 10000;   // required time of stabil input states
+    const uint32_t StabilityTime = 10000;   // required time of stable input states
+    uint16_t inputRegister;  // current input data
 };
 
 #endif /* MCP23017_H_ */

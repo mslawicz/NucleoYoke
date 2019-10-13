@@ -26,6 +26,7 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
     };
     writeRequest(deviceAddress, MCP23017Register::MCP23017_IPOLA, configurationData);
     state = ExpanderState::ES_start;
+    inputRegister = 0;
 }
 
 /*
@@ -70,13 +71,14 @@ void MCP23017::handler(void)
         if(isNewDataReceived())
         {
             System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+            inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
 
-            for(auto byte : receiveBuffer)  //XXX
-            {
-                System::getInstance().getConsole()->getInterface().send(Console::toHex(byte, 2, false)+" ");
-            }
-            System::getInstance().getConsole()->getInterface().send("\r\n"); //XXX
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_EXP, Console::toHex(inputRegister, 4)); //XXX
+        }
+        else
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Warning, LogChannel::LC_EXP, "Expander data not ready");
         }
         state = ES_wait_for_int;
         break;

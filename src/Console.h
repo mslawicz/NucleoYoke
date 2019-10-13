@@ -31,6 +31,7 @@ enum LogChannel
     LC_SPI,
     LC_USB,
     LC_ADC,
+    LC_EXP,
     LC_END
 };
 

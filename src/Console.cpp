@@ -18,6 +18,7 @@ const bool Console::IsChannelActive[] = {
         true, //LC_SPI,
         true, //LC_USB
         true, //LC_ADC
+        true  //LC_EXP
 };
 
 Console::Console() :
