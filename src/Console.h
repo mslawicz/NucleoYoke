@@ -48,7 +48,6 @@ public:
     void sendPrompt(void) { interface.send(">"); }
     void sendMessage(Severity level, LogChannel channel, std::string message);
     void registerCommands(void);
-    static std::string toHex(uint32_t value, uint8_t positions = 0, bool prefix = true);
     static const bool IsChannelActive[LogChannel::LC_END];
 private:
     void executeCommand(std::string commandString);

@@ -8,6 +8,7 @@
 #include "I2C.h"
 #include "GPIO.h"
 #include "System.h"
+#include "Conversion.h"
 
 // this static pointer is used by interrupts
 I2cBus* I2cBus::pI2c1 = nullptr;
@@ -174,7 +175,7 @@ I2cDevice::I2cDevice(I2cBus* pBus, DeviceAddress deviceAddress) :
         pBus(pBus),
         deviceAddress(deviceAddress)
 {
-    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + Console::toHex(deviceAddress, 2));
+    System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_I2C, "I2C device created, addr=" + toHex(deviceAddress, 2));
     newDataReceived = false;
 }
 
@@ -305,7 +306,7 @@ void I2cBus::handler(void)
             {
                 HAL_DMA_Init(&hDmaI2cTx);
             }
-            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " write error=" + Console::toHex(error));
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " write error=" + toHex(error));
         }
     }
     else
@@ -322,7 +323,7 @@ void I2cBus::handler(void)
             {
                 HAL_DMA_Init(&hDmaI2cRx);
             }
-            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " read error=" + Console::toHex(error));
+            System::getInstance().getConsole()->sendMessage(Severity::Error, LogChannel::LC_I2C, name + " read error=" + toHex(error));
         }
     }
 }

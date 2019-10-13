@@ -8,6 +8,8 @@
 #ifndef CONVERSION_H_
 #define CONVERSION_H_
 
+#include <string>
+
 #define LOBYTE(x)  ((uint8_t)(x & 0x00FFU))
 #define HIBYTE(x)  ((uint8_t)((x & 0xFF00U) >> 8U))
 
@@ -17,6 +19,8 @@ struct FloatVector
     float Y;
     float Z;
 };
+
+std::string toHex(uint32_t value, uint8_t positions = 0, bool prefix = true);
 
 // scale input value in the given type T input range to output value in the given output range
 template<typename T> int16_t scaleValue(T inputMin, T inputMax, int16_t outputMin, int16_t outputMax, T inputValue)
