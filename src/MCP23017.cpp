@@ -25,7 +25,7 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
             LOBYTE(pinMask), HIBYTE(pinMask)  // pull-up register
     };
     writeRequest(deviceAddress, MCP23017Register::MCP23017_IPOLA, configurationData);
-    waitingForData = false;
+    state = ExpanderState::ES_start;
 }
 
 /*
@@ -34,25 +34,53 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
  */
 void MCP23017::handler(void)
 {
-    // read data if new interrupt appeared
-    if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) && (!waitingForData))
+    switch(state)
     {
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
-        System::getInstance().testPin2.toggle();
-        waitingForData = true;
-        readRequest(deviceAddress, MCP23017Register::MCP23017_INTFA, 6);
-    }
-
-    if(isNewDataReceived())
-    {
-        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
-        waitingForData = false;
+    case ES_start:
         markNewDataReceived(false);
-
-        for(auto byte : receiveBuffer)  //XXX
+        state = ES_wait_for_int;
+        break;
+    case ES_wait_for_int:
+        if(interruptPin.read() == GPIO_PinState::GPIO_PIN_SET)
         {
-            System::getInstance().getConsole()->getInterface().send(Console::toHex(byte, 2, false)+" ");
+            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+            System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_SET); //XXX
+            // interrupt signal on - read expander data
+            readRequest(deviceAddress, MCP23017Register::MCP23017_GPIOA, 2);
+            eventTimer.reset();
+            state = ES_debouncing;
         }
-        System::getInstance().getConsole()->getInterface().send("\r\n"); //XXX
+        break;
+    case ES_debouncing:
+        if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) &&
+                (eventTimer.elapsed(RepeadPeriod)))
+        {
+            System::getInstance().testPin2.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+            // after RepeatPeriod time there is another INT signal - read data again
+            state = ES_wait_for_int;
+        }
+        if(eventTimer.elapsed(StabilityTime))
+        {
+            // no next INT signal after StabilityTime
+            state = ES_stable;
+        }
+        break;
+    case ES_stable:
+        System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+        if(isNewDataReceived())
+        {
+            System::getInstance().testPin1.write(GPIO_PinState::GPIO_PIN_RESET); //XXX
+            markNewDataReceived(false);
+
+            for(auto byte : receiveBuffer)  //XXX
+            {
+                System::getInstance().getConsole()->getInterface().send(Console::toHex(byte, 2, false)+" ");
+            }
+            System::getInstance().getConsole()->getInterface().send("\r\n"); //XXX
+        }
+        state = ES_wait_for_int;
+        break;
+    default:
+        break;
     }
 }

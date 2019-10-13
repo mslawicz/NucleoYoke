@@ -10,6 +10,7 @@
 
 #include "I2C.h"
 #include "GPIO.h"
+#include "Timer.h"
 
 #define MCP23017_0_INT_PORT    GPIOD    //temporary value XXX
 #define MCP23017_0_INT_PIN     GPIO_PIN_1   //temporary value XXX
@@ -18,7 +19,16 @@
 enum MCP23017Register
 {
     MCP23017_IPOLA = 0x02,
-    MCP23017_INTFA = 0x0E
+    MCP23017_INTFA = 0x0E,
+    MCP23017_GPIOA = 0x12
+};
+
+enum ExpanderState
+{
+    ES_start,
+    ES_wait_for_int,
+    ES_debouncing,
+    ES_stable
 };
 
 class MCP23017 : public I2cDevice
@@ -29,7 +39,10 @@ public:
 private:
     DeviceAddress deviceAddress;
     GPIO interruptPin;
-    bool waitingForData;
+    uint8_t state;
+    Timer eventTimer;
+    const uint32_t RepeadPeriod = 1000;     // period of expander readout repetitions for debouncing
+    const uint32_t StabilityTime = 10000;   // required time of stabil input states
 };
 
 #endif /* MCP23017_H_ */
