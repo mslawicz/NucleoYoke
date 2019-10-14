@@ -35,7 +35,8 @@ class MCP23017 : public I2cDevice
 {
 public:
     MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* portINT, uint32_t pinINT, uint16_t pinMask);
-    void handler(void);
+    bool handler(void);
+    uint16_t getInputRegister(void) const { return inputRegister; }
 private:
     DeviceAddress deviceAddress;
     GPIO interruptPin;

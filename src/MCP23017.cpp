@@ -33,8 +33,9 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
  * MCP23017 GPIO expander handler
  * to be called periodically in a loop
  */
-void MCP23017::handler(void)
+bool MCP23017::handler(void)
 {
+    bool newDataAvailable = false;
     switch(state)
     {
     case ES_start:
@@ -68,6 +69,7 @@ void MCP23017::handler(void)
         {
             inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
+            newDataAvailable = true;
         }
         else
         {
@@ -78,4 +80,5 @@ void MCP23017::handler(void)
     default:
         break;
     }
+    return newDataAvailable;
 }

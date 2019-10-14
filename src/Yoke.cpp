@@ -31,6 +31,7 @@ Yoke::Yoke() :
     pitchMagnet.setForce(0.0f); //XXX
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
+    buttons = 0;
 }
 
 Yoke::~Yoke()
@@ -168,15 +169,23 @@ void Yoke::sendJoystickData(void)
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
-            LOBYTE(deflectionX),
+            LOBYTE(deflectionX),    //joystick axis X
             HIBYTE(deflectionX),
-            LOBYTE(deflectionY),
+            LOBYTE(deflectionY),    //joystick axis Y
             HIBYTE(deflectionY),
-            LOBYTE(deflectionZ),
+            LOBYTE(deflectionZ),    //joystick axis Z
             HIBYTE(deflectionZ),
-            0,0,0,
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1])),
-            0,0,0,0,0,0,0
+            0,    //joystick axis Rx
+            0,    //joystick axis Ry
+            0,    //joystick axis Rz
+            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1])),    //joystick slider
+            0,    //joystick dial
+            0,    //joystick wheel
+            0,    // HAT switch 1-8, 0=neutral
+            static_cast<uint8_t>(buttons & 0xFF),         // buttons 0-7
+            static_cast<uint8_t>((buttons >> 8) & 0xFF),  // buttons 8-15
+            static_cast<uint8_t>((buttons >> 16) & 0xFF), // buttons 16-23
+            static_cast<uint8_t>((buttons >> 24) & 0xFF)  // buttons 24-31
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
 }
@@ -204,4 +213,75 @@ void Yoke::displayForceFeedbackData(void)
     System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
+}
+
+/*
+ * update yoke buttons according to GPIO expander data
+ */
+void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
+{
+    int decoderOutput;
+
+    switch(expanderIndex)
+    {
+    case 0:
+        copyBit(expanderData, 0, 2);  // XXX example of copying bit: expanderData.0 -> buttons.2
+        // example of rotary decoder usage:
+        decoderOutput = pitchTrimmer.decode(expanderData, 4, 5);
+        // set left and right trim bits according to decoderOutput
+        break;
+    case 1:
+        break;
+    case 2:
+        break;
+    default:
+        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_EXP, "Expander index out of range: " + toHex(expanderIndex));
+        break;
+    }
+}
+
+/*
+ * copies a single bit from 16-bit data register to a particular position of the yoke button register
+ */
+void Yoke::copyBit(uint16_t data, uint8_t sourcePosition, uint8_t targetPosition)
+{
+    if (data & (1 << sourcePosition))
+    {
+        buttons |= (1 << targetPosition);
+    }
+    else
+    {
+        buttons &= ~(1 << targetPosition);
+    }
+}
+
+
+RotaryDecoder::RotaryDecoder()
+{
+    previousData = 0;
+    output = 0;
+}
+
+/*
+ * decodes input from clk and direction pins of a rotary encoder
+ * returns -1 for left turn, 1 for right turn and 0 for no change
+ */
+int RotaryDecoder::decode(uint16_t expanderData, uint8_t clkPosition, uint8_t directionPosition)
+{
+    if(((expanderData & (1 << clkPosition)) != 0) &&
+       ((previousData & (1 << clkPosition)) == 0))
+    {
+        // clk transition 0->1
+        output = (expanderData & (1 << directionPosition)) != 0 ? 1 : -1;
+    }
+
+    if(((expanderData & (1 << clkPosition)) == 0) &&
+       ((previousData & (1 << clkPosition)) != 0))
+    {
+        // clk transition 1->0
+        output = 0;
+    }
+
+    previousData = expanderData;
+    return output;
 }

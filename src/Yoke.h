@@ -33,6 +33,17 @@ struct ForceFeedbackData
 };
 
 
+class RotaryDecoder
+{
+public:
+    RotaryDecoder();
+    int decode(uint16_t expanderData, uint8_t clkPosition, uint8_t directionPosition);
+private:
+    uint16_t previousData;
+    int output;
+};
+
+
 class Yoke
 {
 public:
@@ -43,10 +54,12 @@ public:
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
     void displayForceFeedbackData(void);
+    void updateButtons(uint8_t expanderIndex, uint16_t expanderData);
 private:
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
+    void copyBit(uint16_t expanderData, uint8_t sourcePosition, uint8_t targetPosition);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
@@ -65,6 +78,9 @@ private:
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
     Timer forceFeedbackDataTimer;
+    uint32_t buttons;       // 32 yoke buttons
+    RotaryDecoder pitchTrimmer;
+    RotaryDecoder yawTrimmer;
 };
 
 #endif /* YOKE_H_ */

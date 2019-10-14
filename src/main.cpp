@@ -47,9 +47,14 @@ int main(void)
         SpiBus::pSpi4->handler();
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
-        for(auto pExpander : System::getInstance().getGpioExpanders())
+        for(size_t index = 0; index < System::getInstance().getGpioExpanders().size(); index++)
         {
-            pExpander->handler();
+            bool newDataAvailable = System::getInstance().getGpioExpanders()[index]->handler();
+            if(newDataAvailable)
+            {
+                // a new GPIO input data in this expander
+                System::getInstance().getYoke()->updateButtons(index, System::getInstance().getGpioExpanders()[index]->getInputRegister());
+            }
         }
 
         if((System::getInstance().systemPushbutton.read()==GPIO_PinState::GPIO_PIN_SET) || (tm.elapsed(500000))) //XXX
