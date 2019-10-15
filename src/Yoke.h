@@ -16,6 +16,7 @@
 #include "PCA9685.h"
 #include "Electromagnet.h"
 #include "Filter.h"
+#include "Decoder.h"
 #include <string>
 
 struct ForceFeedbackData
@@ -32,18 +33,6 @@ struct ForceFeedbackData
     float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 units
 };
 
-
-class RotaryDecoder
-{
-public:
-    RotaryDecoder();
-    int decode(uint16_t expanderData, uint8_t clkPosition, uint8_t directionPosition);
-private:
-    uint16_t previousData;
-    int output;
-};
-
-
 class Yoke
 {
 public:
@@ -59,7 +48,8 @@ private:
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
-    void copyBit(uint16_t expanderData, uint8_t sourcePosition, uint8_t targetPosition);
+    void setButton(uint8_t targetPosition, bool valueHigh, bool addToClearMask);
+    void setButton(uint8_t targetPosition, uint16_t sourceData, uint8_t sourcePosition) { setButton(targetPosition, (sourceData & (1 << sourcePosition)) != 0, false); }
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
@@ -79,8 +69,10 @@ private:
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
     Timer forceFeedbackDataTimer;
     uint32_t buttons;       // 32 yoke buttons
-    RotaryDecoder pitchTrimmer;
-    RotaryDecoder yawTrimmer;
+    RotaryEncoder pitchTrimmer;
+    RotaryEncoder yawTrimmer;
+    uint32_t clearButtonMask;
+    ToggleSwitch landingLights; //XXX example
 };
 
 #endif /* YOKE_H_ */

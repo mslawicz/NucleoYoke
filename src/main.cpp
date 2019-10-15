@@ -49,8 +49,8 @@ int main(void)
         System::getInstance().getDisplay()->handler();
         for(size_t index = 0; index < System::getInstance().getGpioExpanders().size(); index++)
         {
-            bool newDataAvailable = System::getInstance().getGpioExpanders()[index]->handler();
-            if(newDataAvailable)
+            bool updateRequested = System::getInstance().getGpioExpanders()[index]->handler();
+            if(updateRequested)
             {
                 // a new GPIO input data in this expander
                 System::getInstance().getYoke()->updateButtons(index, System::getInstance().getGpioExpanders()[index]->getInputRegister());

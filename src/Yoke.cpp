@@ -24,7 +24,10 @@ Yoke::Yoke() :
     interface(),
     sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
-    pitchMagnet(&motorDriver, 0)
+    pitchMagnet(&motorDriver, 0),
+    pitchTrimmer(4, 5), //XXX example values
+    yawTrimmer(14, 15),  //XXX example values
+    landingLights(11)   //XXX example
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -32,6 +35,7 @@ Yoke::Yoke() :
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
     buttons = 0;
+    clearButtonMask = 0x00000000;
 }
 
 Yoke::~Yoke()
@@ -217,18 +221,28 @@ void Yoke::displayForceFeedbackData(void)
 
 /*
  * update yoke buttons according to GPIO expander data
+ * this function is called on every expander input data change
+ * and another time after some deferment time elapsed
  */
 void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
 {
     int decoderOutput;
 
+    // clear all decoder signals
+    buttons &= ~clearButtonMask;
+
     switch(expanderIndex)
     {
     case 0:
-        copyBit(expanderData, 0, 2);  // XXX example of copying bit: expanderData.0 -> buttons.2
+        setButton(2, expanderData, 0);  // XXX example of setting button: expanderData.0 -> buttons.2
         // example of rotary decoder usage:
-        decoderOutput = pitchTrimmer.decode(expanderData, 4, 5);
-        // set left and right trim bits according to decoderOutput
+        decoderOutput = pitchTrimmer.decode(expanderData);
+        setButton(10, decoderOutput == 1, true);
+        setButton(11, decoderOutput == -1, true);
+        // example of a toggle switch
+        decoderOutput = landingLights.decode(expanderData);
+        setButton(12, decoderOutput == 1, true); // switch 0->1
+        setButton(13, decoderOutput == -1, true);  // switch 1->0
         break;
     case 1:
         break;
@@ -241,11 +255,11 @@ void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
 }
 
 /*
- * copies a single bit from 16-bit data register to a particular position of the yoke button register
+ * sets yoke button to high or low according to input value
  */
-void Yoke::copyBit(uint16_t data, uint8_t sourcePosition, uint8_t targetPosition)
+void Yoke::setButton(uint8_t targetPosition, bool valueHigh, bool addToClearMask)
 {
-    if (data & (1 << sourcePosition))
+    if (valueHigh)
     {
         buttons |= (1 << targetPosition);
     }
@@ -253,35 +267,14 @@ void Yoke::copyBit(uint16_t data, uint8_t sourcePosition, uint8_t targetPosition
     {
         buttons &= ~(1 << targetPosition);
     }
-}
 
-
-RotaryDecoder::RotaryDecoder()
-{
-    previousData = 0;
-    output = 0;
-}
-
-/*
- * decodes input from clk and direction pins of a rotary encoder
- * returns -1 for left turn, 1 for right turn and 0 for no change
- */
-int RotaryDecoder::decode(uint16_t expanderData, uint8_t clkPosition, uint8_t directionPosition)
-{
-    if(((expanderData & (1 << clkPosition)) != 0) &&
-       ((previousData & (1 << clkPosition)) == 0))
+    if(addToClearMask)
     {
-        // clk transition 0->1
-        output = (expanderData & (1 << directionPosition)) != 0 ? 1 : -1;
+        clearButtonMask |= (1 << targetPosition);
     }
-
-    if(((expanderData & (1 << clkPosition)) == 0) &&
-       ((previousData & (1 << clkPosition)) != 0))
+    else
     {
-        // clk transition 1->0
-        output = 0;
+        clearButtonMask &= ~(1 << targetPosition);
     }
-
-    previousData = expanderData;
-    return output;
 }
+

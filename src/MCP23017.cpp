@@ -27,6 +27,7 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
     writeRequest(deviceAddress, MCP23017Register::MCP23017_IPOLA, configurationData);
     state = ExpanderState::ES_start;
     inputRegister = 0;
+    deferredUpdateRequested = false;
 }
 
 /*
@@ -35,7 +36,7 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
  */
 bool MCP23017::handler(void)
 {
-    bool newDataAvailable = false;
+    bool updateRequested = false;
     switch(state)
     {
     case ES_start:
@@ -47,18 +48,18 @@ bool MCP23017::handler(void)
         {
             // interrupt signal on - read expander data
             readRequest(deviceAddress, MCP23017Register::MCP23017_GPIOA, 2);
-            eventTimer.reset();
+            debounceTimer.reset();
             state = ES_debouncing;
         }
         break;
     case ES_debouncing:
         if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) &&
-                (eventTimer.elapsed(RepeadPeriod)))
+                (debounceTimer.elapsed(RepeadPeriod)))
         {
             // after RepeatPeriod time there is another INT signal - read data again
             state = ES_wait_for_int;
         }
-        if(eventTimer.elapsed(StabilityTime))
+        if(debounceTimer.elapsed(StabilityTime))
         {
             // no next INT signal after StabilityTime
             state = ES_stable;
@@ -69,7 +70,9 @@ bool MCP23017::handler(void)
         {
             inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
-            newDataAvailable = true;
+            updateRequested = true;   // request update now
+            updateTimer.reset();
+            deferredUpdateRequested = true; // deferred update requested
         }
         else
         {
@@ -80,5 +83,13 @@ bool MCP23017::handler(void)
     default:
         break;
     }
-    return newDataAvailable;
+
+    // set updateRequest if deferred update time elapsed
+    if(deferredUpdateRequested && updateTimer.elapsed(DeferredUpdateTime))
+    {
+        deferredUpdateRequested = false;
+        updateRequested = true;
+    }
+
+    return updateRequested;
 }
