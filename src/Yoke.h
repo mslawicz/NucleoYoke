@@ -71,8 +71,11 @@ private:
     uint32_t buttons;       // 32 yoke buttons
     RotaryEncoder pitchTrimmer;
     RotaryEncoder yawTrimmer;
-    uint32_t clearButtonMask;
+    uint32_t clearButtonMask;   // mask for deferred button clearance
     ToggleSwitch landingLights; //XXX example
+    bool buttonClearRequest;
+    Timer buttonClearTimer;
+    const uint32_t buttonClearDelay = 100000;   // time which must elapse between last expander update and button clearance
 };
 
 #endif /* YOKE_H_ */

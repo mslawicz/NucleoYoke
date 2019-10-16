@@ -27,7 +27,6 @@ MCP23017::MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* port
     writeRequest(deviceAddress, MCP23017Register::MCP23017_IPOLA, configurationData);
     state = ExpanderState::ES_start;
     inputRegister = 0;
-    deferredUpdateRequested = false;
 }
 
 /*
@@ -71,8 +70,6 @@ bool MCP23017::handler(void)
             inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
             updateRequested = true;   // request update now
-            updateTimer.reset();
-            deferredUpdateRequested = true; // deferred update requested
         }
         else
         {
@@ -82,13 +79,6 @@ bool MCP23017::handler(void)
         break;
     default:
         break;
-    }
-
-    // set updateRequest if deferred update time elapsed
-    if(deferredUpdateRequested && updateTimer.elapsed(DeferredUpdateTime))
-    {
-        deferredUpdateRequested = false;
-        updateRequested = true;
     }
 
     return updateRequested;

@@ -36,6 +36,7 @@ Yoke::Yoke() :
     forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
     buttons = 0;
     clearButtonMask = 0x00000000;
+    buttonClearRequest = false;
 }
 
 Yoke::~Yoke()
@@ -67,6 +68,13 @@ void Yoke::handler(void)
         if(forceFeedbackDataTimer.elapsed(500000))
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
+        }
+
+        if(buttonClearRequest && buttonClearTimer.elapsed(buttonClearDelay))
+        {
+            buttonClearRequest = false;
+            // clear all decoder signals
+            buttons &= ~clearButtonMask;
         }
     }
 }
@@ -228,9 +236,6 @@ void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
 {
     int decoderOutput;
 
-    // clear all decoder signals
-    buttons &= ~clearButtonMask;
-
     switch(expanderIndex)
     {
     case 0:
@@ -252,6 +257,9 @@ void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_EXP, "Expander index out of range: " + toHex(expanderIndex));
         break;
     }
+
+    buttonClearRequest = true;
+    buttonClearTimer.reset();
 }
 
 /*

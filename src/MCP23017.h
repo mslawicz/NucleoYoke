@@ -42,12 +42,9 @@ private:
     GPIO interruptPin;
     uint8_t state;
     Timer debounceTimer;        // timer for input debouncing purpose
-    Timer updateTimer;          // timer for deferred button update
     const uint32_t RepeadPeriod = 1000;     // period of expander readout repetitions for debouncing
     const uint32_t StabilityTime = 10000;   // required time of stable input states
     uint16_t inputRegister;  // current input data
-    bool deferredUpdateRequested;   // true if deferred button update is to be done
-    const uint32_t DeferredUpdateTime = 100000;
 };
 
 #endif /* MCP23017_H_ */
