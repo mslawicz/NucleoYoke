@@ -9,6 +9,7 @@
 #include "stm32f4xx_nucleo_144.h"
 #include "Timer.h"
 #include "System.h"
+#include "Decoder.h"
 
 
 #define USE_HSE_OSCILLATOR  1
@@ -128,11 +129,13 @@ void System::config(void)
     pSPI2 = new SpiBus(SPI2);
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
+    // add GPIO expanders
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, 0x0001));
     pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;
     pConsole->registerCommands();
+    pYoke->registerButtonDecoders();
 }
 
 /*

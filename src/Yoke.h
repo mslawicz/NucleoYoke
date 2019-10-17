@@ -43,13 +43,12 @@ public:
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
     void displayForceFeedbackData(void);
-    void updateButtons(uint8_t expanderIndex, uint16_t expanderData);
+    void registerButtonDecoders(void);
 private:
+    void updateButtons(void);
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
-    void setButton(uint8_t targetPosition, bool valueHigh, bool addToClearMask);
-    void setButton(uint8_t targetPosition, uint16_t sourceData, uint8_t sourcePosition) { setButton(targetPosition, (sourceData & (1 << sourcePosition)) != 0, false); }
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
@@ -69,10 +68,7 @@ private:
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
     Timer forceFeedbackDataTimer;
     uint32_t buttons;       // 32 yoke buttons
-    RotaryEncoder pitchTrimmer;
-    RotaryEncoder yawTrimmer;
-    uint32_t clearButtonMask;   // mask for deferred button clearance
-    ToggleSwitch landingLights; //XXX example
+    uint32_t buttonClearMask;   // mask for deferred button clearance
     bool buttonClearRequest;
     Timer buttonClearTimer;
     const uint32_t buttonClearDelay = 100000;   // time which must elapse between last expander update and button clearance

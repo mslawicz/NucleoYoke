@@ -24,10 +24,7 @@ Yoke::Yoke() :
     interface(),
     sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
-    pitchMagnet(&motorDriver, 0),
-    pitchTrimmer(4, 5), //XXX example values
-    yawTrimmer(14, 15),  //XXX example values
-    landingLights(11)   //XXX example
+    pitchMagnet(&motorDriver, 0)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -35,7 +32,7 @@ Yoke::Yoke() :
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
     buttons = 0;
-    clearButtonMask = 0x00000000;
+    buttonClearMask = 0x00000000;
     buttonClearRequest = false;
 }
 
@@ -53,6 +50,8 @@ void Yoke::handler(void)
     if(loopTimer.elapsed(loopPeriod))
     {
         loopTimer.reset();
+        // update joystick button data
+        updateButtons();
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report
@@ -68,13 +67,6 @@ void Yoke::handler(void)
         if(forceFeedbackDataTimer.elapsed(500000))
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
-        }
-
-        if(buttonClearRequest && buttonClearTimer.elapsed(buttonClearDelay))
-        {
-            buttonClearRequest = false;
-            // clear all decoder signals
-            buttons &= ~clearButtonMask;
         }
     }
 }
@@ -169,6 +161,16 @@ void Yoke::computeParameters(void)
     gPhi = phi; //XXX
 }
 
+/*
+ * register yoke button decoders
+ */
+void Yoke::registerButtonDecoders(void)
+{
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoder(0, 1, 10, 11, buttons)); // example of rotary encoder
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(2, 12, buttons));     // example of toggle switch
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(3, 13));     // example of direct button (not inverted)
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(4, 14, true));     // example of direct button (inverted)
+}
 
 /*
  * sends yoke data to PC using USB HID joystick report
@@ -229,60 +231,31 @@ void Yoke::displayForceFeedbackData(void)
 
 /*
  * update yoke buttons according to GPIO expander data
- * this function is called on every expander input data change
- * and another time after some deferment time elapsed
+ * to be called in yoke handler
  */
-void Yoke::updateButtons(uint8_t expanderIndex, uint16_t expanderData)
+void Yoke::updateButtons(void)
 {
-    int decoderOutput;
-
-    switch(expanderIndex)
+    for(auto& pExpander : System::getInstance().getGpioExpanders())
     {
-    case 0:
-        setButton(2, expanderData, 0);  // XXX example of setting button: expanderData.0 -> buttons.2
-        // example of rotary decoder usage:
-        decoderOutput = pitchTrimmer.decode(expanderData);
-        setButton(10, decoderOutput == 1, true);
-        setButton(11, decoderOutput == -1, true);
-        // example of a toggle switch
-        decoderOutput = landingLights.decode(expanderData);
-        setButton(12, decoderOutput == 1, true); // switch 0->1
-        setButton(13, decoderOutput == -1, true);  // switch 1->0
-        break;
-    case 1:
-        break;
-    case 2:
-        break;
-    default:
-        System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_EXP, "Expander index out of range: " + toHex(expanderIndex));
-        break;
+        bool updateRequested = pExpander->handler();
+        if(updateRequested)
+        {
+            for(auto& pDecoder : pExpander->getDecoders())
+            {
+                pDecoder->decode(pExpander->getInputRegister(), buttons);
+            }
+
+            buttonClearRequest = true;
+            buttonClearTimer.reset();
+        }
     }
 
-    buttonClearRequest = true;
-    buttonClearTimer.reset();
+    if(buttonClearRequest && buttonClearTimer.elapsed(buttonClearDelay))
+    {
+        buttonClearRequest = false;
+        // clear all decoder signals
+        buttons &= ~buttonClearMask;
+    }
 }
 
-/*
- * sets yoke button to high or low according to input value
- */
-void Yoke::setButton(uint8_t targetPosition, bool valueHigh, bool addToClearMask)
-{
-    if (valueHigh)
-    {
-        buttons |= (1 << targetPosition);
-    }
-    else
-    {
-        buttons &= ~(1 << targetPosition);
-    }
-
-    if(addToClearMask)
-    {
-        clearButtonMask |= (1 << targetPosition);
-    }
-    else
-    {
-        clearButtonMask &= ~(1 << targetPosition);
-    }
-}
 
