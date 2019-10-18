@@ -22,6 +22,17 @@
 #define TEST2_PORT   GPIOG
 #define TEST2_PIN    GPIO_PIN_12
 
+enum ErrorCode
+{
+    EC_OK = 0,
+    EC_RccOscConfig,
+    EC_RccClockConfig,
+    EC_RccPeriphClkConfig,
+    EC_TimBase,
+    EC_TimConfigClockSource,
+    EC_TimMasterConfigSynchronization,
+    EC_UartInit
+};
 
 class System
 {
@@ -29,7 +40,7 @@ public:
     ~System();
     static void configMCU(void);
     static System& getInstance(void);
-    void errorHandler(void) { errorLED.write(GPIO_PinState::GPIO_PIN_SET); };
+    void errorHandler(ErrorCode code) { errorLED.write(GPIO_PinState::GPIO_PIN_SET); };
     void config(void);
     void terminate(void);
     void blinkSystemLED(void);
@@ -38,6 +49,7 @@ public:
     Display* getDisplay(void) const { return pDisplay; }
     WS2812* getRGBLeds(void) const { return pRGBLeds; }
     std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
+    static ErrorCode initErrorCode;
     GPIO systemLED;
     GPIO errorLED;
     GPIO dataLED;

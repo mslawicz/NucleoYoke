@@ -33,7 +33,7 @@ UART::UART(USART_TypeDef* instance, uint32_t baudRate) :
     hUart.Init.OverSampling = UART_OVERSAMPLING_16;
     if (HAL_UART_Init(&hUart) != HAL_OK)
     {
-      System::getInstance().errorHandler();
+      System::getInstance().errorHandler(ErrorCode::EC_UartInit);
     }
 
     if(instance == USART3)
