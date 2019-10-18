@@ -14,8 +14,12 @@
 #include "Decoder.h"
 #include <vector>
 
-#define MCP23017_0_INT_PORT    GPIOD    //temporary value XXX
-#define MCP23017_0_INT_PIN     GPIO_PIN_1   //temporary value XXX
+#define MCP23017_0_INT_PORT    GPIOD
+#define MCP23017_0_INT_PIN     GPIO_PIN_1
+#define MCP23017_1_INT_PORT    GPIOD
+#define MCP23017_1_INT_PIN     GPIO_PIN_0
+#define MCP23017_2_INT_PORT    GPIOG
+#define MCP23017_2_INT_PIN     GPIO_PIN_0
 
 // caution! the following addressing reflects the default addressing scheme (IOCON.BANK = 0)
 enum MCP23017Register

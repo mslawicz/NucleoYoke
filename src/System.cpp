@@ -132,7 +132,8 @@ void System::config(void)
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
     // add GPIO expanders
-    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, 0x0001));
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, 0x1F03));
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_0_INT_PIN, 0xC000));
     pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;

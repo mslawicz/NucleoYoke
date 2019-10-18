@@ -166,10 +166,21 @@ void Yoke::computeParameters(void)
  */
 void Yoke::registerButtonDecoders(void)
 {
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoder(0, 1, 10, 11, buttons)); // example of rotary encoder
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(2, 12, buttons));     // example of toggle switch
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(3, 13));     // example of direct button (not inverted)
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(4, 14, true));     // example of direct button (inverted)
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoder(0, 1, 10, 11, buttons)); // example of rotary encoder
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(2, 12, buttons));     // example of toggle switch
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(3, 13));     // example of direct button (not inverted)
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(4, 14, true));     // example of direct button (inverted)
+
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(0, 0));   // gear up
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, buttons));     // toggle left of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 5, buttons));     // toggle centre of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 6, buttons));     // toggle right of 3
+
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(14, 7, buttons));     // toggle left of 2
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(15, 8, buttons));     // toggle right of 2
 }
 
 /*
