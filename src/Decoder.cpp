@@ -71,14 +71,15 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
 /*
  * constructor of toggle switch object
  */
-ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& cleanMask) :
-        Decoder(inputBit, -1, outputBit, -1)
+ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t onBit, uint8_t offBit, uint32_t& cleanMask) :
+        Decoder(inputBit, -1, onBit, offBit)
 {
-    cleanMask |= (1 << outputBit);
+    cleanMask |= (1 << onBit);
+    cleanMask |= (1 << offBit);
 }
 
 /*
- * generates toggle switch signal for button register from input bit in expander data
+ * generates toggle switch on & off signals for button register from input bit in expander data
  */
 bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
 {
@@ -89,13 +90,16 @@ bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
     {
         // input transition 0->1
         buttons |= (1 << o1Bit);
+        buttons &= ~(1 << o2Bit);
         cleanRequest = true;
     }
     else if(((expanderData & (1 << i1Bit)) == 0) &&
        ((previousExpanderData & (1 << i1Bit)) != 0))
     {
         // input transition 1->0
+        buttons |= (1 << o2Bit);
         buttons &= ~(1 << o1Bit);
+        cleanRequest = true;
     }
 
     previousExpanderData = expanderData;

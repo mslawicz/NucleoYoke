@@ -175,12 +175,12 @@ void Yoke::registerButtonDecoders(void)
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, buttonCleanMask));     // toggle left of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 5, buttonCleanMask));     // toggle centre of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 6, buttonCleanMask));     // toggle right of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3
 
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(14, 7, buttonCleanMask));     // toggle left of 2
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(15, 8, buttonCleanMask));     // toggle right of 2
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(14, 24, 25, buttonCleanMask));     // toggle left of 2
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(15, 26, 27, buttonCleanMask));     // toggle right of 2
 }
 
 /*

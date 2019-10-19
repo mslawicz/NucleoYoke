@@ -21,6 +21,8 @@ const bool Console::IsChannelActive[] = {
         true  //LC_EXP
 };
 
+Severity Console::systemLevel = Severity::Debug;
+
 Console::Console() :
     interface(USART3, 115200)
 {
@@ -64,7 +66,8 @@ void Console::sendMessage(Severity level, LogChannel channel, std::string messag
             {Debug, "debug"}
     };
 
-    if(Console::IsChannelActive[channel])
+    if(Console::IsChannelActive[channel] &&
+            (level <= Console::systemLevel))
     {
         message = severityStrings.find(level)->second + ": " + message + "\r\n";
         interface.send(message);

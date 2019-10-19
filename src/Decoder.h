@@ -34,7 +34,7 @@ public:
 class ToggleSwitch : public Decoder
 {
 public:
-    ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& cleanMask);
+    ToggleSwitch(uint8_t inputBit, uint8_t onBit, uint8_t offBit, uint32_t& cleanMask);
     bool decode(uint16_t expanderData, uint32_t& buttons);
 };
 

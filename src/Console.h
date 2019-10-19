@@ -49,6 +49,7 @@ public:
     void sendMessage(Severity level, LogChannel channel, std::string message);
     void registerCommands(void);
     static const bool IsChannelActive[LogChannel::LC_END];
+    static Severity systemLevel;
 private:
     void executeCommand(std::string commandString);
     void displayHelp(StringVector);
