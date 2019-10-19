@@ -68,10 +68,10 @@ private:
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
     Timer forceFeedbackDataTimer;
     uint32_t buttons;       // 32 yoke buttons
-    uint32_t buttonClearMask;   // mask for deferred button clearance
-    bool buttonClearRequest;
-    Timer buttonClearTimer;
-    const uint32_t buttonClearDelay = 100000;   // time which must elapse between last expander update and button clearance
+    uint32_t buttonCleanMask;   // mask for deferred button clean out
+    bool buttonCleanRequest;
+    Timer buttonCleanTimer;
+    const uint32_t buttonCleanDelay = 100000;   // time which must elapse between last expander update and button clean out
 };
 
 #endif /* YOKE_H_ */

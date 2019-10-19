@@ -27,14 +27,14 @@ protected:
 class RotaryEncoder : public Decoder
 {
 public:
-    RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& clearMask);
+    RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask);
     bool decode(uint16_t expanderData, uint32_t& buttons);
 };
 
 class ToggleSwitch : public Decoder
 {
 public:
-    ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& clearMask);
+    ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& cleanMask);
     bool decode(uint16_t expanderData, uint32_t& buttons);
 };
 

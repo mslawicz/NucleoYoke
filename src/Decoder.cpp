@@ -22,11 +22,11 @@ Decoder::Decoder(uint8_t i1Bit, uint8_t i2Bit, uint8_t o1Bit, uint8_t o2Bit) :
 /*
  * constructor of rotary encoder object
  */
-RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& clearMask) :
+RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask) :
         Decoder(clkBit, directionBit, turnLeftBit, turnRightBit)
 {
-    clearMask |= (1 << turnLeftBit);
-    clearMask |= (1 << turnRightBit);
+    cleanMask |= (1 << turnLeftBit);
+    cleanMask |= (1 << turnRightBit);
 }
 
 /*
@@ -34,7 +34,7 @@ RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnL
  */
 bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
 {
-    bool clearRequest = false;
+    bool cleanRequest = false;
 
     // check if there is clk transition 0->1
     if(((expanderData & (1 << i1Bit)) != 0) &&
@@ -53,28 +53,28 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
             buttons &= ~(1 << o2Bit);
         }
 
-        clearRequest = true;
+        cleanRequest = true;
     }
     // check if there is clk transition 1->0
     else if(((expanderData & (1 << i1Bit)) == 0) &&
        ((previousExpanderData & (1 << i1Bit)) != 0))
     {
-        // clear both output signals
+        // clean both output signals
         buttons &= ~(1 << o1Bit);
         buttons &= ~(1 << o2Bit);
     }
 
     previousExpanderData = expanderData;
-    return clearRequest;
+    return cleanRequest;
 }
 
 /*
  * constructor of toggle switch object
  */
-ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& clearMask) :
+ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& cleanMask) :
         Decoder(inputBit, -1, outputBit, -1)
 {
-    clearMask |= (1 << outputBit);
+    cleanMask |= (1 << outputBit);
 }
 
 /*
@@ -82,14 +82,14 @@ ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& clearM
  */
 bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
 {
-    bool clearRequest = false;
+    bool cleanRequest = false;
 
     if(((expanderData & (1 << i1Bit)) != 0) &&
        ((previousExpanderData & (1 << i1Bit)) == 0))
     {
         // input transition 0->1
         buttons |= (1 << o1Bit);
-        clearRequest = true;
+        cleanRequest = true;
     }
     else if(((expanderData & (1 << i1Bit)) == 0) &&
        ((previousExpanderData & (1 << i1Bit)) != 0))
@@ -99,7 +99,7 @@ bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
     }
 
     previousExpanderData = expanderData;
-    return clearRequest;
+    return cleanRequest;
 }
 
 /*
