@@ -44,6 +44,7 @@ public:
     bool handler(void);
     uint16_t getInputRegister(void) const { return inputRegister; }
     std::vector<Decoder*>& getDecoders(void) { return decoders; }
+    DeviceAddress getDeviceAddress(void) const { return deviceAddress; }
 private:
     DeviceAddress deviceAddress;
     GPIO interruptPin;
