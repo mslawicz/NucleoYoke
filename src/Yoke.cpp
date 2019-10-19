@@ -251,7 +251,6 @@ void Yoke::updateButtons(void)
         bool updateRequested = pExpander->handler();
         if(updateRequested)
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP, "Expander addr=" + toHex(pExpander->getDeviceAddress(), 2, true) + " value=" + toHex(pExpander->getInputRegister(), 4, true));
             for(auto& pDecoder : pExpander->getDecoders())
             {
                 pDecoder->decode(pExpander->getInputRegister(), buttons);
@@ -259,6 +258,11 @@ void Yoke::updateButtons(void)
 
             buttonClearRequest = true;
             buttonClearTimer.reset();
+
+            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
+                    "Expander addr=" + toHex(pExpander->getDeviceAddress(), 2, true) +
+                    " value=" + toHex(pExpander->getInputRegister(), 4, true) +
+                    " buttons=" + toHex(buttons, 8, true));
         }
     }
 
@@ -267,6 +271,8 @@ void Yoke::updateButtons(void)
         buttonClearRequest = false;
         // clear all decoder signals
         buttons &= ~buttonClearMask;
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
+                            "Cleared buttons=" + toHex(buttons, 8, true));
     }
 }
 
