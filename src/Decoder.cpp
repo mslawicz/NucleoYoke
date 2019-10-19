@@ -34,7 +34,7 @@ RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnL
  */
 bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
 {
-    bool changedToOne = false;
+    bool clearRequest = false;
 
     // check if there is clk transition 0->1
     if(((expanderData & (1 << i1Bit)) != 0) &&
@@ -53,7 +53,7 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
             buttons &= ~(1 << o2Bit);
         }
 
-        changedToOne = true;
+        clearRequest = true;
     }
     // check if there is clk transition 1->0
     else if(((expanderData & (1 << i1Bit)) == 0) &&
@@ -65,7 +65,7 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
     }
 
     previousExpanderData = expanderData;
-    return changedToOne;
+    return clearRequest;
 }
 
 /*
@@ -82,14 +82,14 @@ ToggleSwitch::ToggleSwitch(uint8_t inputBit, uint8_t outputBit, uint32_t& clearM
  */
 bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
 {
-    bool changedToOne = false;
+    bool clearRequest = false;
 
     if(((expanderData & (1 << i1Bit)) != 0) &&
        ((previousExpanderData & (1 << i1Bit)) == 0))
     {
         // input transition 0->1
         buttons |= (1 << o1Bit);
-        changedToOne = true;
+        clearRequest = true;
     }
     else if(((expanderData & (1 << i1Bit)) == 0) &&
        ((previousExpanderData & (1 << i1Bit)) != 0))
@@ -99,7 +99,7 @@ bool ToggleSwitch::decode(uint16_t expanderData, uint32_t& buttons)
     }
 
     previousExpanderData = expanderData;
-    return changedToOne;
+    return clearRequest;
 }
 
 /*

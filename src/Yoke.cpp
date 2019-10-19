@@ -175,12 +175,12 @@ void Yoke::registerButtonDecoders(void)
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, buttons));     // toggle left of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 5, buttons));     // toggle centre of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 6, buttons));     // toggle right of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, buttonClearMask));     // toggle left of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 5, buttonClearMask));     // toggle centre of 3
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 6, buttonClearMask));     // toggle right of 3
 
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(14, 7, buttons));     // toggle left of 2
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(15, 8, buttons));     // toggle right of 2
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(14, 7, buttonClearMask));     // toggle left of 2
+    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(15, 8, buttonClearMask));     // toggle right of 2
 }
 
 /*
@@ -253,11 +253,12 @@ void Yoke::updateButtons(void)
         {
             for(auto& pDecoder : pExpander->getDecoders())
             {
-                pDecoder->decode(pExpander->getInputRegister(), buttons);
+                if(pDecoder->decode(pExpander->getInputRegister(), buttons))
+                {
+                    buttonClearRequest = true;
+                    buttonClearTimer.reset();
+                }
             }
-
-            buttonClearRequest = true;
-            buttonClearTimer.reset();
 
             System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
                     "Expander addr=" + toHex(pExpander->getDeviceAddress(), 2, true) +
@@ -272,7 +273,8 @@ void Yoke::updateButtons(void)
         // clear all decoder signals
         buttons &= ~buttonClearMask;
         System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
-                            "Cleared buttons=" + toHex(buttons, 8, true));
+                            "Clear mask=" + toHex(buttonClearMask, 8, true) +
+                            " cleared buttons=" + toHex(buttons, 8, true));
     }
 }
 
