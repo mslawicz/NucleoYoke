@@ -59,6 +59,7 @@ int main(void)
         if(tl.elapsed(50000)) //XXX
         {
             static uint8_t step = 0;
+            static uint8_t gearStep = 0;
             tl.reset();
             ledData =
             {
@@ -69,10 +70,17 @@ int main(void)
                     System::getInstance().getRGBLeds()->getCycledValue(step, 12),
                     System::getInstance().getRGBLeds()->getCycledValue(step, 15),
                     System::getInstance().getRGBLeds()->getCycledValue(step, 18),
-                    System::getInstance().getRGBLeds()->getCycledValue(step, 21)
+                    System::getInstance().getRGBLeds()->getCycledValue(step, 21),
+                    System::getInstance().getRGBLeds()->getCycledValue(gearStep, 0),
+                    System::getInstance().getRGBLeds()->getCycledValue(gearStep, 0),
+                    System::getInstance().getRGBLeds()->getCycledValue(gearStep, 0)
             };
             System::getInstance().getRGBLeds()->send(ledData);
             step = (step+1) % 24;
+            if(step == 0)
+            {
+                gearStep = (gearStep+1) % 24;
+            }
         }
     }
 
