@@ -134,6 +134,7 @@ void System::config(void)
     // add GPIO expanders
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, 0x1F03));
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, 0xC000));
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, 0x0001)); //XXX for test
     pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;
