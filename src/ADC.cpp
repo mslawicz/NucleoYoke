@@ -41,8 +41,10 @@ ADConverter::ADConverter()
 
     // register ADC channels
     channelRank = 1;
-    registerChannel(ADC_CHANNEL_0);
-    registerChannel(ADC_CHANNEL_9);
+    registerChannel(ADC_CHANNEL_14);    // rudder
+    registerChannel(ADC_CHANNEL_0);     // thrust
+    registerChannel(ADC_CHANNEL_10);    // mixture
+    registerChannel(ADC_CHANNEL_11);    // propeller
 
     /* ADC1 DMA Init */
     __HAL_RCC_DMA2_CLK_ENABLE();
