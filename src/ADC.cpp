@@ -27,7 +27,7 @@ ADConverter::ADConverter()
     hADC.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
     hADC.Init.ExternalTrigConv = ADC_SOFTWARE_START;
     hADC.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-    hADC.Init.NbrOfConversion = 2;
+    hADC.Init.NbrOfConversion = 4;
     hADC.Init.DMAContinuousRequests = ENABLE;
     hADC.Init.EOCSelection = ADC_EOC_SEQ_CONV;
     if (HAL_ADC_Init(&hADC) == HAL_OK)
