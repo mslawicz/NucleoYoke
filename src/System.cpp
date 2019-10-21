@@ -132,9 +132,35 @@ void System::config(void)
     // SPI4 is used for display
     pSPI4 = new SpiBus(SPI4);
     // add GPIO expanders
-    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, 0x1F03));
-    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, 0xC000));
-    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, 0x0001)); //XXX for test
+    uint16_t bitMask = 0;
+    bitMask |= (1 << 13);   // reverser button
+    bitMask |= (1 << 0);   // gear up
+    bitMask |= (1 << 1);   // gear down
+    bitMask |= (1 << 8);   // flaps up
+    bitMask |= (1 << 9);   // flaps down
+    bitMask |= (1 << 10);   // left toggle (3 toggle set)
+    bitMask |= (1 << 11);   // middle toggle (3 toggle set)
+    bitMask |= (1 << 12);   // right toggle (3 toggle set)
+    bitMask |= (1 << 5);   // elevator trim encoder - clk
+    bitMask |= (1 << 6);   // elevator trim encoder - direction
+    bitMask |= (1 << 7);   // elevator trim encoder - pushbutton
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, bitMask));
+    bitMask = 0;
+    bitMask |= (1 << 5);   // rudder trim encoder - clk
+    bitMask |= (1 << 6);   // rudder trim encoder - direction
+    bitMask |= (1 << 7);   // rudder trim encoder - pushbutton
+    bitMask |= (1 << 8);   // ailron trim encoder - clk
+    bitMask |= (1 << 9);   // ailron trim encoder - direction
+    bitMask |= (1 << 10);   // ailron trim encoder - pushbutton
+    bitMask |= (1 << 13);   // extra encoder - clk
+    bitMask |= (1 << 14);   // extra encoder - direction
+    bitMask |= (1 << 15);   // extra encoder - pushbutton
+    bitMask |= (1 << 3);   // analog joystick pushbutton
+    bitMask |= (1 << 11);   // left toggle (2 toggle set)
+    bitMask |= (1 << 12);   // right toggle (2 toggle set)
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, bitMask));
+    bitMask = 0;
+    gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, bitMask));
     pRGBLeds = new WS2812(pSPI2);
     pDisplay = new Display;
     pYoke = new Yoke;
