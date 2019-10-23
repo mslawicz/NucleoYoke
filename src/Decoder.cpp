@@ -36,11 +36,10 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
 {
     bool cleanRequest = false;
 
-    // check if there is clk transition 0->1
-    if(((expanderData & (1 << i1Bit)) != 0) &&
-       ((previousExpanderData & (1 << i1Bit)) == 0))
+    // check if there is clk transition
+    if((expanderData & (1 << i1Bit)) != (previousExpanderData & (1 << i1Bit)))
     {
-        if((expanderData & (1 << i2Bit)) != 0)
+        if(((expanderData >> i1Bit) ^ (expanderData >> i2Bit)) & 0x0001)
         {
             // encoder rotated right
             buttons &= ~(1 << o1Bit);
@@ -55,11 +54,11 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
 
         cleanRequest = true;
     }
-    // check if there is clk transition 1->0
-    else if(((expanderData & (1 << i1Bit)) == 0) &&
-       ((previousExpanderData & (1 << i1Bit)) != 0))
+
+    // check if there is direction bit transition
+    if((expanderData & (1 << i2Bit)) != (previousExpanderData & (1 << i2Bit)))
     {
-        // clean both output signals
+        // clear both buttons and allow next rotation signal
         buttons &= ~(1 << o1Bit);
         buttons &= ~(1 << o2Bit);
     }

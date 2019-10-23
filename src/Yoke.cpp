@@ -47,11 +47,12 @@ Yoke::~Yoke()
  */
 void Yoke::handler(void)
 {
+    // update joystick button data
+    updateButtons();
+
     if(loopTimer.elapsed(loopPeriod))
     {
         loopTimer.reset();
-        // update joystick button data
-        updateButtons();
         // compute yoke parameters after reception of new sensor data
         computeParameters();
         // send yoke data to PC using USB HID joystick report

@@ -46,36 +46,53 @@ bool MCP23017::handler(void)
         if(interruptPin.read() == GPIO_PinState::GPIO_PIN_SET)
         {
             // interrupt signal on - read expander data
-            readRequest(deviceAddress, MCP23017Register::MCP23017_GPIOA, 2);
-            debounceTimer.reset();
-            state = ES_debouncing;
+            readRequest(deviceAddress, MCP23017Register::MCP23017_INTCAPA, 2);
+            eventTimer.reset();
+            state = ES_wait_for_data;
         }
         break;
-    case ES_debouncing:
-        if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) &&
-                (debounceTimer.elapsed(RepeadPeriod)))
+    case ES_wait_for_data:
+        if(eventTimer.elapsed(DataTimeout))
         {
-            // after RepeatPeriod time there is another INT signal - read data again
-            state = ES_wait_for_int;
+            System::getInstance().getConsole()->sendMessage(Severity::Warning, LogChannel::LC_EXP, "Expander data not received");
+            state = ES_start;
         }
-        if(debounceTimer.elapsed(StabilityTime))
-        {
-            // no next INT signal after StabilityTime
-            state = ES_stable;
-        }
-        break;
-    case ES_stable:
         if(isNewDataReceived())
         {
             inputRegister = *reinterpret_cast<uint16_t*>(&receiveBuffer[0]);
             markNewDataReceived(false);
             updateRequested = true;   // request update now
+            eventTimer.reset();
+            state = ES_debouncing;
         }
-        else
+        break;
+    case ES_debouncing:
+        if((interruptPin.read() == GPIO_PinState::GPIO_PIN_SET) &&
+                (eventTimer.elapsed(RepeadPeriod)))
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Warning, LogChannel::LC_EXP, "Expander data not ready");
+            // after RepeatPeriod time there is another INT signal - read data again for clearing INT signal
+            readRequest(deviceAddress, MCP23017Register::MCP23017_GPIOA, 2);
+            eventTimer.reset();
+            state = ES_wait_for_clearance;
         }
-        state = ES_wait_for_int;
+        if(eventTimer.elapsed(StabilityTime))
+        {
+            // no next INT signal after StabilityTime - go to new event awaiting
+            state = ES_wait_for_int;
+        }
+        break;
+    case ES_wait_for_clearance:
+        if(eventTimer.elapsed(DataTimeout))
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Warning, LogChannel::LC_EXP, "Expander dummy data not received");
+            state = ES_start;
+        }
+        if(isNewDataReceived())
+        {
+            markNewDataReceived(false);
+            eventTimer.reset();
+            state = ES_debouncing;
+        }
         break;
     default:
         break;
