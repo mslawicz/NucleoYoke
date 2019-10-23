@@ -41,15 +41,15 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
     {
         if(((expanderData >> i1Bit) ^ (expanderData >> i2Bit)) & 0x0001)
         {
-            // encoder rotated right
-            buttons &= ~(1 << o1Bit);
-            buttons |= (1 << o2Bit);
-        }
-        else
-        {
             // encoder rotated left
             buttons |= (1 << o1Bit);
             buttons &= ~(1 << o2Bit);
+        }
+        else
+        {
+            // encoder rotated right
+            buttons &= ~(1 << o1Bit);
+            buttons |= (1 << o2Bit);
         }
 
         cleanRequest = true;
