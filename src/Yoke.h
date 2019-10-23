@@ -70,6 +70,7 @@ private:
     uint32_t buttons;       // 32 yoke buttons
     uint32_t buttonCleanMask;   // mask for deferred button clean out
     bool buttonCleanRequest;
+    Timer buttonCleanTimer;
     const uint32_t buttonCleanDelay = 100000;   // time which must elapse between last expander update and button clean out
 };
 
