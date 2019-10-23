@@ -55,14 +55,6 @@ bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
         cleanRequest = true;
     }
 
-    // check if there is direction bit transition
-    if((expanderData & (1 << i2Bit)) != (previousExpanderData & (1 << i2Bit)))
-    {
-        // clear both buttons and allow next rotation signal
-        buttons &= ~(1 << o1Bit);
-        buttons &= ~(1 << o2Bit);
-    }
-
     previousExpanderData = expanderData;
     return cleanRequest;
 }

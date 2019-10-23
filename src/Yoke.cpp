@@ -69,6 +69,16 @@ void Yoke::handler(void)
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
+
+        if(buttonCleanRequest)
+        {
+            buttonCleanRequest = false;
+            // clean all decoder signals
+            buttons &= ~buttonCleanMask;
+            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
+                                "Clean mask=" + toHex(buttonCleanMask, 8, true) +
+                                " clean out buttons=" + toHex(buttons, 8, true));
+        }
     }
 }
 
@@ -258,7 +268,6 @@ void Yoke::updateButtons(void)
                 if(pDecoder->decode(pExpander->getInputRegister(), buttons))
                 {
                     buttonCleanRequest = true;
-                    buttonCleanTimer.reset();
                 }
             }
 
@@ -267,16 +276,6 @@ void Yoke::updateButtons(void)
                     " value=" + toHex(pExpander->getInputRegister(), 4, true) +
                     " buttons=" + toHex(buttons, 8, true));
         }
-    }
-
-    if(buttonCleanRequest && buttonCleanTimer.elapsed(buttonCleanDelay))
-    {
-        buttonCleanRequest = false;
-        // clean all decoder signals
-        buttons &= ~buttonCleanMask;
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
-                            "Clean mask=" + toHex(buttonCleanMask, 8, true) +
-                            " clean out buttons=" + toHex(buttons, 8, true));
     }
 }
 
