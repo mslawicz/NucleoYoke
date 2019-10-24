@@ -27,7 +27,6 @@ class WS2812 : public SpiDevice
 public:
     WS2812(SpiBus* pBus);
     void send(std::vector<uint32_t> dataGRB);
-    uint32_t getCycledValue(uint8_t step, uint8_t phase);
 private:
     const uint8_t zeroBitPattern = 0xC0;
     const uint8_t onebitPattern = 0xFC;

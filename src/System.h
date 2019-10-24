@@ -14,7 +14,7 @@
 #include "I2C.h"
 #include "SPI.h"
 #include "Display.h"
-#include "WS2812.h"
+#include "RGB.h"
 #include "MCP23017.h"
 
 #define TEST1_PORT   GPIOG
@@ -47,7 +47,7 @@ public:
     Console* getConsole(void) const { return pConsole; }
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
-    WS2812* getRGBLeds(void) const { return pRGBLeds; }
+    RGB* getRGBLeds(void) const { return pRGBLeds; }
     std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
     static ErrorCode initErrorCode;
     GPIO systemLED;
@@ -65,8 +65,9 @@ private:
     SpiBus* pSPI2;
     SpiBus* pSPI4;
     Display* pDisplay;
-    WS2812* pRGBLeds;
+    RGB* pRGBLeds;
     std::vector<MCP23017*> gpioExpanders;
+    const uint8_t NumberOfRgbLeds = 11;
 };
 
 #endif /* SYSTEM_H_ */

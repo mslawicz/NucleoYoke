@@ -161,7 +161,7 @@ void System::config(void)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, bitMask));
     bitMask = 0;
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, bitMask));
-    pRGBLeds = new WS2812(pSPI2);
+    pRGBLeds = new RGB(pSPI2, NumberOfRgbLeds);
     pDisplay = new Display;
     pYoke = new Yoke;
     pConsole->registerCommands();
