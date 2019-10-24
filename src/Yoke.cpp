@@ -205,9 +205,9 @@ void Yoke::sendJoystickData(void)
             0,    //joystick axis Rx
             0,    //joystick axis Ry
             0,    //joystick axis Rz
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1])),    //joystick slider - thrust
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[2])),    //joystick dial - mixture
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[3])),    //joystick wheel - propeller
+            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]))),    //joystick slider - thrust
+            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2]))),    //joystick dial - mixture
+            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]))),    //joystick wheel - propeller
             0,    // HAT switch 1-8, 0=neutral
             static_cast<uint8_t>(buttons & 0xFF),         // buttons 0-7
             static_cast<uint8_t>((buttons >> 8) & 0xFF),  // buttons 8-15

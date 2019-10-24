@@ -11,7 +11,7 @@
 class EMA
 {
 public:
-    EMA(float quickness = 0.1f);
+    EMA(float quickness = 0.2f);
     float getFilteredValue(float input);
 private:
     float filteredValue;
