@@ -84,7 +84,7 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
     uint8_t charHeight = font[3];
 
     // width of this space
-    uint8_t charWidth = 1 + charHeight / 8;
+    uint8_t charWidth = 1 + (charHeight - 2) / 8;
 
     // for every column
     for(uint8_t ix = 0; ix < charWidth; ix++)
