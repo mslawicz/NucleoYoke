@@ -11,12 +11,14 @@
 class EMA
 {
 public:
-    EMA();
+    EMA(float quickness = 0.1f);
     float getFilteredValue(float input);
 private:
     float filteredValue;
-    float alpha;     // filter strength parameter: 0-max filtering, 1-no filtering
-    float averageDelta;
+    float alpha;     // filter smoothing parameter: 0-max filtering, 1-no filtering
+    const float Beta = 0.02f;   // average value smoothing factor
+    float averageDelta;     // average value of delta
+    float quickness;     //
 };
 
 #endif /* FILTER_H_ */

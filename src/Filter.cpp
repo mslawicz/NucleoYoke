@@ -8,7 +8,12 @@
 #include "Filter.h"
 #include <cmath>
 
-EMA::EMA()
+/*
+ * quickness defines how fast the filter follows the input
+ * faster means it's dynamically more accurate, but there's less smoothing in long term
+ */
+EMA::EMA(float quickness) :
+    quickness (quickness)
 {
     filteredValue = 0.0f;
     alpha = 0.02f;
@@ -18,10 +23,10 @@ EMA::EMA()
 float EMA::getFilteredValue(float input)
 {
     float delta = input - filteredValue;
-    averageDelta = 0.98 * averageDelta + 0.02 * fabs(delta);
+    averageDelta += Beta * (fabs(delta) - averageDelta);
     if(averageDelta != 0)
     {
-        alpha = 0.2f * fabs(delta) / averageDelta;
+        alpha = quickness * fabs(delta) / averageDelta;
     }
     else
     {
