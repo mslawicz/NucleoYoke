@@ -13,13 +13,14 @@
 
 enum WS2812Color
 {
-    Color_blue = 0x000001,
-    Color_red = 0x000100,
-    Color_green = 0x010000,
-    Color_magenta = 0x000101,
-    Color_cyan = 0x010001,
-    Color_yellow = 0x010100,
-    Color_white = 0x010101
+    Color_blue = 0x000004,
+    Color_red = 0x000400,
+    Color_green = 0x040000,
+    Color_magenta = 0x000202,
+    Color_cyan = 0x020002,
+    Color_yellow = 0x020200,
+    Color_orange = 0x010300,
+    Color_white = 0x020202
 };
 
 class WS2812 : public SpiDevice
