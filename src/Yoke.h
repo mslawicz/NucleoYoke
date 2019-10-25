@@ -30,7 +30,17 @@ struct ForceFeedbackData
     float rollForce;    // roll force to yoke expressed in lbs
     float yawForce;     // yaw force to yoke expressed in lbs
     float flapsDeflection;  // flaps deflection ratio 0..1
-    float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 units
+    float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 gear units
+};
+
+/*
+ * the structure of data to be displayed in LED indicators
+ */
+struct IndicatorData
+{
+    bool isRetractable;
+    float flapsDeflection;  // flaps deflection ratio 0..1
+    float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 gear units
 };
 
 class Yoke
@@ -49,6 +59,7 @@ private:
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
+    void sendDataToIndicators(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
@@ -75,6 +86,7 @@ private:
     EMA thrustFilter;
     EMA mixtureFilter;
     EMA propellerFilter;
+    IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
 };
 
 #endif /* YOKE_H_ */

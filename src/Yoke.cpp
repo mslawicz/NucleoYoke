@@ -104,6 +104,9 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
                 forceFeedbackDataTimer.reset();
             }
         }
+
+        // check new data and possibly send new values to LED indicators
+        sendDataToIndicators();
     }
     else
     {
@@ -280,4 +283,119 @@ void Yoke::updateButtons(void)
     }
 }
 
+/*
+ * check if particular data has changed
+ * if so, send new values to LED indicators
+ */
+void Yoke::sendDataToIndicators(void)
+{
+    // check if particular data has changed
+    bool isRetractable = (forceFeedbackData.booleanFlags & 0x00000001) != 0;
+    if((indicatorData.isRetractable != isRetractable) ||
+            (indicatorData.flapsDeflection != forceFeedbackData.flapsDeflection) ||
+            (indicatorData.gearDeflection[0] != forceFeedbackData.gearDeflection[0]) ||
+            (indicatorData.gearDeflection[1] != forceFeedbackData.gearDeflection[1]) ||
+            (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2]))
+    {
+        // data has changed
+        // set flaps indicators
+        uint8_t noOfColoredLeds = 0;
+        WS2812Color color = WS2812Color::Color_off;
+        if((forceFeedbackData.flapsDeflection > 0.0f) && (forceFeedbackData.flapsDeflection < 0.143f))
+        {
+            noOfColoredLeds = 1;
+            color = WS2812Color::Color_green;
+        }
+        else if(forceFeedbackData.flapsDeflection < 0.29f)
+        {
+            noOfColoredLeds = 2;
+            color = WS2812Color::Color_yellow;
+        }
+        else if(forceFeedbackData.flapsDeflection < 0.43f)
+        {
+            noOfColoredLeds = 3;
+            color = WS2812Color::Color_orange;
+        }
+        else if(forceFeedbackData.flapsDeflection < 0.57f)
+        {
+            noOfColoredLeds = 4;
+            color = WS2812Color::Color_red;
+        }
+        else if(forceFeedbackData.flapsDeflection < 0.71f)
+        {
+            noOfColoredLeds = 5;
+            color = WS2812Color::Color_magenta;
+        }
+        else if(forceFeedbackData.flapsDeflection < 0.86f)
+        {
+            noOfColoredLeds = 6;
+            color = WS2812Color::Color_blue;
+        }
+        else if(forceFeedbackData.flapsDeflection < 1.0f)
+        {
+            noOfColoredLeds = 7;
+            color = WS2812Color::Color_cyan;
+        }
+        else
+        {
+            noOfColoredLeds = 8;
+            color = WS2812Color::Color_white;
+        }
 
+        uint8_t ledIndex = 0;
+        // set colored LEDs
+        while(ledIndex < noOfColoredLeds)
+        {
+            System::getInstance().getRGBLeds()->setValue(ledIndex++, color);
+        }
+        // set the rest of 'flap' LEDs to off
+        while(ledIndex < 8)
+        {
+            System::getInstance().getRGBLeds()->setValue(ledIndex++, WS2812Color::Color_off);
+        }
+
+        // set gear indicators
+        if(isRetractable)
+        {
+            // this aircraft has retractable gear
+            auto getGearColor = [](float deflection)
+            {
+                WS2812Color color;
+                if(deflection == 0.0f)
+                {
+                    color = WS2812Color::Color_off;
+                }
+                else if(deflection == 1.0f)
+                {
+                    color = WS2812Color::Color_green;
+                }
+                else
+                {
+                    color = WS2812Color::Color_red;
+                }
+                return color;
+            };
+
+            System::getInstance().getRGBLeds()->setValue(9, getGearColor(forceFeedbackData.gearDeflection[0]));     // nose gear indication
+            System::getInstance().getRGBLeds()->setValue(10, getGearColor(forceFeedbackData.gearDeflection[1]));    // left gear indication
+            System::getInstance().getRGBLeds()->setValue(8, getGearColor(forceFeedbackData.gearDeflection[2]));     // right gear indication
+        }
+        else
+        {
+            // this aircraft has fixed gear
+            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::Color_gray);     // nose gear indication
+            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::Color_gray);    // left gear indication
+            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::Color_gray);     // right gear indication
+        }
+
+        // request the LED update
+        System::getInstance().getRGBLeds()->requestUpdate();
+
+        // store current values
+        indicatorData.isRetractable = isRetractable;
+        indicatorData.flapsDeflection = forceFeedbackData.flapsDeflection;
+        indicatorData.gearDeflection[0] = forceFeedbackData.gearDeflection[0];
+        indicatorData.gearDeflection[1] = forceFeedbackData.gearDeflection[1];
+        indicatorData.gearDeflection[2] = forceFeedbackData.gearDeflection[2];
+    }
+}
