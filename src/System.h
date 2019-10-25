@@ -16,6 +16,7 @@
 #include "Display.h"
 #include "RGB.h"
 #include "MCP23017.h"
+#include "Menu.h"
 
 #define TEST1_PORT   GPIOG
 #define TEST1_PIN    GPIO_PIN_9
@@ -49,6 +50,8 @@ public:
     Display* getDisplay(void) const { return pDisplay; }
     RGB* getRGBLeds(void) const { return pRGBLeds; }
     std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
+    Menu* getMenu(void) const { return pMenu; }
+
     static ErrorCode initErrorCode;
     GPIO systemLED;
     GPIO errorLED;
@@ -68,6 +71,7 @@ private:
     RGB* pRGBLeds;
     std::vector<MCP23017*> gpioExpanders;
     const uint8_t NumberOfRgbLeds = 11;
+    Menu* pMenu;
 };
 
 #endif /* SYSTEM_H_ */

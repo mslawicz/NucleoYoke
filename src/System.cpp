@@ -32,6 +32,7 @@ System::System() :
     pYoke = nullptr;
     pDisplay = nullptr;
     pRGBLeds = nullptr;
+    pMenu = nullptr;
 }
 
 System::~System()
@@ -166,6 +167,9 @@ void System::config(void)
     pYoke = new Yoke;
     pConsole->registerCommands();
     pYoke->registerButtonDecoders();
+    pMenu = new Menu;
+    pMenu->setItem(0, "test", [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button UP pressed");},
+            [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button DOWN pressed");});
 }
 
 /*

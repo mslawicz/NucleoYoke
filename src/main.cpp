@@ -61,6 +61,7 @@ int main(void)
         System::getInstance().getYoke()->handler();
         System::getInstance().getDisplay()->handler();
         System::getInstance().getRGBLeds()->handler();
+        System::getInstance().getMenu()->handler();
     }
 
     System::getInstance().terminate();
