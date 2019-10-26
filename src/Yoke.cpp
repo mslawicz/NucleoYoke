@@ -299,60 +299,14 @@ void Yoke::sendDataToIndicators(void)
     {
         // data has changed
         // set flaps indicators
-        uint8_t noOfColoredLeds = 0;
-        WS2812Color color = WS2812Color::Color_off;
-        if((forceFeedbackData.flapsDeflection > 0.0f) && (forceFeedbackData.flapsDeflection < 0.143f))
-        {
-            noOfColoredLeds = 1;
-            color = WS2812Color::Color_green;
-        }
-        else if(forceFeedbackData.flapsDeflection < 0.29f)
-        {
-            noOfColoredLeds = 2;
-            color = WS2812Color::Color_yellow;
-        }
-        else if(forceFeedbackData.flapsDeflection < 0.43f)
-        {
-            noOfColoredLeds = 3;
-            color = WS2812Color::Color_orange;
-        }
-        else if(forceFeedbackData.flapsDeflection < 0.57f)
-        {
-            noOfColoredLeds = 4;
-            color = WS2812Color::Color_red;
-        }
-        else if(forceFeedbackData.flapsDeflection < 0.71f)
-        {
-            noOfColoredLeds = 5;
-            color = WS2812Color::Color_magenta;
-        }
-        else if(forceFeedbackData.flapsDeflection < 0.86f)
-        {
-            noOfColoredLeds = 6;
-            color = WS2812Color::Color_blue;
-        }
-        else if(forceFeedbackData.flapsDeflection < 1.0f)
-        {
-            noOfColoredLeds = 7;
-            color = WS2812Color::Color_cyan;
-        }
-        else
-        {
-            noOfColoredLeds = 8;
-            color = WS2812Color::Color_white;
-        }
-
-        uint8_t ledIndex = 0;
-        // set colored LEDs
-        while(ledIndex < noOfColoredLeds)
-        {
-            System::getInstance().getRGBLeds()->setValue(ledIndex++, color);
-        }
-        // set the rest of 'flap' LEDs to off
-        while(ledIndex < 8)
-        {
-            System::getInstance().getRGBLeds()->setValue(ledIndex++, WS2812Color::Color_off);
-        }
+        System::getInstance().getRGBLeds()->setValue(0, forceFeedbackData.flapsDeflection > 0.0f ? WS2812Color::Color_green : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(1, forceFeedbackData.flapsDeflection > 0.125f ? WS2812Color::Color_yellow : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(2, forceFeedbackData.flapsDeflection > 0.25f ? WS2812Color::Color_orange : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(3, forceFeedbackData.flapsDeflection > 0.375f ? WS2812Color::Color_red : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(4, forceFeedbackData.flapsDeflection > 0.5f ? WS2812Color::Color_magenta : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(5, forceFeedbackData.flapsDeflection > 0.625f ? WS2812Color::Color_blue : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(6, forceFeedbackData.flapsDeflection > 0.75f ? WS2812Color::Color_cyan : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(7, forceFeedbackData.flapsDeflection == 1.0f ? WS2812Color::Color_white : WS2812Color::Color_off);
 
         // set gear indicators
         if(isRetractable)
