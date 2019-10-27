@@ -80,15 +80,6 @@ void Yoke::handler(void)
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
-
-        //XXX test of electromagnet
-        float jX = 1.0f * adc.getConvertedValues()[4] / 0xFFF;
-        float jY = 1.0f * adc.getConvertedValues()[5] / 0xFFF;
-        static uint32_t cnt = 0;
-        if(cnt++ % 25 == 0)
-        {
-            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "X=" + std::to_string(jX) + "  Y=" + std::to_string(jY));
-        }
     }
 }
 
