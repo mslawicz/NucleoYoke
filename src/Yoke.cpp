@@ -23,17 +23,28 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 Yoke::Yoke() :
     interface(),
     sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
-    motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
-    pitchMagnet(&motorDriver, 2)
+    motorDriverBottom(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
+    motorDriverTop(I2cBus::pI2c1, DeviceAddress::PCA9685_0_ADD),
+    electromagnet
+    {
+        Electromagnet(&motorDriverBottom, 2),   // north
+        Electromagnet(&motorDriverTop, 2),      // east
+        Electromagnet(&motorDriverBottom, 3),   // south
+        Electromagnet(&motorDriverTop, 3),      // west
+        Electromagnet(&motorDriverTop, 0)       // center
+    }
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
-    pitchMagnet.setForce(0.0f); //XXX
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
     buttons = 0;
     buttonCleanMask = 0x00000000;
     buttonCleanRequest = false;
+    for(auto& item : electromagnet)
+    {
+        item.setForce(0);
+    }
 }
 
 Yoke::~Yoke()
@@ -80,7 +91,12 @@ void Yoke::handler(void)
         {
             force *= -1.0f;
         }
-        pitchMagnet.setForce(force);
+        electromagnet[0].setForce(force);
+//        static uint32_t cnt = 0;
+//        if(cnt++ % 50 == 0)
+//        {
+//            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "force=" + std::to_string(force));
+//        }
     }
 }
 

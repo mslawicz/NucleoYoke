@@ -30,6 +30,8 @@ Electromagnet::Electromagnet(PCA9685* pDriver, uint8_t magnetIndex) :
  * set electromagnet force by controlling PWM waves
  * input value -1..+1
  * 0.0 - electromagnet off
+ * single coil: force=0.5 for current 1.2A
+ * 2 coils in serial: force=0.88 for current 1.2A
  */
 void Electromagnet::setForce(float force)
 {
@@ -46,7 +48,8 @@ void Electromagnet::setForce(float force)
     {
         uint16_t turnOff;
         // set PWM input to desired duty cycle
-        turnOff = scaleValue<float>(0.0f, 1.0f, 1, 4095, fabs(force));
+        // max turnOff value limited to 2047 for coil current limitation
+        turnOff = scaleValue<float>(0.0f, 1.0f, 1, 2047, fabs(force));
         channelData.emplace(DriverChannel[magnetIndex][0], std::vector<uint8_t>{0, 0, LOBYTE(turnOff), HIBYTE(turnOff)});
         // set input IN1
         channelData.emplace(DriverChannel[magnetIndex][1], force > 0 ? pDriver->ChannelHigh : pDriver->ChannelLow);

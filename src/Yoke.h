@@ -73,8 +73,9 @@ private:
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;
     ADConverter adc;                // ADC converter object
-    PCA9685 motorDriver;        // DC motor PWM controller for pitch and roll force feedback electromagnets
-    Electromagnet pitchMagnet;    // force feedback electromagnet of pitch control
+    PCA9685 motorDriverBottom;      // DC motor PWM controller for north and south force feedback electromagnets
+    PCA9685 motorDriverTop;         // DC motor PWM controller for east, center and west force feedback electromagnets
+    Electromagnet electromagnet[5];    // array of force feedback electromagnets
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
     Timer forceFeedbackDataTimer;
