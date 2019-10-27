@@ -82,21 +82,13 @@ void Yoke::handler(void)
         }
 
         //XXX test of electromagnet
-        float force = 1.0f * adc.getConvertedValues()[1] / 0xFFF;
-        if(force>1.0f)
+        float jX = 1.0f * adc.getConvertedValues()[4] / 0xFFF;
+        float jY = 1.0f * adc.getConvertedValues()[5] / 0xFFF;
+        static uint32_t cnt = 0;
+        if(cnt++ % 25 == 0)
         {
-            force = 1.0f;
+            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "X=" + std::to_string(jX) + "  Y=" + std::to_string(jY));
         }
-        if((System::getInstance().getGpioExpanders()[0]->getInputRegister() & (1 << 10)) != 0)
-        {
-            force *= -1.0f;
-        }
-        electromagnet[0].setForce(force);
-//        static uint32_t cnt = 0;
-//        if(cnt++ % 50 == 0)
-//        {
-//            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "force=" + std::to_string(force));
-//        }
     }
 }
 
