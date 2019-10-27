@@ -24,7 +24,7 @@ Yoke::Yoke() :
     interface(),
     sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
     motorDriver(I2cBus::pI2c1, DeviceAddress::PCA9685_ADD),
-    pitchMagnet(&motorDriver, 0)
+    pitchMagnet(&motorDriver, 2)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -69,6 +69,18 @@ void Yoke::handler(void)
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
+
+        //XXX test of electromagnet
+        float force = 1.0f * adc.getConvertedValues()[1] / 0xFFF;
+        if(force>1.0f)
+        {
+            force = 1.0f;
+        }
+        if((System::getInstance().getGpioExpanders()[0]->getInputRegister() & (1 << 10)) != 0)
+        {
+            force *= -1.0f;
+        }
+        pitchMagnet.setForce(force);
     }
 }
 
