@@ -84,9 +84,11 @@ private:
     bool buttonCleanRequest;
     Timer buttonCleanTimer;
     const uint32_t buttonCleanDelay = 100000;   // time which must elapse between last expander update and button clean out
+    EMA rudderFilter;
     EMA thrustFilter;
     EMA mixtureFilter;
     EMA propellerFilter;
+    EMA autorudderGainFilter;
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
 };
 

@@ -188,7 +188,7 @@ void Yoke::registerButtonDecoders(void)
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(13, 10));   // reverser button
+    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(13, 10, true));   // reverser button (normal closed)
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoder(5, 6, 11, 12, buttonCleanMask)); // elevator trim
 
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoder(5, 6, 13, 14, buttonCleanMask)); // rudder trim
@@ -205,8 +205,11 @@ void Yoke::sendJoystickData(void)
 {
     int16_t deflectionX = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
-    //int16_t deflectionZ = scaleValue<uint16_t>(0, 0xFFF, -JoystickXyzMaxValue, JoystickXyzMaxValue, adc.getConvertedValues()[0]);
-    int16_t deflectionZ = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi * 0.2f); //XXX temporary auto-rudder
+    // autorudder deflection calculated from phi (roll input) and gain
+    float autorudder = phi * autorudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]) / 0xFFF;
+    // rudder deflection read from analog input #0, range -1..+1
+    float rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 0xFFF - 1.0f;
+    int16_t deflectionZ = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autorudder);   //XXX rudder signal ignored
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
