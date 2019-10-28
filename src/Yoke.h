@@ -88,7 +88,7 @@ private:
     EMA thrustFilter;
     EMA mixtureFilter;
     EMA propellerFilter;
-    EMA autorudderGainFilter;
+    EMA autoRudderGainFilter;
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
 };
 

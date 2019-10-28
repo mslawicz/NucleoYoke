@@ -35,7 +35,7 @@ Yoke::Yoke() :
     },
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
-    autorudderGainFilter(0.1f)
+    autoRudderGainFilter(0.1f)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -209,10 +209,12 @@ void Yoke::sendJoystickData(void)
     int16_t deflectionX = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     // autorudder deflection calculated from phi (roll input) and gain
-    float autorudder = phi * autorudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]) / 0xFFF;
+    float autoRudderGain = scaleValue<int16_t>(40, 0xFFF, 0, 0xFFF, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6])) / 4095.0f;
+    // gain is squared to achieve semi-exponential curve
+    float autoRudder = phi * autoRudderGain * autoRudderGain;
     // rudder deflection read from analog input #0, range -1..+1
-    float rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 0xFFF - 1.0f;
-    int16_t deflectionZ = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autorudder);   //XXX rudder signal ignored
+    float rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
+    int16_t deflectionZ = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autoRudder);   //XXX rudder signal ignored
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
