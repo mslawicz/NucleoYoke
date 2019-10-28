@@ -21,7 +21,7 @@ Display::Display() :
  * inverted - clears pixels if true
  * refresh - request for screen update
  */
-uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, bool inverted, bool refresh)
+uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, bool inverted, bool refresh, uint8_t upToX)
 {
     bool isSpace = false;
 
@@ -50,8 +50,14 @@ uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, b
     }
 
     // for every column
-    for(uint8_t ix = 0; ix < charWidth; ix++)
+    uint8_t ix;
+    for(ix = 0; ix < charWidth; ix++)
     {
+        // if upToX!=0 then print up to this X limit
+        if((upToX != 0) && (X+ix > upToX))
+        {
+            break;
+        }
         // for every horizontal row
         for(uint8_t iy = 0; iy < charHeight; iy++)
         {
@@ -67,7 +73,7 @@ uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, b
         controller.requestUpdate();
     }
 
-    return X + charWidth;
+    return X + ix;
 }
 
 /*
@@ -78,7 +84,7 @@ uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, b
  * inverted - clears pixels if true
  * refresh - request for screen update
  */
-uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh)
+uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bool inverted, bool refresh, uint8_t upToX)
 {
     // height of this space
     uint8_t charHeight = font[3];
@@ -87,8 +93,14 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
     uint8_t charWidth = 1 + (charHeight - 2) / 8;
 
     // for every column
-    for(uint8_t ix = 0; ix < charWidth; ix++)
+    uint8_t ix;
+    for(ix = 0; ix < charWidth; ix++)
     {
+        // if upToX!=0 then print up to this X limit
+        if((upToX != 0) && (X+ix > upToX))
+        {
+            break;
+        }
         // for every horizontal row
         for(uint8_t iy = 0; iy < charHeight; iy++)
         {
@@ -101,7 +113,7 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
         controller.requestUpdate();
     }
 
-    return X + charWidth;
+    return X + ix;
 }
 
 /*
@@ -112,12 +124,21 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
  * inverted - clears pixels if true
  * refresh - request for screen update
  */
-uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted, bool refresh)
+uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted, bool refresh, uint8_t upToX)
 {
     for(auto ch : text)
     {
-        X = putChar(X, Y, ch, font, inverted, refresh);
-        X = putChar2CharSpace(X, Y, font, inverted, refresh);
+        X = putChar(X, Y, ch, font, inverted, refresh, upToX);
+        X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
+    }
+
+    // if limit != 0, fill the text up to the X limit
+    if(upToX != 0)
+    {
+        while(X < upToX)
+        {
+            X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
+        }
     }
     return X;
 }
