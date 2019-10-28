@@ -32,7 +32,10 @@ Yoke::Yoke() :
         Electromagnet(&motorDriverBottom, 3),   // south
         Electromagnet(&motorDriverTop, 3),      // west
         Electromagnet(&motorDriverTop, 0)       // center
-    }
+    },
+    mixtureFilter(0.1f),
+    propellerFilter(0.1f),
+    autorudderGainFilter(0.1f)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
