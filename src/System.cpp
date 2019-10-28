@@ -153,14 +153,12 @@ void System::config(void)
     bitMask |= (1 << 8);   // aileron trim encoder - clk
     bitMask |= (1 << 9);   // aileron trim encoder - direction
     bitMask |= (1 << 10);   // aileron trim encoder - pushbutton
-    bitMask |= (1 << 13);   // extra encoder - clk
-    bitMask |= (1 << 14);   // extra encoder - direction
-    bitMask |= (1 << 15);   // extra encoder - pushbutton
     bitMask |= (1 << 3);   // analog joystick pushbutton
     bitMask |= (1 << 11);   // left toggle (2 toggle set)
     bitMask |= (1 << 12);   // right toggle (2 toggle set)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, bitMask));
     bitMask = 0;
+    bitMask |= 0xFF00;      // keypad (8 keys)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, bitMask));
     pRGBLeds = new RGB(pSPI2, NumberOfRgbLeds);
     pDisplay = new Display;
