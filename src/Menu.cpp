@@ -19,7 +19,7 @@ MenuItem::MenuItem(uint8_t pinUp, uint8_t pinDown) :
 }
 
 Menu::Menu() :
-        menuItems{MenuItem(1,2), MenuItem(3,4), MenuItem(5,6), MenuItem(7,8)}   // TODO provide actual pins here
+        menuItems{MenuItem(9, 8), MenuItem(11, 10), MenuItem(13, 12), MenuItem(15, 14)}
 {
 
 }
@@ -92,5 +92,5 @@ void Menu::setItem(uint8_t index, std::string text, std::function<void(void)> ac
     }
     menuItems[index].setActionUp(actionUp);
     menuItems[index].setActionDown(actionDown);
-    // TODO display menu text here
+    System::getInstance().getDisplay()->print(index * 32, 55, text, FontArial9, true, false, index * 32 + 31);
 }
