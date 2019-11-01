@@ -34,7 +34,6 @@ int main(void)
     System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);  //XXX
     System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
     //System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
-    System::getInstance().getDisplay()->drawRectangle(20, 35, 30, 4);
     System::getInstance().getDisplay()->getController().requestUpdate(); //XXX
 
 

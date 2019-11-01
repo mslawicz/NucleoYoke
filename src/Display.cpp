@@ -139,7 +139,7 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
  * font - font array from fonts.h
  * inverted - clears pixels if true
  * refresh - request for screen update
- * upToX - if >0, prints the text up to X==upToX; if text is shorter - fills with spaces
+ * upToX - if >0, prints the text up to X==upToX
  */
 uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted, bool refresh, uint8_t upToX)
 {
@@ -147,15 +147,6 @@ uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* fo
     {
         X = putChar(X, Y, text[index], font, inverted, refresh, upToX);
         if(index < text.size() - 1)
-        {
-            X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
-        }
-    }
-
-    // if limit != 0, fill the text up to the X limit
-    if(upToX != 0)
-    {
-        while(X < upToX)
         {
             X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
         }
