@@ -31,12 +31,7 @@ int main(void)
     System::getInstance().getYoke()->resetParameters();
 
 
-    System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);  //XXX
-    System::getInstance().getDisplay()->print(10, 22, "1234567890 +-=*", FontTahoma11);
-    //System::getInstance().getDisplay()->print(0, 50, "my inverted system font", FontArial9, true);
-    System::getInstance().getDisplay()->getController().requestUpdate(); //XXX
-
-
+    System::getInstance().displayStatus();
 
     System::getInstance().getRGBLeds()->setValue(0, WS2812Color::Color_green);  //XXX
     System::getInstance().getRGBLeds()->setValue(1, WS2812Color::Color_yellow);  //XXX

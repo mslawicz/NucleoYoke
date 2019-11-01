@@ -166,8 +166,8 @@ void System::config(void)
     pConsole->registerCommands();
     pYoke->registerButtonDecoders();
     pMenu = new Menu;
-    pMenu->setItem(0, "test", [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button UP pressed");},
-            [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button DOWN pressed");});
+    pMenu->setItem(0, "mode", [this](){ pYoke->changeMode(1); displayStatus(); },
+            [this](){ pYoke->changeMode(-1); displayStatus(); });
     pMenu->setItem(1, "", nullptr, nullptr);
     pMenu->setItem(2, "", nullptr, nullptr);
     pMenu->setItem(3, "", nullptr, nullptr);
@@ -199,4 +199,13 @@ void System::blinkSystemLED(void)
         ledTimer.reset();
         systemLED.toggle();
     }
+}
+
+/*
+ * displays system status
+ */
+void System::displayStatus(void)
+{
+    getDisplay()->print(0, 0, "mode=" + getYoke()->getYokeModeText() + "     ", FontTahoma11);
+    getDisplay()->getController().requestUpdate();
 }

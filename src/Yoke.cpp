@@ -44,6 +44,7 @@ Yoke::Yoke() :
     buttons = 0;
     buttonCleanMask = 0x00000000;
     buttonCleanRequest = false;
+    yokeMode = YokeMode::YM_auto;
     for(auto& item : electromagnet)
     {
         item.setForce(0);

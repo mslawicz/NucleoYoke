@@ -18,6 +18,16 @@
 #include "Filter.h"
 #include "Decoder.h"
 #include <string>
+#include <unordered_map>
+
+enum YokeMode
+{
+    YM_auto,
+    YM_force_feedback,
+    YM_spring,
+    YM_demo,
+    YM_end
+};
 
 struct ForceFeedbackData
 {
@@ -49,11 +59,13 @@ public:
     Yoke();
     ~Yoke();
     void handler(void);
-    USB::Device& getInterface(void) { return interface; }
+    USB::Device& getInterface(void) { return interface; };
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
     void displayForceFeedbackData(void);
     void registerButtonDecoders(void);
+    void changeMode(int8_t changeValue) { yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end); };
+    std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; };
 private:
     void updateButtons(void);
     int16_t toInt16(float value, int16_t maxValue);
@@ -90,6 +102,13 @@ private:
     EMA propellerFilter;
     EMA autoRudderGainFilter;
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
+    YokeMode yokeMode;
+    const std::unordered_map<YokeMode, std::string> modeText{
+            {YokeMode::YM_auto, "auto"},
+            {YokeMode::YM_force_feedback, "FF"},
+            {YokeMode::YM_spring, "spring"},
+            {YokeMode::YM_demo, "demo"}
+    };
 };
 
 #endif /* YOKE_H_ */

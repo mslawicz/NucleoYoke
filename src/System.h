@@ -51,7 +51,7 @@ public:
     RGB* getRGBLeds(void) const { return pRGBLeds; }
     std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
     Menu* getMenu(void) const { return pMenu; }
-
+    void displayStatus(void);
     static ErrorCode initErrorCode;
     GPIO systemLED;
     GPIO errorLED;
