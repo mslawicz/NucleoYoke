@@ -32,17 +32,7 @@ int main(void)
 
 
     System::getInstance().displayStatus();
-
-    System::getInstance().getRGBLeds()->setValue(0, WS2812Color::Color_green);  //XXX
-    System::getInstance().getRGBLeds()->setValue(1, WS2812Color::Color_yellow);  //XXX
-    System::getInstance().getRGBLeds()->setValue(2, WS2812Color::Color_orange);  //XXX
-    System::getInstance().getRGBLeds()->setValue(3, WS2812Color::Color_red);  //XXX
-    System::getInstance().getRGBLeds()->setValue(4, WS2812Color::Color_magenta);  //XXX
-    System::getInstance().getRGBLeds()->setValue(5, WS2812Color::Color_blue);  //XXX
-    System::getInstance().getRGBLeds()->setValue(6, WS2812Color::Color_cyan);  //XXX
-    System::getInstance().getRGBLeds()->setValue(7, WS2812Color::Color_white);  //XXX
-
-    System::getInstance().getRGBLeds()->requestUpdate();  //XXX
+    System::getInstance().getYoke()->sendDataToIndicators(true);
 
     // main loop
     while(1)

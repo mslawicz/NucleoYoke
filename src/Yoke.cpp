@@ -307,7 +307,7 @@ void Yoke::updateButtons(void)
  * check if particular data has changed
  * if so, send new values to LED indicators
  */
-void Yoke::sendDataToIndicators(void)
+void Yoke::sendDataToIndicators(bool force)
 {
     // check if particular data has changed
     bool isRetractable = (forceFeedbackData.booleanFlags & 0x00000001) != 0;
@@ -315,7 +315,8 @@ void Yoke::sendDataToIndicators(void)
             (indicatorData.flapsDeflection != forceFeedbackData.flapsDeflection) ||
             (indicatorData.gearDeflection[0] != forceFeedbackData.gearDeflection[0]) ||
             (indicatorData.gearDeflection[1] != forceFeedbackData.gearDeflection[1]) ||
-            (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2])) &&
+            (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2]) ||
+            force) &&
             (yokeMode != YokeMode::YM_demo))
     {
         // data has changed
@@ -381,5 +382,5 @@ void Yoke::sendDataToIndicators(void)
 void Yoke::changeMode(int8_t changeValue)
 {
     yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end);
-    sendDataToIndicators();
+    sendDataToIndicators(true);
 };

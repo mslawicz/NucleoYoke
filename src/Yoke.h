@@ -67,7 +67,7 @@ public:
     void changeMode(int8_t changeValue);
     std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; }
     YokeMode getYokeMode(void) const { return yokeMode; }
-    void sendDataToIndicators(void);
+    void sendDataToIndicators(bool force = false);
 private:
     void updateButtons(void);
     int16_t toInt16(float value, int16_t maxValue);
