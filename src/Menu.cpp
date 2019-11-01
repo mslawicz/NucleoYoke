@@ -92,5 +92,6 @@ void Menu::setItem(uint8_t index, std::string text, std::function<void(void)> ac
     }
     menuItems[index].setActionUp(actionUp);
     menuItems[index].setActionDown(actionDown);
+    //uint8_t lengthInPixels = System::getInstance().getDisplay()->calculateLength(text, FontArial9);
     System::getInstance().getDisplay()->print(index * 32, 55, text, FontArial9, true, false, index * 32 + 31);
 }

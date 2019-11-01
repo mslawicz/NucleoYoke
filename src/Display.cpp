@@ -145,3 +145,32 @@ uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* fo
     }
     return X;
 }
+
+/*
+ * calculates the length of the text in pixels according to applied font
+ */
+uint8_t Display::calculateLength(std::string text, const uint8_t* font)
+{
+    uint8_t length = 0;
+    for(auto ch : text)
+    {
+        if((ch < font[4]) || (ch >= font[4]+font[5]))
+        {
+            // ascii code out of this font range
+            continue;
+        }
+
+        // width of this char
+        uint8_t charWidth = font[6 + ch - font[4]];
+        if(charWidth == 0)
+        {
+            charWidth = font[2];
+        }
+
+        length += charWidth;
+
+        // add char-to-char space
+        length += 1 + (font[3] - 2) / 8;
+    }
+    return length;
+}
