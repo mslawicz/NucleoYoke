@@ -209,3 +209,29 @@ void System::displayStatus(void)
     getDisplay()->print(0, 0, "mode=" + getYoke()->getYokeModeText() + "     ", FontTahoma11);
     getDisplay()->getController().requestUpdate();
 }
+
+/*
+ * things to do in demo mode
+ */
+void System::demoHandler(void)
+{
+    if(pYoke->getYokeMode() == YokeMode::YM_demo)
+    {
+        static Timer cycleTimer;
+        if(cycleTimer.elapsed(50000))
+        {
+            static uint8_t step = 0;
+            cycleTimer.reset();
+            pRGBLeds->setValue(0, pRGBLeds->getCycledValue(step, 0));
+            pRGBLeds->setValue(1, pRGBLeds->getCycledValue(step, 3));
+            pRGBLeds->setValue(2, pRGBLeds->getCycledValue(step, 6));
+            pRGBLeds->setValue(3, pRGBLeds->getCycledValue(step, 9));
+            pRGBLeds->setValue(4, pRGBLeds->getCycledValue(step, 12));
+            pRGBLeds->setValue(5, pRGBLeds->getCycledValue(step, 15));
+            pRGBLeds->setValue(6, pRGBLeds->getCycledValue(step, 18));
+            pRGBLeds->setValue(7, pRGBLeds->getCycledValue(step, 21));
+            pRGBLeds->requestUpdate();
+            step = (step+1) % 24;
+        }
+    }
+}

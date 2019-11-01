@@ -57,6 +57,7 @@ int main(void)
         System::getInstance().getDisplay()->handler();
         System::getInstance().getRGBLeds()->handler();
         System::getInstance().getMenu()->handler();
+        System::getInstance().demoHandler();
     }
 
     System::getInstance().terminate();

@@ -59,19 +59,20 @@ public:
     Yoke();
     ~Yoke();
     void handler(void);
-    USB::Device& getInterface(void) { return interface; };
+    USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
     void displayForceFeedbackData(void);
     void registerButtonDecoders(void);
     void changeMode(int8_t changeValue);
-    std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; };
+    std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; }
+    YokeMode getYokeMode(void) const { return yokeMode; }
+    void sendDataToIndicators(void);
 private:
     void updateButtons(void);
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
-    void sendDataToIndicators(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
