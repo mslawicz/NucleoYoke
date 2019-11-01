@@ -168,6 +168,9 @@ void System::config(void)
     pMenu = new Menu;
     pMenu->setItem(0, "test", [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button UP pressed");},
             [this](){pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Button DOWN pressed");});
+    pMenu->setItem(1, "", nullptr, nullptr);
+    pMenu->setItem(2, "", nullptr, nullptr);
+    pMenu->setItem(3, "", nullptr, nullptr);
 }
 
 /*

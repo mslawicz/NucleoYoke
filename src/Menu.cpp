@@ -92,7 +92,14 @@ void Menu::setItem(uint8_t index, std::string text, std::function<void(void)> ac
     }
     menuItems[index].setActionUp(actionUp);
     menuItems[index].setActionDown(actionDown);
-    //uint8_t lengthInPixels = System::getInstance().getDisplay()->calculateLength(text, FontArial9);
     System::getInstance().getDisplay()->drawRectangle(index*32, 54, 31, 10);
-    System::getInstance().getDisplay()->print(index * 32, 55, text, FontArial9, true, false, index * 32 + 31);
+    int8_t startX = (31 - System::getInstance().getDisplay()->calculateLength(text, FontArial9)) / 2;
+    if(startX < 0)
+    {
+        startX = 0;
+    }
+    if(text.size() > 0)
+    {
+        System::getInstance().getDisplay()->print(index * 32 + static_cast<uint8_t>(startX), 55, text, FontArial9, true, false, index * 32 + 31);
+    }
 }
