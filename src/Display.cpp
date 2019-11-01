@@ -78,6 +78,20 @@ uint8_t Display::putChar(uint8_t X, uint8_t Y,uint8_t ch, const uint8_t* font, b
 }
 
 /*
+ * draws rectangle
+ */
+void Display::drawRectangle(uint8_t X, uint8_t Y, uint8_t width, uint8_t height, bool inverted)
+{
+    for(uint8_t ix = 0; ix < width; ix++)
+    {
+        for(uint8_t iy = 0; iy < height; iy++)
+        {
+            controller.setPoint(X + ix, Y + iy, !inverted);
+        }
+    }
+}
+
+/*
  * displays character on the screen
  * ch - ascii code
  * X,Y - upper left corner of character placement
@@ -129,10 +143,13 @@ uint8_t Display::putChar2CharSpace(uint8_t X, uint8_t Y, const uint8_t* font, bo
  */
 uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* font, bool inverted, bool refresh, uint8_t upToX)
 {
-    for(auto ch : text)
+    for(size_t index = 0; index < text.size(); index++)
     {
-        X = putChar(X, Y, ch, font, inverted, refresh, upToX);
-        X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
+        X = putChar(X, Y, text[index], font, inverted, refresh, upToX);
+        if(index < text.size() - 1)
+        {
+            X = putChar2CharSpace(X, Y, font, inverted, refresh, upToX);
+        }
     }
 
     // if limit != 0, fill the text up to the X limit
@@ -152,8 +169,9 @@ uint8_t Display::print(uint8_t X, uint8_t Y, std::string text, const uint8_t* fo
 uint8_t Display::calculateLength(std::string text, const uint8_t* font)
 {
     uint8_t length = 0;
-    for(auto ch : text)
+    for(size_t index = 0; index < text.size(); index++)
     {
+        auto ch = text[index];
         if((ch < font[4]) || (ch >= font[4]+font[5]))
         {
             // ascii code out of this font range
@@ -170,7 +188,10 @@ uint8_t Display::calculateLength(std::string text, const uint8_t* font)
         length += charWidth;
 
         // add char-to-char space
-        length += 1 + (font[3] - 2) / 8;
+        if(index < text.size() - 1)
+        {
+            length += 1 + (font[3] - 2) / 8;
+        }
     }
     return length;
 }
