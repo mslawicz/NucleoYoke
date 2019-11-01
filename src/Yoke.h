@@ -64,7 +64,7 @@ public:
     void resetParameters(void);
     void displayForceFeedbackData(void);
     void registerButtonDecoders(void);
-    void changeMode(int8_t changeValue) { yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end); };
+    void changeMode(int8_t changeValue);
     std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; };
 private:
     void updateButtons(void);

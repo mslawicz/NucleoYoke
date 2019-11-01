@@ -311,11 +311,12 @@ void Yoke::sendDataToIndicators(void)
 {
     // check if particular data has changed
     bool isRetractable = (forceFeedbackData.booleanFlags & 0x00000001) != 0;
-    if((indicatorData.isRetractable != isRetractable) ||
+    if(((indicatorData.isRetractable != isRetractable) ||
             (indicatorData.flapsDeflection != forceFeedbackData.flapsDeflection) ||
             (indicatorData.gearDeflection[0] != forceFeedbackData.gearDeflection[0]) ||
             (indicatorData.gearDeflection[1] != forceFeedbackData.gearDeflection[1]) ||
-            (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2]))
+            (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2])) &&
+            (yokeMode != YokeMode::YM_demo))
     {
         // data has changed
         // set flaps indicators
@@ -373,3 +374,12 @@ void Yoke::sendDataToIndicators(void)
         indicatorData.gearDeflection[2] = forceFeedbackData.gearDeflection[2];
     }
 }
+
+/*
+ * changes the yoke function mode
+ */
+void Yoke::changeMode(int8_t changeValue)
+{
+    yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end);
+    sendDataToIndicators();
+};
