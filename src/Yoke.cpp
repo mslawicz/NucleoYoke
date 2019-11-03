@@ -207,8 +207,8 @@ void Yoke::registerButtonDecoders(void)
  */
 void Yoke::sendJoystickData(void)
 {
-    int16_t deflectionX = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
-    int16_t deflectionY = scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
+    int16_t deflectionX = scaleValue<float>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
+    int16_t deflectionY = -scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     // autorudder deflection calculated from phi (roll input) and gain
     float autoRudderGain = scaleValue<int16_t>(40, 0xFFF, 0, 0xFFF, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6])) / 4095.0f;
     // gain is squared to achieve semi-exponential curve

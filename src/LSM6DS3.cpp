@@ -22,29 +22,29 @@ LSM6DS3::LSM6DS3(I2cBus* pBus, DeviceAddress deviceAddress) :
 
 /*
  * returns float vector of measured angular rate in rad/s
- * returned values must reflect right hand rule of XYZ->north-east-down oriented axis
+ * positive slope fot moving joystick forward, right and twisting right
  */
 FloatVector LSM6DS3::getAngularRate(void)
 {
     return FloatVector
     {
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
         -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[2])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
-        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[0])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue,
+        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[4])) / MeasurementRegisterFullScaleValue * gyroscopeFullScaleValue
     };
 }
 
 /*
  * returns float vector of measured acceleration in g
- * returned values must reflect XYZ->north-east-down oriented axis
+ * positive values for Z in neutral and joystick forward and to right
  */
 FloatVector LSM6DS3::getAcceleration(void)
 {
     return FloatVector
     {
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[6])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
         static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[8])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
-        static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[10])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[6])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue,
+        -static_cast<float>(*reinterpret_cast<int16_t*>(&receiveBuffer[10])) / MeasurementRegisterFullScaleValue * accelerometerFullScaleValue
     };
 }
 
