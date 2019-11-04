@@ -84,6 +84,24 @@ void Yoke::handler(void)
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
+
+        //XXX test of electromagnets
+        static uint32_t cnt = 0;
+        const float PI_2 = 1.570796f;
+        float tm = cnt / 50.0f;
+        float emCenter = scaleValue<uint16_t, float>(0, 0xFFF, -0.5f, 0.5f, adc.getConvertedValues()[3]);
+        float ampl = scaleValue<uint16_t, float>(0, 0xFFF, -1.0f, 1.0f, adc.getConvertedValues()[2]);
+        electromagnet[4].setForce(emCenter);
+        float em;
+        em = sin(tm); electromagnet[0].setForce(ampl * em);
+        em = sin(tm + PI_2); electromagnet[1].setForce(ampl * em);
+        em = sin(tm + PI_2 * 2); electromagnet[2].setForce(ampl * em);
+        em = sin(tm + PI_2 * 3); electromagnet[3].setForce(ampl * em);
+        if(cnt++ % 25 == 0)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "C=" + std::to_string(emCenter) +
+                    " a=" + std::to_string(ampl));
+        }
     }
 }
 
