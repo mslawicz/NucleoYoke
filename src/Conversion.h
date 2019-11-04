@@ -23,9 +23,9 @@ struct FloatVector
 std::string toHex(uint32_t value, uint8_t positions = 0, bool prefix = true);
 
 // scale input value in the given type T input range to output value in the given output range
-template<typename T> int16_t scaleValue(T inputMin, T inputMax, int16_t outputMin, int16_t outputMax, T inputValue)
+template<typename Ti, typename To> To scaleValue(Ti inputMin, Ti inputMax, To outputMin, To outputMax, Ti inputValue)
 {
-    auto outputValue = static_cast<int16_t>(1.0f * (inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
+    auto outputValue = static_cast<To>(1.0f * (inputValue - inputMin) / (inputMax - inputMin) * (outputMax - outputMin) + outputMin);
     if(outputValue > outputMax)
     {
         outputValue = outputMax;

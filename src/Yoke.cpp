@@ -207,15 +207,15 @@ void Yoke::registerButtonDecoders(void)
  */
 void Yoke::sendJoystickData(void)
 {
-    int16_t deflectionX = scaleValue<float>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
-    int16_t deflectionY = -scaleValue<float>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
+    int16_t deflectionX = scaleValue<float, int16_t>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
+    int16_t deflectionY = -scaleValue<float, int16_t>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     // autorudder deflection calculated from phi (roll input) and gain
-    float autoRudderGain = scaleValue<int16_t>(40, 0xFFF, 0, 0xFFF, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6])) / 4095.0f;
+    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]));
     // gain is squared to achieve semi-exponential curve
     float autoRudder = phi * autoRudderGain * autoRudderGain;
     // rudder deflection read from analog input #0, range -1..+1
     float rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
-    int16_t deflectionZ = scaleValue<float>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autoRudder);   //XXX rudder signal ignored
+    int16_t deflectionZ = scaleValue<float, int16_t>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autoRudder);   //XXX rudder signal ignored
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
@@ -228,9 +228,9 @@ void Yoke::sendJoystickData(void)
             0,    //joystick axis Rx
             0,    //joystick axis Ry
             0,    //joystick axis Rz
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]))),    //joystick slider - thrust
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2]))),    //joystick dial - mixture
-            LOBYTE(scaleValue<int16_t>(0, 0xFFF, 0, 255, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]))),    //joystick wheel - propeller
+            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, thrustFilter.getFilteredValue(adc.getConvertedValues()[1])))),    //joystick slider - thrust
+            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2])))),    //joystick dial - mixture
+            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, propellerFilter.getFilteredValue(adc.getConvertedValues()[3])))),    //joystick wheel - propeller
             0,    // HAT switch 1-8, 0=neutral
             static_cast<uint8_t>(buttons & 0xFF),         // buttons 0-7
             static_cast<uint8_t>((buttons >> 8) & 0xFF),  // buttons 8-15
