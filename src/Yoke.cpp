@@ -49,6 +49,7 @@ Yoke::Yoke() :
     {
         item.setForce(0);
     }
+    forceFeedbackActive = false;
 }
 
 Yoke::~Yoke()
@@ -75,6 +76,8 @@ void Yoke::handler(void)
         {
             sendJoystickData();
         }
+        // apply new forces to joystick
+        setJoystickForces();
         // start new AD conversion set
         adc.startConversions();
         // request data transmission from IMU sensors
@@ -83,24 +86,6 @@ void Yoke::handler(void)
         if(forceFeedbackDataTimer.elapsed(500000))
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
-        }
-
-        //XXX test of electromagnets
-        static uint32_t cnt = 0;
-        const float PI_2 = 1.570796f;
-        float tm = cnt / 50.0f;
-        float emCenter = scaleValue<uint16_t, float>(0, 0xFFF, -0.5f, 0.5f, adc.getConvertedValues()[3]);
-        float ampl = scaleValue<uint16_t, float>(0, 0xFFF, -1.0f, 1.0f, adc.getConvertedValues()[2]);
-        electromagnet[4].setForce(emCenter);
-        float em;
-        em = sin(tm); electromagnet[0].setForce(ampl * em);
-        em = sin(tm + PI_2); electromagnet[1].setForce(ampl * em);
-        em = sin(tm + PI_2 * 2); electromagnet[2].setForce(ampl * em);
-        em = sin(tm + PI_2 * 3); electromagnet[3].setForce(ampl * em);
-        if(cnt++ % 25 == 0)
-        {
-            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "C=" + std::to_string(emCenter) +
-                    " a=" + std::to_string(ampl));
         }
     }
 }
@@ -126,6 +111,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
             // yoke force data is received
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
             forceFeedbackDataTimer.reset();
+            forceFeedbackActive = true;
         }
         else
         {
@@ -135,6 +121,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
                 // data LED is blinking in this scenario
                 System::getInstance().dataLED.toggle();
                 forceFeedbackDataTimer.reset();
+                forceFeedbackActive = false;
             }
         }
 
@@ -401,4 +388,70 @@ void Yoke::changeMode(int8_t changeValue)
 {
     yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end);
     sendDataToIndicators(true);
-};
+}
+;
+
+/*
+ * sets joystick forces by driving electromagnets
+ */
+void Yoke::setJoystickForces(void)
+{
+    const float MaxForce = 99.0f;
+    const float MaxForceReciprocal = 1.0f / MaxForce;
+    const float ZeroAttraction = 0.15f;   // force for zero electromagnet attraction
+    float pitchForce = 0.0f;
+    float rollForce = 0.0f;
+
+    if((yokeMode == YokeMode::YM_force_feedback) ||
+            ((yokeMode == YokeMode::YM_auto) && forceFeedbackActive))
+    {
+        // yoke in 'force feedback' mode or in auto with active FF data
+        pitchForce = forceFeedbackData.pitchForce * MaxForceReciprocal;
+        rollForce = forceFeedbackData.rollForce * MaxForceReciprocal;
+    }
+    else if((yokeMode == YokeMode::YM_spring) ||
+            ((yokeMode == YokeMode::YM_auto) && !forceFeedbackActive))
+    {
+        // yoke in 'spring' mode or in auto without active FF data
+        const float Amplitude = 2.5f;
+        pitchForce = sin(theta);
+        pitchForce *= pitchForce * Amplitude;
+        rollForce = sin(phi);
+        rollForce *= rollForce * Amplitude;
+    }
+    else
+    {
+        // yoke in demo mode
+        static uint32_t cnt = 0;
+        float angle = cnt++ / 20.0f;
+        float amplitude = scaleValue<uint16_t, float>(0, 0xFFF, -1.0f, 1.0f, adc.getConvertedValues()[2]);
+        pitchForce = amplitude * sin(angle);
+        rollForce = amplitude * cos(angle);
+    }
+
+    float northForce = -pitchForce * cos(theta) + rollForce * sin(phi); // north electromagnet force value
+    float eastForce = pitchForce * sin(theta) - rollForce * cos(phi);   // east electromagnet force value
+    float southForce = pitchForce * cos(theta) + rollForce * sin(phi);  // south electromagnet force value
+    float westForce = pitchForce * sin(theta) + rollForce * cos(phi);   // west electromagnet force value
+    float centralForce = pitchForce * sin(theta) + rollForce * sin(phi) + ZeroAttraction;   // central electromagnet force value
+    electromagnet[0].setForce(northForce);
+    electromagnet[1].setForce(eastForce);
+    electromagnet[2].setForce(southForce);
+    electromagnet[3].setForce(westForce);
+    electromagnet[4].setForce(centralForce);
+
+    //XXX test
+    static Timer tm;
+    if((System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET) &&
+            (tm.elapsed(250000)))
+    {
+        tm.reset();
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "NESWC " + std::to_string(northForce) +
+                " " + std::to_string(eastForce) +
+                " " + std::to_string(southForce) +
+                " " + std::to_string(westForce) +
+                " " + std::to_string(centralForce) +
+                "\r\nFF " + std::to_string(pitchForce) +
+                " " + std::to_string(rollForce));
+    }
+}

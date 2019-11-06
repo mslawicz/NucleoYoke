@@ -73,6 +73,7 @@ private:
     int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
+    void setJoystickForces(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
@@ -110,6 +111,7 @@ private:
             {YokeMode::YM_spring, "spring"},
             {YokeMode::YM_demo, "demo"}
     };
+    bool forceFeedbackActive;
 };
 
 #endif /* YOKE_H_ */
