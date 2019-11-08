@@ -159,6 +159,8 @@ void System::config(void)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, bitMask));
     bitMask = 0;
     bitMask |= 0xFF00;      // keypad (8 keys)
+    bitMask |= (1 << 0);   // blue button
+    bitMask |= (1 << 1);   // yellow button
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, bitMask));
     pRGBLeds = new RGB(pSPI2, NumberOfRgbLeds);
     pDisplay = new Display;

@@ -205,6 +205,9 @@ void Yoke::registerButtonDecoders(void)
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new DirectButton(10, 17));   // aileron trim pushbutton
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(11, 24, 25, buttonCleanMask));     // toggle left of 2
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(12, 26, 27, buttonCleanMask));     // toggle right of 2
+
+    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(0, 18));   // blue button
+    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(1, 19));   // yellow button
 }
 
 /*
