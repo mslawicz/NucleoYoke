@@ -17,6 +17,8 @@ float gThetaA; //XXX
 float gPhiA; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
+float gFFpitch; //XXX
+float gFFroll; //XXX
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
@@ -399,18 +401,29 @@ void Yoke::changeMode(int8_t changeValue)
  */
 void Yoke::setJoystickForces(void)
 {
-    const float MaxForce = 99.0f;
+    const float MaxForce = 90.0f;
     const float MaxForceReciprocal = 1.0f / MaxForce;
     const float ZeroAttraction = 0.15f;   // force for zero electromagnet attraction
     float pitchForce = 0.0f;
     float rollForce = 0.0f;
+    static EMA pitchFilter(0.05f);
+    static EMA rollFilter(0.05f);
 
     if((yokeMode == YokeMode::YM_force_feedback) ||
             ((yokeMode == YokeMode::YM_auto) && forceFeedbackActive))
     {
         // yoke in 'force feedback' mode or in auto with active FF data
-        pitchForce = forceFeedbackData.pitchForce * MaxForceReciprocal;
-        rollForce = forceFeedbackData.rollForce * MaxForceReciprocal;
+        gFFpitch = pitchFilter.getFilteredValue(forceFeedbackData.pitchForce); //XXX
+        gFFroll = -rollFilter.getFilteredValue(forceFeedbackData.rollForce); //XXX
+        pitchForce = gFFpitch * MaxForceReciprocal;
+        rollForce = gFFroll * MaxForceReciprocal;
+        static Timer tmf;//XXX
+        if(tmf.elapsed(500000))
+        {
+            tmf.reset();
+            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "FF " + std::to_string(pitchForce) +
+                            " " + std::to_string(rollForce));
+        }
     }
     else if((yokeMode == YokeMode::YM_spring) ||
             ((yokeMode == YokeMode::YM_auto) && !forceFeedbackActive))
