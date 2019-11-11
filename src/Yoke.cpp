@@ -19,6 +19,7 @@ float gTheta; //XXX
 float gPhi; //XXX
 float gFFpitch; //XXX
 float gFFroll; //XXX
+extern TIM_HandleTypeDef htim3; //QQQ
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
@@ -470,4 +471,7 @@ void Yoke::setJoystickForces(void)
                 "\r\nFF " + std::to_string(pitchForce) +
                 " " + std::to_string(rollForce));
     }
+
+    //QQQ
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, (scaleValue<uint16_t, uint32_t>(0, 0xFFF, 1000, 2000, adc.getConvertedValues()[3]))); // input from propeller
 }

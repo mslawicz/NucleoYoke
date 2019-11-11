@@ -91,7 +91,7 @@ void Timer::config(void)
     HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
     // PWM set and start
     sConfigOC.OCMode = TIM_OCMODE_PWM1;
-    sConfigOC.Pulse = 5000;
+    sConfigOC.Pulse = 1500;
     sConfigOC.OCPolarity = TIM_OCPOLARITY_HIGH;
     sConfigOC.OCFastMode = TIM_OCFAST_DISABLE;
     if (HAL_TIM_PWM_ConfigChannel(&htim3, &sConfigOC, TIM_CHANNEL_3) != HAL_OK)
