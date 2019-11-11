@@ -473,5 +473,5 @@ void Yoke::setJoystickForces(void)
     }
 
     //QQQ
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_3, (scaleValue<uint16_t, uint32_t>(0, 0xFFF, 1000, 2000, adc.getConvertedValues()[3]))); // input from propeller
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-90.0f, 90.0f, 1000, 2000, forceFeedbackData.rollForce)));
 }
