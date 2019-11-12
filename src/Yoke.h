@@ -22,7 +22,6 @@
 
 enum YokeMode
 {
-    YM_auto,
     YM_force_feedback,
     YM_spring,
     YM_demo,
@@ -33,14 +32,16 @@ struct ForceFeedbackData
 {
     /*
      * bits of boolean flags:
-     * 0 - true if any gear is retractable
+     * 0 -> true if any gear is retractable
      */
-    uint32_t booleanFlags;
-    float pitchForce;   // pitch force to yoke expressed in lbs
-    float rollForce;    // roll force to yoke expressed in lbs
-    float yawForce;     // yaw force to yoke expressed in lbs
+    uint8_t booleanFlags;
+    uint8_t gearDeflection[3]; // gear deflection state: 0-up, 1-on the way, 2-down; array of 3 gear units
     float flapsDeflection;  // flaps deflection ratio 0..1
-    float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 gear units
+    float totalPitch;   // total pitch control input (sum of user yoke plus autopilot servo plus artificial stability) <-1.0f .. 1.0f>
+    float totalRoll;    // total roll control input (sum of user yoke plus autopilot servo plus artificial stability) <-1.0f .. 1.0f>
+    float totalYaw;     // total yaw control input (sum of user yoke plus autopilot servo plus artificial stability) <-1.0f .. 1.0f>
+    float throttle; // throttle position of the handle itself - this controls all the handles at once <0.0f .. 1.0f>
+    float airSpeed; // aircraft airspeed in relation to its Vno <0.0f .. 1.0f+> (may exceed 1.0f)
 };
 
 /*
@@ -50,7 +51,7 @@ struct IndicatorData
 {
     bool isRetractable;
     float flapsDeflection;  // flaps deflection ratio 0..1
-    float gearDeflection[3];  // gear deflection ratio 0..1; array of 3 gear units
+    uint8_t gearDeflection[3];  // gear deflection state; array of 3 gear units
 };
 
 class Yoke
@@ -106,12 +107,10 @@ private:
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
     YokeMode yokeMode;
     const std::unordered_map<YokeMode, std::string> modeText{
-            {YokeMode::YM_auto, "auto"},
             {YokeMode::YM_force_feedback, "FF"},
             {YokeMode::YM_spring, "spring"},
             {YokeMode::YM_demo, "demo"}
     };
-    bool forceFeedbackActive;
 };
 
 #endif /* YOKE_H_ */

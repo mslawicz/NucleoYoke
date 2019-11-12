@@ -17,8 +17,7 @@ float gThetaA; //XXX
 float gPhiA; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
-float gFFpitch; //XXX
-float gFFroll; //XXX
+
 extern TIM_HandleTypeDef htim3; //QQQ
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
@@ -43,16 +42,15 @@ Yoke::Yoke() :
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     forceFeedbackDataTimer.reset();
-    forceFeedbackData = {0, 0.0f, 0.0f, 0.0f, 0.0f, {0.0f, 0.0f, 0.0f}};
+    forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     buttons = 0;
     buttonCleanMask = 0x00000000;
     buttonCleanRequest = false;
-    yokeMode = YokeMode::YM_auto;
+    yokeMode = YokeMode::YM_force_feedback;
     for(auto& item : electromagnet)
     {
         item.setForce(0);
     }
-    forceFeedbackActive = false;
 }
 
 Yoke::~Yoke()
@@ -100,33 +98,20 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
     if(buffer[0] == 0x03)
     {
-        forceFeedbackData.booleanFlags = *reinterpret_cast<uint32_t*>(buffer+2);
-        forceFeedbackData.pitchForce = *reinterpret_cast<float*>(buffer+6);
-        forceFeedbackData.rollForce = *reinterpret_cast<float*>(buffer+10);
-        forceFeedbackData.yawForce = *reinterpret_cast<float*>(buffer+14);
-        forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+18);
-        forceFeedbackData.gearDeflection[0] = *reinterpret_cast<float*>(buffer+22);
-        forceFeedbackData.gearDeflection[1] = *reinterpret_cast<float*>(buffer+26);
-        forceFeedbackData.gearDeflection[2] = *reinterpret_cast<float*>(buffer+30);
+        forceFeedbackData.booleanFlags = *(buffer+2);
+        forceFeedbackData.gearDeflection[0] = ((*(buffer+3)) >> 0) & 0x03;
+        forceFeedbackData.gearDeflection[1] = ((*(buffer+3)) >> 2) & 0x03;
+        forceFeedbackData.gearDeflection[2] = ((*(buffer+3)) >> 4) & 0x03;
+        forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+4);
+        forceFeedbackData.totalPitch = *reinterpret_cast<float*>(buffer+8);
+        forceFeedbackData.totalRoll = *reinterpret_cast<float*>(buffer+12);
+        forceFeedbackData.totalYaw = *reinterpret_cast<float*>(buffer+16);
+        forceFeedbackData.throttle = *reinterpret_cast<float*>(buffer+20);
+        forceFeedbackData.airSpeed = *reinterpret_cast<float*>(buffer+24);
 
-        if((forceFeedbackData.pitchForce != 0.0f) || (forceFeedbackData.rollForce != 0.0f))
-        {
-            // yoke force data is received
-            System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
-            forceFeedbackDataTimer.reset();
-            forceFeedbackActive = true;
-        }
-        else
-        {
-            // force data is zero (not supported in this aircraft)
-            if(forceFeedbackDataTimer.elapsed(250000))
-            {
-                // data LED is blinking in this scenario
-                System::getInstance().dataLED.toggle();
-                forceFeedbackDataTimer.reset();
-                forceFeedbackActive = false;
-            }
-        }
+        // yoke force data is received
+        System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
+        forceFeedbackDataTimer.reset();
 
         // check new data and possibly send new values to LED indicators
         sendDataToIndicators();
@@ -265,11 +250,11 @@ void Yoke::resetParameters(void)
  */
 void Yoke::displayForceFeedbackData(void)
 {
-    System::getInstance().getConsole()->getInterface().send("pitch force = " + std::to_string(forceFeedbackData.pitchForce) + "\r\n");
-    System::getInstance().getConsole()->getInterface().send("roll force = " + std::to_string(forceFeedbackData.rollForce) + "\r\n");
-    System::getInstance().getConsole()->getInterface().send("yaw force = " + std::to_string(forceFeedbackData.yawForce) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("total pitch = " + std::to_string(forceFeedbackData.totalPitch) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("total roll = " + std::to_string(forceFeedbackData.totalRoll) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("total yaw = " + std::to_string(forceFeedbackData.totalYaw) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("flaps deflection = " + std::to_string(forceFeedbackData.flapsDeflection) + "\r\n");
-    std::string isRetractableString = forceFeedbackData.booleanFlags & 0x00000001 ? "yes" : "no";
+    std::string isRetractableString = forceFeedbackData.booleanFlags & 0x01 ? "yes" : "no";
     System::getInstance().getConsole()->getInterface().send("is retractable? = " + isRetractableString + "\r\n");
     System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
@@ -321,7 +306,7 @@ void Yoke::updateButtons(void)
 void Yoke::sendDataToIndicators(bool force)
 {
     // check if particular data has changed
-    bool isRetractable = (forceFeedbackData.booleanFlags & 0x00000001) != 0;
+    bool isRetractable = (forceFeedbackData.booleanFlags & 0x01) != 0;
     if(((indicatorData.isRetractable != isRetractable) ||
             (indicatorData.flapsDeflection != forceFeedbackData.flapsDeflection) ||
             (indicatorData.gearDeflection[0] != forceFeedbackData.gearDeflection[0]) ||
@@ -345,14 +330,14 @@ void Yoke::sendDataToIndicators(bool force)
         if(isRetractable)
         {
             // this aircraft has retractable gear
-            auto getGearColor = [](float deflection)
+            auto getGearColor = [](uint8_t deflection)
             {
                 WS2812Color color;
-                if(deflection == 0.0f)
+                if(deflection == 0)
                 {
                     color = WS2812Color::Color_off;
                 }
-                else if(deflection == 1.0f)
+                else if(deflection == 2)
                 {
                     color = WS2812Color::Color_green;
                 }
@@ -402,32 +387,19 @@ void Yoke::changeMode(int8_t changeValue)
  */
 void Yoke::setJoystickForces(void)
 {
-    const float MaxForce = 90.0f;
-    const float MaxForceReciprocal = 1.0f / MaxForce;
     const float ZeroAttraction = 0.15f;   // force for zero electromagnet attraction
     float pitchForce = 0.0f;
     float rollForce = 0.0f;
     static EMA pitchFilter(0.05f);
     static EMA rollFilter(0.05f);
 
-    if((yokeMode == YokeMode::YM_force_feedback) ||
-            ((yokeMode == YokeMode::YM_auto) && forceFeedbackActive))
+    if(yokeMode == YokeMode::YM_force_feedback)
     {
-        // yoke in 'force feedback' mode or in auto with active FF data
-        gFFpitch = pitchFilter.getFilteredValue(forceFeedbackData.pitchForce); //XXX
-        gFFroll = -rollFilter.getFilteredValue(forceFeedbackData.rollForce); //XXX
-        pitchForce = gFFpitch * MaxForceReciprocal;
-        rollForce = gFFroll * MaxForceReciprocal;
-        static Timer tmf;//XXX
-        if(tmf.elapsed(500000))
-        {
-            tmf.reset();
-            System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "FF " + std::to_string(pitchForce) +
-                            " " + std::to_string(rollForce));
-        }
+        // yoke in 'force feedback' mode
+        pitchForce = 0.0f;
+        rollForce = 0.0f;
     }
-    else if((yokeMode == YokeMode::YM_spring) ||
-            ((yokeMode == YokeMode::YM_auto) && !forceFeedbackActive))
+    else if(yokeMode == YokeMode::YM_spring)
     {
         // yoke in 'spring' mode or in auto without active FF data
         const float Amplitude = 2.5f;
@@ -473,5 +445,5 @@ void Yoke::setJoystickForces(void)
     }
 
     //QQQ
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-90.0f, 90.0f, 1000, 2000, forceFeedbackData.rollForce)));
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-90.0f, 90.0f, 1000, 2000, 0.0f)));
 }
