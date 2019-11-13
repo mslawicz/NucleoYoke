@@ -386,8 +386,8 @@ void Yoke::setJoystickForces(void)
     if(yokeMode == YokeMode::YM_force_feedback)
     {
         // yoke in 'force feedback' mode
-        pitchForce = 0.0f;
-        rollForce = 0.0f;
+        pitchForce = (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed;
+        rollForce = (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f;
     }
     else if(yokeMode == YokeMode::YM_spring)
     {
@@ -402,9 +402,9 @@ void Yoke::setJoystickForces(void)
     {
         // yoke in demo mode
         static uint32_t cnt = 0;
-        float angle = cnt++ / 20.0f;
+        float angle = cnt++ / 5.0f;
         float amplitude = scaleValue<uint16_t, float>(0, 0xFFF, -1.0f, 1.0f, adc.getConvertedValues()[2]);
-        pitchForce = amplitude * sin(angle);
+        pitchForce = 0.5f * amplitude * sin(angle);
         rollForce = amplitude * cos(angle);
     }
 
