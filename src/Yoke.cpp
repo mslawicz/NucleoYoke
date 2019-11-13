@@ -259,6 +259,8 @@ void Yoke::displayForceFeedbackData(void)
     System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("relative airspeed = " + std::to_string(forceFeedbackData.airSpeed) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("throttle = " + std::to_string(forceFeedbackData.throttle) + "\r\n");
 }
 
 /*
@@ -445,5 +447,5 @@ void Yoke::setJoystickForces(void)
     }
 
     //QQQ
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-90.0f, 90.0f, 1000, 2000, 0.0f)));
+    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-1.0f, 1.0f, 1000, 2000, forceFeedbackData.totalRoll)));
 }
