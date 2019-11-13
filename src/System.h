@@ -16,6 +16,7 @@
 #include "Display.h"
 #include "RGB.h"
 #include "MCP23017.h"
+#include "Servo.h"
 #include "Menu.h"
 
 #define TEST1_PORT   GPIOG
@@ -32,7 +33,8 @@ enum ErrorCode
     EC_TimBase,
     EC_TimConfigClockSource,
     EC_TimMasterConfigSynchronization,
-    EC_UartInit
+    EC_UartInit,
+    EC_TimPwmInit
 };
 
 class System

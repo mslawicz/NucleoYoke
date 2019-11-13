@@ -18,8 +18,6 @@ float gPhiA; //XXX
 float gTheta; //XXX
 float gPhi; //XXX
 
-extern TIM_HandleTypeDef htim3; //QQQ
-
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
@@ -37,7 +35,8 @@ Yoke::Yoke() :
     },
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
-    autoRudderGainFilter(0.1f)
+    autoRudderGainFilter(0.1f),
+    throttleServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
     theta = phi = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -83,11 +82,14 @@ void Yoke::handler(void)
         adc.startConversions();
         // request data transmission from IMU sensors
         sensorAG.readNewData();
-        // switch data LED off if no force feedback data are being received during 0.5 sec
-        if(forceFeedbackDataTimer.elapsed(500000))
+        // switch data LED off if no force feedback data are being received during 0.2 sec
+        if(forceFeedbackDataTimer.elapsed(200000))
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
         }
+
+        //XXX servo test
+        throttleServo.setValue(forceFeedbackData.throttle);     //XXX
     }
 }
 
@@ -445,7 +447,4 @@ void Yoke::setJoystickForces(void)
                 "\r\nFF " + std::to_string(pitchForce) +
                 " " + std::to_string(rollForce));
     }
-
-    //QQQ
-    __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, (scaleValue<float, uint16_t>(-1.0f, 1.0f, 1000, 2000, forceFeedbackData.totalRoll)));
 }

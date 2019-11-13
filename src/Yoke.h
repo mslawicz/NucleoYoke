@@ -17,6 +17,7 @@
 #include "Electromagnet.h"
 #include "Filter.h"
 #include "Decoder.h"
+#include "Servo.h"
 #include <string>
 #include <unordered_map>
 
@@ -111,6 +112,7 @@ private:
             {YokeMode::YM_spring, "spring"},
             {YokeMode::YM_demo, "demo"}
     };
+    Servo throttleServo;
 };
 
 #endif /* YOKE_H_ */

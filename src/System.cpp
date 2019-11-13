@@ -164,6 +164,7 @@ void System::config(void)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_2_ADD, MCP23017_2_INT_PORT, MCP23017_2_INT_PIN, bitMask));
     pRGBLeds = new RGB(pSPI2, NumberOfRgbLeds);
     pDisplay = new Display;
+    Servo::config();    // configure servo timer (must be called before Yoke creation)
     pYoke = new Yoke;
     pConsole->registerCommands();
     pYoke->registerButtonDecoders();
