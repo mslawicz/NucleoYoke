@@ -124,20 +124,6 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
     }
 }
 
-int16_t Yoke::toInt16(float value, int16_t maxValue)
-{
-    int16_t outValue = static_cast<int16_t>(value);
-    if(outValue > maxValue)
-    {
-        outValue = maxValue;
-    }
-    else if(outValue < -maxValue)
-    {
-        outValue = -maxValue;
-    }
-    return outValue;
-}
-
 /*
  * computes yoke parameters after receiving new data from sensors
  */

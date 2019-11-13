@@ -72,7 +72,6 @@ public:
     void sendDataToIndicators(bool force = false);
 private:
     void updateButtons(void);
-    int16_t toInt16(float value, int16_t maxValue);
     void computeParameters(void);
     void sendJoystickData(void);
     void setJoystickForces(void);
