@@ -110,6 +110,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
         forceFeedbackData.totalYaw = *reinterpret_cast<float*>(buffer+16);
         forceFeedbackData.throttle = *reinterpret_cast<float*>(buffer+20);
         forceFeedbackData.airSpeed = *reinterpret_cast<float*>(buffer+24);
+        forceFeedbackData.propellerSpeed = *reinterpret_cast<float*>(buffer+28);
 
         // yoke force data is received
         System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
@@ -238,17 +239,20 @@ void Yoke::resetParameters(void)
  */
 void Yoke::displayForceFeedbackData(void)
 {
+    auto boolToYN = [](bool val)->std::string{ return (val ? "yes" : "no"); };
     System::getInstance().getConsole()->getInterface().send("total pitch = " + std::to_string(forceFeedbackData.totalPitch) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("total roll = " + std::to_string(forceFeedbackData.totalRoll) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("total yaw = " + std::to_string(forceFeedbackData.totalYaw) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("flaps deflection = " + std::to_string(forceFeedbackData.flapsDeflection) + "\r\n");
-    std::string isRetractableString = forceFeedbackData.booleanFlags & 0x01 ? "yes" : "no";
-    System::getInstance().getConsole()->getInterface().send("is retractable? = " + isRetractableString + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("is retractable? = " + boolToYN(forceFeedbackData.booleanFlags & 0x01) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("gear deflection = " + std::to_string(forceFeedbackData.gearDeflection[0]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[1]) + ", "
          + std::to_string(forceFeedbackData.gearDeflection[2]) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("relative airspeed = " + std::to_string(forceFeedbackData.airSpeed) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("throttle = " + std::to_string(forceFeedbackData.throttle) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("stick shaker on? = " + boolToYN(forceFeedbackData.booleanFlags & (1 << 1)) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("reverser on? = " + boolToYN(forceFeedbackData.booleanFlags & (1 << 2)) + "\r\n");
+    System::getInstance().getConsole()->getInterface().send("propeller speed = " + std::to_string(forceFeedbackData.propellerSpeed) + " [rpm]\r\n");
 }
 
 /*

@@ -33,7 +33,9 @@ struct ForceFeedbackData
 {
     /*
      * bits of boolean flags:
-     * 0 -> true if any gear is retractable
+     * 0 -> 1 if any gear is retractable
+     * 1 -> 1 if stick shaker is on
+     * 2 -> 1 if reverser is deployed
      */
     uint8_t booleanFlags;
     uint8_t gearDeflection[3]; // gear deflection state: 0-up, 1-on the way, 2-down; array of 3 gear units
@@ -43,6 +45,7 @@ struct ForceFeedbackData
     float totalYaw;     // total yaw control input (sum of user yoke plus autopilot servo plus artificial stability) <-1.0f .. 1.0f>
     float throttle; // throttle position of the handle itself - this controls all the handles at once <0.0f .. 1.0f>
     float airSpeed; // aircraft airspeed in relation to its Vno <0.0f .. 1.0f+> (may exceed 1.0f)
+    float propellerSpeed;   // propeller speed in [rpm]; the higher value of first 2 engines is used
 };
 
 /*
