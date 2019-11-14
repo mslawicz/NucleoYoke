@@ -74,19 +74,7 @@ void Yoke::handler(void)
         // send yoke data to PC using USB HID joystick report
         if(interface.isActive())
         {
-            static uint32_t frCnt = 0;  //XXX
-            if(++frCnt % 10 == 0)
-            {
-                //XXX test of sending report ID 3
-                uint8_t sendBuffer[64] = {0x03, 0x00};
-                int dataForTransponder = (frCnt / 10) % 100;
-                memcpy(sendBuffer+1, &dataForTransponder, sizeof(dataForTransponder));
-                USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
-            }
-            else
-            {
-                sendJoystickData();
-            }
+            sendJoystickData();
         }
         // apply new forces to joystick
         setJoystickForces();
