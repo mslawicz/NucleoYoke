@@ -95,7 +95,7 @@ private:
     PCA9685 motorDriverTop;         // DC motor PWM controller for east, center and west force feedback electromagnets
     Electromagnet electromagnet[5];    // array of force feedback electromagnets
     Timer loopTimer;        // timer for triggering main Yoke handler loop
-    const uint32_t loopPeriod = 20000;  // handler loop triggered every 20 ms
+    const uint32_t loopPeriod = 10000;  // handler loop triggered every 10 ms
     Timer forceFeedbackDataTimer;
     uint32_t buttons;       // 32 yoke buttons
     uint32_t buttonCleanMask;   // mask for deferred button clean out
@@ -115,6 +115,7 @@ private:
             {YokeMode::YM_demo, "demo"}
     };
     Servo throttleServo;
+    bool pcDataReceived;
 };
 
 #endif /* YOKE_H_ */

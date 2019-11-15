@@ -50,6 +50,7 @@ Yoke::Yoke() :
     {
         item.setForce(0);
     }
+    pcDataReceived = false;
 }
 
 Yoke::~Yoke()
@@ -71,11 +72,29 @@ void Yoke::handler(void)
         loopTimer.reset();
         // compute yoke parameters after reception of new sensor data
         computeParameters();
-        // send yoke data to PC using USB HID joystick report
+
+        // send yoke data to PC
         if(interface.isActive())
         {
-            sendJoystickData();
+            if(pcDataReceived)
+            {
+                // send buffered data to PC
+                pcDataReceived = false;
+
+                static uint32_t frCnt = 0;  //XXX
+                //XXX test of sending report ID 3
+                uint8_t sendBuffer[64] = {0x03, 0x00};
+                int dataForTransponder = frCnt++ % 100;
+                memcpy(sendBuffer+1, &dataForTransponder, sizeof(dataForTransponder));
+                USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
+            }
+            else
+            {
+                // TODO joystick data is to be replaced entirely by the buffered data (report ID 3) in the future
+                sendJoystickData();
+            }
         }
+
         // apply new forces to joystick
         setJoystickForces();
         // start new AD conversion set
@@ -118,6 +137,9 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 
         // check new data and possibly send new values to LED indicators
         sendDataToIndicators();
+
+        // mark that data from PC has been received
+        pcDataReceived = true;
     }
     else
     {
