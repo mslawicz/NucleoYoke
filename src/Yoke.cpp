@@ -255,7 +255,12 @@ void Yoke::sendYokeData(void)
     // bytes 16-19 reserved for rudder control
     // bytes 20-23 for throttle control
     float throttle = scaleValue<int16_t, float>(0, 0xFFF, 0.0f, 1.0f, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]));
-    memcpy(sendBuffer+20, &thrustFilter, sizeof(thrustFilter));
+    memcpy(sendBuffer+20, &throttle, sizeof(throttle));
+
+    //XXX
+    static uint32_t cnt = 0;
+    uint32_t trsp = cnt++ % 100;
+    memcpy(sendBuffer+4, &trsp, sizeof(trsp));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
 }
