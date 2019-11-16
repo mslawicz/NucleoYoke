@@ -80,14 +80,8 @@ void Yoke::handler(void)
             if(pcDataReceived)
             {
                 // send buffered data to PC
+                sendYokeData();
                 pcDataReceived = false;
-
-                static uint32_t frCnt = 0;  //XXX
-                //XXX test of sending report ID 3
-                uint8_t sendBuffer[64] = {0x03, 0x00};
-                int dataForTransponder = frCnt++ % 100;
-                memcpy(sendBuffer+1, &dataForTransponder, sizeof(dataForTransponder));
-                USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
             }
             else
             {
@@ -248,6 +242,19 @@ void Yoke::sendJoystickData(void)
             static_cast<uint8_t>((buttons >> 24) & 0xFF)  // buttons 24-31
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
+}
+
+/*
+ * sends yoke data to PC using USB HID undefined buffer data
+ */
+void Yoke::sendYokeData(void)
+{
+    static uint32_t frCnt = 0;  //XXX
+    //XXX test of sending report ID 3
+    uint8_t sendBuffer[64] = {0x03, 0x00};
+    int dataForTransponder = frCnt++ % 100;
+    memcpy(sendBuffer+1, &dataForTransponder, sizeof(dataForTransponder));
+    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
 }
 
 /*

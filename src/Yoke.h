@@ -78,6 +78,7 @@ private:
     void updateButtons(void);
     void computeParameters(void);
     void sendJoystickData(void);
+    void sendYokeData(void);
     void setJoystickForces(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
