@@ -51,6 +51,7 @@ Yoke::Yoke() :
         item.setForce(0);
     }
     pcDataReceived = false;
+    ffchannelActive = false;
 }
 
 Yoke::~Yoke()
@@ -105,6 +106,7 @@ void Yoke::handler(void)
         if(forceFeedbackDataTimer.elapsed(200000))
         {
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
+            ffchannelActive = false;
         }
 
         //XXX servo test
@@ -140,6 +142,7 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 
         // mark that data from PC has been received
         pcDataReceived = true;
+        ffchannelActive = true;
     }
     else
     {
@@ -412,8 +415,8 @@ void Yoke::setJoystickForces(void)
     if(yokeMode == YokeMode::YM_force_feedback)
     {
         // yoke in 'force feedback' mode
-        pitchForce = (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed;
-        rollForce = (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f;
+        pitchForce = ffchannelActive ? (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed : 0.0f;
+        rollForce = ffchannelActive ? (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f : 0.0f;
     }
     else if(yokeMode == YokeMode::YM_spring)
     {
