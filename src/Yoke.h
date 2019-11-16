@@ -56,6 +56,7 @@ struct IndicatorData
     bool isRetractable;
     float flapsDeflection;  // flaps deflection ratio 0..1
     uint8_t gearDeflection[3];  // gear deflection state; array of 3 gear units
+    bool reverserOn;    // true if reverser in switched on
 };
 
 class Yoke

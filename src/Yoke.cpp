@@ -326,11 +326,13 @@ void Yoke::sendDataToIndicators(bool force)
 {
     // check if particular data has changed
     bool isRetractable = (forceFeedbackData.booleanFlags & 0x01) != 0;
+    bool reverserOn = (forceFeedbackData.booleanFlags & (1 << 2)) != 0;
     if(((indicatorData.isRetractable != isRetractable) ||
             (indicatorData.flapsDeflection != forceFeedbackData.flapsDeflection) ||
             (indicatorData.gearDeflection[0] != forceFeedbackData.gearDeflection[0]) ||
             (indicatorData.gearDeflection[1] != forceFeedbackData.gearDeflection[1]) ||
             (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2]) ||
+            (indicatorData.reverserOn != reverserOn) ||
             force) &&
             (yokeMode != YokeMode::YM_demo))
     {
@@ -346,7 +348,13 @@ void Yoke::sendDataToIndicators(bool force)
         System::getInstance().getRGBLeds()->setValue(7, forceFeedbackData.flapsDeflection == 1.0f ? WS2812Color::Color_white : WS2812Color::Color_off);
 
         // set gear indicators
-        if(isRetractable)
+        if(reverserOn)
+        {
+            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::Color_blue);     // nose gear indication
+            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::Color_blue);    // left gear indication
+            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::Color_blue);     // right gear indication
+        }
+        else if(isRetractable)
         {
             // this aircraft has retractable gear
             auto getGearColor = [](uint8_t deflection)
@@ -388,6 +396,7 @@ void Yoke::sendDataToIndicators(bool force)
         indicatorData.gearDeflection[0] = forceFeedbackData.gearDeflection[0];
         indicatorData.gearDeflection[1] = forceFeedbackData.gearDeflection[1];
         indicatorData.gearDeflection[2] = forceFeedbackData.gearDeflection[2];
+        indicatorData.reverserOn = reverserOn;
     }
 }
 
