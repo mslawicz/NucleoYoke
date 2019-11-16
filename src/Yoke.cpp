@@ -415,8 +415,8 @@ void Yoke::setJoystickForces(void)
     if(yokeMode == YokeMode::YM_force_feedback)
     {
         // yoke in 'force feedback' mode
-        pitchForce = ffchannelActive ? (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed : 0.0f;
-        rollForce = ffchannelActive ? (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f : 0.0f;
+        pitchForce = (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed;
+        rollForce = (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f;
     }
     else if(yokeMode == YokeMode::YM_spring)
     {
@@ -442,11 +442,12 @@ void Yoke::setJoystickForces(void)
     float southForce = pitchForce * cos(theta) + rollForce * sin(phi);  // south electromagnet force value
     float westForce = pitchForce * sin(theta) + rollForce * cos(phi);   // west electromagnet force value
     float centralForce = pitchForce * sin(theta) + rollForce * sin(phi) + ZeroAttraction;   // central electromagnet force value
-    electromagnet[0].setForce(northForce);
-    electromagnet[1].setForce(eastForce);
-    electromagnet[2].setForce(southForce);
-    electromagnet[3].setForce(westForce);
-    electromagnet[4].setForce(centralForce);
+    bool disableEM = (yokeMode == YokeMode::YM_force_feedback) && !ffchannelActive;
+    electromagnet[0].setForce(disableEM ? 0.0f : northForce);
+    electromagnet[1].setForce(disableEM ? 0.0f : eastForce);
+    electromagnet[2].setForce(disableEM ? 0.0f : southForce);
+    electromagnet[3].setForce(disableEM ? 0.0f : westForce);
+    electromagnet[4].setForce(disableEM ? 0.0f : centralForce);
 
     //XXX test
     static Timer tm;
