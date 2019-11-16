@@ -232,7 +232,7 @@ void Yoke::sendJoystickData(void)
             0,    //joystick axis Rx
             0,    //joystick axis Ry
             0,    //joystick axis Rz
-            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, thrustFilter.getFilteredValue(adc.getConvertedValues()[1])))),    //joystick slider - thrust
+            0, //LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, thrustFilter.getFilteredValue(adc.getConvertedValues()[1])))),    //joystick slider - throttle
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2])))),    //joystick dial - mixture
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, propellerFilter.getFilteredValue(adc.getConvertedValues()[3])))),    //joystick wheel - propeller
             0,    // HAT switch 1-8, 0=neutral
@@ -249,11 +249,14 @@ void Yoke::sendJoystickData(void)
  */
 void Yoke::sendYokeData(void)
 {
-    static uint32_t frCnt = 0;  //XXX
-    //XXX test of sending report ID 3
     uint8_t sendBuffer[64] = {0x03, 0x00};
-    int dataForTransponder = frCnt++ % 100;
-    memcpy(sendBuffer+1, &dataForTransponder, sizeof(dataForTransponder));
+    // bytes 8-11 reserved for elevator control
+    // bytes 12-15 reserved for aileron control
+    // bytes 16-19 reserved for rudder control
+    // bytes 20-23 for throttle control
+    float throttle = scaleValue<int16_t, float>(0, 0xFFF, 0.0f, 1.0f, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]));
+    memcpy(sendBuffer+20, &thrustFilter, sizeof(thrustFilter));
+
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
 }
 
