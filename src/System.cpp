@@ -209,7 +209,7 @@ void System::blinkSystemLED(void)
  */
 void System::displayStatus(void)
 {
-    getDisplay()->print(0, 0, "mode=" + getYoke()->getYokeModeText() + "     ", FontTahoma11);
+    getDisplay()->print(0, 20, "mode=" + getYoke()->getYokeModeText() + "     ", FontTahoma11);
     getDisplay()->getController().requestUpdate();
 }
 

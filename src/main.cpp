@@ -31,6 +31,7 @@ int main(void)
     System::getInstance().getYoke()->resetParameters();
 
 
+    System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
     System::getInstance().displayStatus();
     System::getInstance().getYoke()->sendDataToIndicators(true);
 
