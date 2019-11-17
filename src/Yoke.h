@@ -89,6 +89,7 @@ private:
     float dPhi;     // roll angle derivative [rad/s]
     float theta;    // joystick pitch angle [rad]
     float phi;      // joystick roll angle [rad]
+    float rudder;   // rudder pedals deflection in the range -1 ... 1
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
     const int16_t JoystickXyzMaxValue = 0x0FFF;

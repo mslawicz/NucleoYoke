@@ -38,7 +38,7 @@ Yoke::Yoke() :
     autoRudderGainFilter(0.1f),
     throttleServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
-    theta = phi = dTheta = dPhi = 0.0f;
+    theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -179,6 +179,16 @@ void Yoke::computeParameters(void)
 
     gTheta = theta; //XXX
     gPhi = phi; //XXX
+
+    // rudder deflection read from analog input #0, range -1..+1
+    rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
+    rudder *= 0.0f; // XXX rudder signal is not available yet
+    // autorudder deflection calculated from phi (roll input) and gain
+    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]));
+    // gain is squared to achieve semi-exponential curve
+    float autoRudder = phi * autoRudderGain * autoRudderGain;
+    // autorudder is summed with rudder input
+    rudder += autoRudder;
 }
 
 /*
@@ -213,13 +223,7 @@ void Yoke::sendJoystickData(void)
 {
     int16_t deflectionX = scaleValue<float, int16_t>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = -scaleValue<float, int16_t>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
-    // autorudder deflection calculated from phi (roll input) and gain
-    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]));
-    // gain is squared to achieve semi-exponential curve
-    float autoRudder = phi * autoRudderGain * autoRudderGain;
-    // rudder deflection read from analog input #0, range -1..+1
-    float rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
-    int16_t deflectionZ = scaleValue<float, int16_t>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, 0*rudder+autoRudder);   //XXX rudder signal ignored
+    int16_t deflectionZ = scaleValue<float, int16_t>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, rudder);
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID
@@ -251,9 +255,15 @@ void Yoke::sendYokeData(void)
 {
     float fParameter;
     uint8_t sendBuffer[64] = {0x03, 0x00};
-    // bytes 8-11 reserved for elevator control
-    // bytes 12-15 reserved for aileron control
-    // bytes 16-19 reserved for rudder control
+    // bytes 8-11 for yoke pith
+    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, phi);
+    memcpy(sendBuffer+8, &fParameter, sizeof(fParameter));
+    // bytes 12-15 for yoke roll
+    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, theta);
+    memcpy(sendBuffer+12, &fParameter, sizeof(fParameter));
+    // bytes 16-19 for rudder control
+    fParameter = scaleValue<float, float>(-1.0f, 1.0f, -1.0f, 1.0f, rudder);
+    memcpy(sendBuffer+16, &fParameter, sizeof(fParameter));
     // bytes 20-23 for throttle control
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]));
     memcpy(sendBuffer+20, &fParameter, sizeof(fParameter));
