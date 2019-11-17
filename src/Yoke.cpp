@@ -221,6 +221,9 @@ void Yoke::registerButtonDecoders(void)
  */
 void Yoke::sendJoystickData(void)
 {
+    //XXX check hat switch
+    uint8_t hat = System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET ? 3 : 0; //XXX
+
     int16_t deflectionX = scaleValue<float, int16_t>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
     int16_t deflectionY = -scaleValue<float, int16_t>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
     int16_t deflectionZ = scaleValue<float, int16_t>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, rudder);
@@ -239,7 +242,7 @@ void Yoke::sendJoystickData(void)
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1]))),    //joystick slider - throttle
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[2]))),    //joystick dial - mixture
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[3]))),    //joystick wheel - propeller
-            0,    // HAT switch 1-8, 0=neutral
+            hat, //XXX 0,    // HAT switch 1-8, 0=neutral
             static_cast<uint8_t>(buttons & 0xFF),         // buttons 0-7
             static_cast<uint8_t>((buttons >> 8) & 0xFF),  // buttons 8-15
             static_cast<uint8_t>((buttons >> 16) & 0xFF), // buttons 16-23
@@ -256,10 +259,10 @@ void Yoke::sendYokeData(void)
     float fParameter;
     uint8_t sendBuffer[64] = {0x03, 0x00};
     // bytes 8-11 for yoke pith
-    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, phi);
+    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, theta);
     memcpy(sendBuffer+8, &fParameter, sizeof(fParameter));
     // bytes 12-15 for yoke roll
-    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, theta);
+    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, phi);
     memcpy(sendBuffer+12, &fParameter, sizeof(fParameter));
     // bytes 16-19 for rudder control
     fParameter = scaleValue<float, float>(-1.0f, 1.0f, -1.0f, 1.0f, rudder);
@@ -489,19 +492,4 @@ void Yoke::setJoystickForces(void)
     electromagnet[2].setForce(disableEM ? 0.0f : southForce);
     electromagnet[3].setForce(disableEM ? 0.0f : westForce);
     electromagnet[4].setForce(disableEM ? 0.0f : centralForce);
-
-    //XXX test
-    static Timer tm;
-    if((System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET) &&
-            (tm.elapsed(250000)))
-    {
-        tm.reset();
-        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "NESWC " + std::to_string(northForce) +
-                " " + std::to_string(eastForce) +
-                " " + std::to_string(southForce) +
-                " " + std::to_string(westForce) +
-                " " + std::to_string(centralForce) +
-                "\r\nFF " + std::to_string(pitchForce) +
-                " " + std::to_string(rollForce));
-    }
 }
