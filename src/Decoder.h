@@ -24,10 +24,10 @@ protected:
     uint16_t previousExpanderData;
 };
 
-class RotaryEncoder : public Decoder
+class RotaryEncoderEx : public Decoder
 {
 public:
-    RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask);
+    RotaryEncoderEx(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask);
     bool decode(uint16_t expanderData, uint32_t& buttons);
 };
 

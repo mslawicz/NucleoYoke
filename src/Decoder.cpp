@@ -22,7 +22,7 @@ Decoder::Decoder(uint8_t i1Bit, uint8_t i2Bit, uint8_t o1Bit, uint8_t o2Bit) :
 /*
  * constructor of rotary encoder object
  */
-RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask) :
+RotaryEncoderEx::RotaryEncoderEx(uint8_t clkBit, uint8_t directionBit, uint8_t turnLeftBit, uint8_t turnRightBit, uint32_t& cleanMask) :
         Decoder(clkBit, directionBit, turnLeftBit, turnRightBit)
 {
     cleanMask |= (1 << turnLeftBit);
@@ -32,7 +32,7 @@ RotaryEncoder::RotaryEncoder(uint8_t clkBit, uint8_t directionBit, uint8_t turnL
 /*
  * generates turn-left and turn-right signals for button register from clk and direction bits in expander data
  */
-bool RotaryEncoder::decode(uint16_t expanderData, uint32_t& buttons)
+bool RotaryEncoderEx::decode(uint16_t expanderData, uint32_t& buttons)
 {
     bool cleanRequest = false;
 
