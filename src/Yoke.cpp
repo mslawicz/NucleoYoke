@@ -259,7 +259,7 @@ void Yoke::sendYokeData(void)
     float fParameter;
     uint8_t sendBuffer[64] = {0x03, 0x00};
     // bytes 8-11 for yoke pith
-    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, theta);
+    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, -theta);
     memcpy(sendBuffer+8, &fParameter, sizeof(fParameter));
     // bytes 12-15 for yoke roll
     fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, phi);
