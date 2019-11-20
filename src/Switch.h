@@ -25,6 +25,7 @@ public:
     bool hasChanged(bool clear = true);
     bool hasChangedTo1(bool clear = true);
     bool hasChangedTo0(bool clear = true);
+    bool isStable(void) { stateMachine(); return machineState == SwitchState::SS_stable; }
 private:
     void stateMachine(void);
     GPIO inputPin;      // input GPIO object

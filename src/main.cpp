@@ -12,7 +12,7 @@
 #include "stm32f4xx_nucleo_144.h"
 #include "System.h"
 #include "Display.h"
-#include "Switch.h" //XXX
+#include "RotaryEncoder.h" //XXX
 
 int main(void)
 {
@@ -36,7 +36,8 @@ int main(void)
     System::getInstance().displayStatus();
     System::getInstance().getYoke()->sendDataToIndicators(true);
 
-    Switch yellowButton(GPIOG, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET); //XXX
+    //Switch yellowButton(GPIOG, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET); //XXX
+    RotaryEncoder elevatorTrim(GPIOC, GPIO_PIN_8, GPIOC, GPIO_PIN_6); //XXX
 
     // main loop
     while(1)
@@ -53,14 +54,15 @@ int main(void)
         System::getInstance().getMenu()->handler();
         System::getInstance().demoHandler();
 
-        //XXX Switch test
-        if(yellowButton.hasChangedTo0())
+        //XXX rotary encoder test
+        auto trimValue = elevatorTrim.getState();
+        if(trimValue == 1)
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "pushbutton pressed");
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated right (up)");
         }
-        if(yellowButton.hasChangedTo1())
+        if(trimValue == -1)
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "pushbutton released");
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated left (down)");
         }
     }
 
