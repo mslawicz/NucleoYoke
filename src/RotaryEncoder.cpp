@@ -26,14 +26,11 @@ RotaryEncoder::RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDe
 int RotaryEncoder::getState(void)
 {
     int rotation = 0;
-    if(clockSignal.hasChangedTo0(false) &&
-            clockSignal.isStable() &&
-            directionSignal.isStable())
+    GPIO_PinState direction = directionSignal.getState();
+    if(clockSignal.hasChangedTo0())
     {
-        // rotation detected and signals are stable
-        //clear the flag
-        clockSignal.hasChangedTo0();
-        rotation = directionSignal.getState() == GPIO_PinState::GPIO_PIN_RESET ? 1 : -1;
+        // rotation detected
+        rotation = direction == GPIO_PinState::GPIO_PIN_RESET ? -1 : 1;
     }
     return rotation;
 }

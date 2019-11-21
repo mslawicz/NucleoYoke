@@ -37,7 +37,7 @@ int main(void)
     System::getInstance().getYoke()->sendDataToIndicators(true);
 
     //Switch yellowButton(GPIOG, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET); //XXX
-    RotaryEncoder elevatorTrim(GPIOC, GPIO_PIN_8, GPIOC, GPIO_PIN_6); //XXX
+    RotaryEncoder elevatorTrim(GPIOC, GPIO_PIN_8, GPIOC, GPIO_PIN_6, 5000); //XXX
 
     // main loop
     while(1)
