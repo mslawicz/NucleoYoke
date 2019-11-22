@@ -10,14 +10,21 @@
 
 #include "Switch.h"
 
+enum RotaryEncoderType
+{
+    RET_single_slope,   // one clock slope per encoder detent
+    RET_dual_slope      // two clock slopes per encoder detent (falling slope detection only)
+};
+
 class RotaryEncoder
 {
 public:
-    RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDef* dirPort, uint32_t dirPin, uint32_t debounceTime = 20000);
+    RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDef* dirPort, uint32_t dirPin, RotaryEncoderType type, uint32_t debounceTime = 10000);
     int getState(void);
 private:
     Switch clockSignal;
     Switch directionSignal;
+    RotaryEncoderType type;
 };
 
 #endif /* ROTARYENCODER_H_ */
