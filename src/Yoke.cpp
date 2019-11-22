@@ -35,7 +35,9 @@ Yoke::Yoke() :
     },
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
-    autoRudderGainFilter(0.1f)
+    autoRudderGainFilter(0.1f),
+    flapsUp(GPIOC, GPIO_PIN_11, GPIO_PinState::GPIO_PIN_SET),
+    flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -273,10 +275,11 @@ void Yoke::sendYokeData(void)
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]));
     memcpy(sendBuffer+28, &fParameter, sizeof(fParameter));
 
-    //XXX
-    static uint32_t cnt = 0;
-    uint32_t trsp = cnt++ % 100;
-    memcpy(sendBuffer+4, &trsp, sizeof(trsp));
+    // bytes 4-7 is the bitfield data register (buttons, switches, encoders)
+    uint32_t buttons = 0;
+    buttons |= (static_cast<int>(flapsUp.hasChangedTo0()) << 0);    // bit 0 - flaps up
+    buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down
+    memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
 }

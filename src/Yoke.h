@@ -18,6 +18,7 @@
 #include "Filter.h"
 #include "Decoder.h"
 #include "Servo.h"
+#include "Switch.h"
 #include <string>
 #include <unordered_map>
 
@@ -119,6 +120,8 @@ private:
     };
     bool pcDataReceived;
     bool ffchannelActive;   // true if FF data are being received
+    Switch flapsUp;
+    Switch flapsDown;
 };
 
 #endif /* YOKE_H_ */
