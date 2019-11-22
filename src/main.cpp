@@ -37,7 +37,7 @@ int main(void)
     System::getInstance().getYoke()->sendDataToIndicators(true);
 
     //Switch yellowButton(GPIOG, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET); //XXX
-    RotaryEncoder elevatorTrim(GPIOC, GPIO_PIN_8, GPIOC, GPIO_PIN_6, RotaryEncoderType::RET_dual_slope, 5000); //XXX
+    RotaryEncoder aileronTrim(GPIOG, GPIO_PIN_11, GPIOG, GPIO_PIN_13, RotaryEncoderType::RET_dual_slope, 5000); //XXX
 
     // main loop
     while(1)
@@ -55,14 +55,14 @@ int main(void)
         System::getInstance().demoHandler();
 
         //XXX rotary encoder test
-        auto trimValue = elevatorTrim.getState();
+        auto trimValue = aileronTrim.getState();
         if(trimValue == 1)
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated right (up)");
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated right");
         }
         if(trimValue == -1)
         {
-            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated left (down)");
+            System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SYSTEM, "rotated left");
         }
     }
 

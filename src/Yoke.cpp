@@ -207,8 +207,8 @@ void Yoke::registerButtonDecoders(void)
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 11, 12, buttonCleanMask)); // elevator trim
 
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 13, 14, buttonCleanMask)); // rudder trim
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(8, 9, 15, 16, buttonCleanMask)); // aileron trim
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new DirectButton(10, 17));   // aileron trim pushbutton
+    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(8, 9, 15, 16, buttonCleanMask)); // aileron trim
+    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new DirectButton(10, 17));   // aileron trim pushbutton
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(11, 24, 25, buttonCleanMask));     // toggle left of 2
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(12, 26, 27, buttonCleanMask));     // toggle right of 2
 

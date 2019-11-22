@@ -150,9 +150,9 @@ void System::config(void)
     bitMask |= (1 << 5);   // rudder trim encoder - clk
     bitMask |= (1 << 6);   // rudder trim encoder - direction
     bitMask |= (1 << 7);   // rudder trim encoder - pushbutton
-    bitMask |= (1 << 8);   // aileron trim encoder - clk
-    bitMask |= (1 << 9);   // aileron trim encoder - direction
-    bitMask |= (1 << 10);   // aileron trim encoder - pushbutton
+//    bitMask |= (1 << 8);   // aileron trim encoder - clk
+//    bitMask |= (1 << 9);   // aileron trim encoder - direction
+//    bitMask |= (1 << 10);   // aileron trim encoder - pushbutton
     bitMask |= (1 << 3);   // analog joystick pushbutton
     bitMask |= (1 << 11);   // left toggle (2 toggle set)
     bitMask |= (1 << 12);   // right toggle (2 toggle set)
