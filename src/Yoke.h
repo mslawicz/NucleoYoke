@@ -117,7 +117,6 @@ private:
             {YokeMode::YM_spring, "spring"},
             {YokeMode::YM_demo, "demo"}
     };
-    Servo throttleServo;
     bool pcDataReceived;
     bool ffchannelActive;   // true if FF data are being received
 };

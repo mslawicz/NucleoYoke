@@ -35,8 +35,7 @@ Yoke::Yoke() :
     },
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
-    autoRudderGainFilter(0.1f),
-    throttleServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
+    autoRudderGainFilter(0.1f)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -102,9 +101,6 @@ void Yoke::handler(void)
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
             ffchannelActive = false;
         }
-
-        //XXX servo test
-        throttleServo.setValue(forceFeedbackData.throttle);     //XXX
     }
 }
 
@@ -198,8 +194,8 @@ void Yoke::registerButtonDecoders(void)
 {
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(0, 0));   // gear up
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
+    //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
+    //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3

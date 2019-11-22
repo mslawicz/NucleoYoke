@@ -137,8 +137,8 @@ void System::config(void)
     bitMask |= (1 << 13);   // reverser button
     bitMask |= (1 << 0);   // gear up
     bitMask |= (1 << 1);   // gear down
-    bitMask |= (1 << 8);   // flaps up
-    bitMask |= (1 << 9);   // flaps down
+//    bitMask |= (1 << 8);   // flaps up
+//    bitMask |= (1 << 9);   // flaps down
     bitMask |= (1 << 10);   // left toggle (3 toggle set)
     bitMask |= (1 << 11);   // middle toggle (3 toggle set)
     bitMask |= (1 << 12);   // right toggle (3 toggle set)
