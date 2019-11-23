@@ -28,7 +28,6 @@ RotaryEncoder::RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDe
 int RotaryEncoder::getState(void)
 {
     int rotation = 0;
-    GPIO_PinState direction = directionSignal.getState();
 
     switch(type)
     {
@@ -36,14 +35,14 @@ int RotaryEncoder::getState(void)
         if(clockSignal.hasChanged())
         {
             // clock signal state change detected
-            rotation = (direction == clockSignal.getState() ? -1 : 1);
+            rotation = (directionSignal.getState() == clockSignal.getState() ? -1 : 1);
         }
         break;
     case RET_dual_slope:
         if(clockSignal.hasChangedTo0())
         {
             // clock signal falling slope detected
-            rotation = (direction == GPIO_PinState::GPIO_PIN_RESET ? -1 : 1);
+            rotation = (directionSignal.getState() == GPIO_PinState::GPIO_PIN_RESET ? -1 : 1);
         }
         break;
     default:

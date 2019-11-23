@@ -21,6 +21,7 @@ class RotaryEncoder
 public:
     RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDef* dirPort, uint32_t dirPin, RotaryEncoderType type, uint32_t debounceTime = 10000);
     int getState(void);
+    void update(void) { clockSignal.getState(); directionSignal.getState(); }
 private:
     Switch clockSignal;
     Switch directionSignal;

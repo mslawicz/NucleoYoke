@@ -75,6 +75,9 @@ void Yoke::handler(void)
     if(loopTimer.elapsed(loopPeriod))
     {
         loopTimer.reset();
+        // update encoder states in every loop execution
+        updateEncoders();
+
         // compute yoke parameters after reception of new sensor data
         computeParameters();
 
@@ -285,8 +288,8 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up
     buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down
     auto trimInput = elevatorTrim.getState();
-    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up
-    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down
+    buttons |= (static_cast<int>(trimInput == 1) << 4);  // bit 4 - elevator trim up
+    buttons |= (static_cast<int>(trimInput == -1) << 5);  // bit 5 - elevator trim down
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
@@ -505,4 +508,12 @@ void Yoke::setJoystickForces(void)
     electromagnet[2].setForce(disableEM ? 0.0f : southForce);
     electromagnet[3].setForce(disableEM ? 0.0f : westForce);
     electromagnet[4].setForce(disableEM ? 0.0f : centralForce);
+}
+
+/*
+ * updating rotary encoder states without clearing flags
+ */
+void Yoke::updateEncoders(void)
+{
+    elevatorTrim.update();
 }

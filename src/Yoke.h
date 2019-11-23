@@ -82,6 +82,7 @@ private:
     void sendJoystickData(void);
     void sendYokeData(void);
     void setJoystickForces(void);
+    void updateEncoders(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     LSM6DS3 sensorAG;     // gyroscope and accelerometer sensor
