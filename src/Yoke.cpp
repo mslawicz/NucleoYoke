@@ -37,7 +37,10 @@ Yoke::Yoke() :
     propellerFilter(0.1f),
     autoRudderGainFilter(0.1f),
     flapsUp(GPIOC, GPIO_PIN_11, GPIO_PinState::GPIO_PIN_SET),
-    flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET)
+    flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
+    gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
+    gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
+    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 5000)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -279,9 +282,20 @@ void Yoke::sendYokeData(void)
     uint32_t buttons = 0;
     buttons |= (static_cast<int>(flapsUp.hasChangedTo0()) << 0);    // bit 0 - flaps up
     buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down
+    buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up
+    buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down
+    auto trimInput = elevatorTrim.getState();
+    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up
+    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
+
+    //XXX test
+    if(buttons != 0)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 4, true));
+    }
 }
 
 /*

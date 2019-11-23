@@ -19,6 +19,7 @@
 #include "Decoder.h"
 #include "Servo.h"
 #include "Switch.h"
+#include "RotaryEncoder.h"
 #include <string>
 #include <unordered_map>
 
@@ -122,6 +123,9 @@ private:
     bool ffchannelActive;   // true if FF data are being received
     Switch flapsUp;
     Switch flapsDown;
+    Switch gearUp;
+    Switch gearDown;
+    RotaryEncoder elevatorTrim;
 };
 
 #endif /* YOKE_H_ */
