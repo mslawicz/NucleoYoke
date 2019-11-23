@@ -16,6 +16,7 @@ RotaryEncoder::RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDe
     clockSignal.hasChanged();
     clockSignal.hasChangedTo0();
     directionSignal.hasChanged();
+    state = 0;
 }
 
 /*
@@ -25,30 +26,39 @@ RotaryEncoder::RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDe
  * 0 no change
  * 1 rotated right
  */
-int RotaryEncoder::getState(void)
+int RotaryEncoder::getState(bool clear)
 {
-    int rotation = 0;
+    int currentState = state;
+    if(clear)
+    {
+        state = 0;
+    }
+    return currentState;
+}
 
+/*
+ * encoder to be called frequently in a loop
+ */
+void RotaryEncoder::handler(void)
+{
+    int direction = directionSignal.getState();
     switch(type)
     {
     case RET_single_slope:
         if(clockSignal.hasChanged())
         {
             // clock signal state change detected
-            rotation = (directionSignal.getState() == clockSignal.getState() ? -1 : 1);
+            state = (direction == clockSignal.getState() ? -1 : 1);
         }
         break;
     case RET_dual_slope:
         if(clockSignal.hasChangedTo0())
         {
             // clock signal falling slope detected
-            rotation = (directionSignal.getState() == GPIO_PinState::GPIO_PIN_RESET ? -1 : 1);
+            state = (direction == GPIO_PinState::GPIO_PIN_RESET ? -1 : 1);
         }
         break;
     default:
         break;
     }
-
-    return rotation;
 }
-

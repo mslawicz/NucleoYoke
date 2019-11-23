@@ -40,7 +40,7 @@ Yoke::Yoke() :
     flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
-    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 5000)
+    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -71,12 +71,12 @@ void Yoke::handler(void)
 {
     // update joystick button data
     updateButtons();
+    // update encoders
+    updateEncoders();
 
     if(loopTimer.elapsed(loopPeriod))
     {
         loopTimer.reset();
-        // update encoder states in every loop execution
-        updateEncoders();
 
         // compute yoke parameters after reception of new sensor data
         computeParameters();
@@ -515,5 +515,5 @@ void Yoke::setJoystickForces(void)
  */
 void Yoke::updateEncoders(void)
 {
-    elevatorTrim.update();
+    elevatorTrim.handler();
 }
