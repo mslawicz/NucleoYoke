@@ -288,8 +288,8 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up
     buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down
     auto trimInput = elevatorTrim.getState();
-    buttons |= (static_cast<int>(trimInput == 1) << 4);  // bit 4 - elevator trim up
-    buttons |= (static_cast<int>(trimInput == -1) << 5);  // bit 5 - elevator trim down
+    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up
+    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
@@ -297,7 +297,7 @@ void Yoke::sendYokeData(void)
     //XXX test
     if(buttons != 0)
     {
-        System::getInstance().getConsole()->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 4, true));
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 4, true));
     }
 }
 
