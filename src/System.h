@@ -19,10 +19,10 @@
 #include "Servo.h"
 #include "Menu.h"
 
-#define TEST1_PORT   GPIOG
-#define TEST1_PIN    GPIO_PIN_9
-#define TEST2_PORT   GPIOG
-#define TEST2_PIN    GPIO_PIN_12
+#define TEST1_PORT   GPIOD
+#define TEST1_PIN    GPIO_PIN_7
+#define TEST2_PORT   GPIOE
+#define TEST2_PIN    GPIO_PIN_3
 
 enum ErrorCode
 {
