@@ -27,7 +27,7 @@ ADConverter::ADConverter()
     hADC.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
     hADC.Init.ExternalTrigConv = ADC_SOFTWARE_START;
     hADC.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-    hADC.Init.NbrOfConversion = 7;
+    hADC.Init.NbrOfConversion = 5;
     hADC.Init.DMAContinuousRequests = ENABLE;
     hADC.Init.EOCSelection = ADC_EOC_SEQ_CONV;
     if (HAL_ADC_Init(&hADC) == HAL_OK)
@@ -45,8 +45,6 @@ ADConverter::ADConverter()
     registerChannel(ADC_CHANNEL_0);     // thrust
     registerChannel(ADC_CHANNEL_10);    // mixture
     registerChannel(ADC_CHANNEL_11);    // propeller
-    registerChannel(ADC_CHANNEL_12);    // analog joystick X
-    registerChannel(ADC_CHANNEL_13);    // analog joystick Y
     registerChannel(ADC_CHANNEL_1);     // autorudder
 
     /* ADC1 DMA Init */

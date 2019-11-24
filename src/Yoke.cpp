@@ -189,7 +189,7 @@ void Yoke::computeParameters(void)
     rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
     rudder *= 0.0f; // XXX rudder signal is not available yet
     // autorudder deflection calculated from phi (roll input) and gain
-    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[6]));
+    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[4]));
     // gain is squared to achieve semi-exponential curve
     float autoRudder = phi * autoRudderGain * autoRudderGain;
     // autorudder is summed with rudder input
