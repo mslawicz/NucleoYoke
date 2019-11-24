@@ -41,7 +41,11 @@ Yoke::Yoke() :
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
-    resetView(GPIOE, GPIO_PIN_1, GPIO_PinState::GPIO_PIN_SET)
+    hatUp(GPIOG, GPIO_PIN_11, GPIO_PinState::GPIO_PIN_SET),
+    hatDown(GPIOG, GPIO_PIN_13, GPIO_PinState::GPIO_PIN_SET),
+    hatLeft(GPIOG, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
+    hatRight(GPIOG, GPIO_PIN_15, GPIO_PinState::GPIO_PIN_SET),
+    hatMiddle(GPIOE, GPIO_PIN_6, GPIO_PinState::GPIO_PIN_SET)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -284,22 +288,28 @@ void Yoke::sendYokeData(void)
 
     // bytes 4-7 is the bitfield data register (buttons, switches, encoders)
     uint32_t buttons = 0;
-    buttons |= (static_cast<int>(flapsUp.hasChangedTo0()) << 0);    // bit 0 - flaps up
-    buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down
-    buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up
-    buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down
+    buttons |= (static_cast<int>(flapsUp.hasChangedTo0()) << 0);    // bit 0 - flaps up (one shot switch)
+    buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down (one shot switch)
+    buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up (one shot switch)
+    buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down (one shot switch)
     auto trimInput = elevatorTrim.getState();
-    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up
-    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down
-    buttons |= (static_cast<int>(resetView.hasChangedTo0()) << 6);  // bit 6 - reset pilot's view
+    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up (one shot switch)
+    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down (one shot switch)
+    buttons |= (static_cast<int>(hatUp.getState()) << 6);  // bit 6 - hat switch up (press and hold switch)
+    buttons |= (static_cast<int>(hatDown.getState()) << 7);  // bit 7 - hat switch down (press and hold switch)
+    buttons |= (static_cast<int>(hatRight.getState()) << 8);  // bit 8 - hat switch right (press and hold switch)
+    buttons |= (static_cast<int>(hatLeft.getState()) << 9);  // bit 9 - hat switch left (press and hold switch)
+    buttons |= (static_cast<int>(hatMiddle.hasChangedTo0()) << 10);  // bit 10 - hat switch middle (one shot switch)
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
 
     //XXX test
-    if(buttons != 0)
+    static uint32_t lastButtons = 0;
+    if(buttons != lastButtons)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 4, true));
+        lastButtons = buttons;
     }
 }
 

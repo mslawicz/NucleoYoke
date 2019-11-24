@@ -127,7 +127,11 @@ private:
     Switch gearUp;
     Switch gearDown;
     RotaryEncoder elevatorTrim;
-    Switch resetView;
+    Switch hatUp;
+    Switch hatDown;
+    Switch hatLeft;
+    Switch hatRight;
+    Switch hatMiddle;
 };
 
 #endif /* YOKE_H_ */
