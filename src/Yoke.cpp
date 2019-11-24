@@ -40,7 +40,8 @@ Yoke::Yoke() :
     flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
-    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000)
+    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
+    resetView(GPIOE, GPIO_PIN_1, GPIO_PinState::GPIO_PIN_SET)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -109,6 +110,17 @@ void Yoke::handler(void)
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
             ffchannelActive = false;
         }
+    }
+
+    //XXX test
+    static Timer tm;
+    if(tm.elapsed(500000))
+    {
+        tm.reset();
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_ADC,
+                            "X=" + std::to_string(scaleValue<uint16_t, float>(0, 4095, -1.0f, 1.0f, static_cast<uint16_t>(4095 - adc.getConvertedValues()[5]))) +
+                            "  Y=" + std::to_string(scaleValue<uint16_t, float>(0, 4095, -1.0f, 1.0f, static_cast<uint16_t>(4095 - adc.getConvertedValues()[4]))) +
+                            "  ");
     }
 }
 
@@ -200,15 +212,15 @@ void Yoke::computeParameters(void)
  */
 void Yoke::registerButtonDecoders(void)
 {
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(0, 0));   // gear up
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(0, 0));   // gear up
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
     //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
     //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3
     System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(13, 10, true));   // reverser button (normal closed)
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 11, 12, buttonCleanMask)); // elevator trim
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 11, 12, buttonCleanMask)); // elevator trim
 
     System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 13, 14, buttonCleanMask)); // rudder trim
     //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(8, 9, 15, 16, buttonCleanMask)); // aileron trim
@@ -290,6 +302,7 @@ void Yoke::sendYokeData(void)
     auto trimInput = elevatorTrim.getState();
     buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up
     buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down
+    buttons |= (static_cast<int>(resetView.hasChangedTo0()) << 6);  // bit 6 - reset pilot's view
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));

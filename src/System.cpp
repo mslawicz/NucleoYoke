@@ -135,16 +135,16 @@ void System::config(void)
     // add GPIO expanders
     uint16_t bitMask = 0;
     bitMask |= (1 << 13);   // reverser button
-    bitMask |= (1 << 0);   // gear up
-    bitMask |= (1 << 1);   // gear down
+//    bitMask |= (1 << 0);   // gear up
+//    bitMask |= (1 << 1);   // gear down
 //    bitMask |= (1 << 8);   // flaps up
 //    bitMask |= (1 << 9);   // flaps down
     bitMask |= (1 << 10);   // left toggle (3 toggle set)
     bitMask |= (1 << 11);   // middle toggle (3 toggle set)
     bitMask |= (1 << 12);   // right toggle (3 toggle set)
-    bitMask |= (1 << 5);   // elevator trim encoder - clk
-    bitMask |= (1 << 6);   // elevator trim encoder - direction
-    bitMask |= (1 << 7);   // elevator trim encoder - pushbutton
+//    bitMask |= (1 << 5);   // elevator trim encoder - clk
+//    bitMask |= (1 << 6);   // elevator trim encoder - direction
+//    bitMask |= (1 << 7);   // elevator trim encoder - pushbutton
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_0_ADD, MCP23017_0_INT_PORT, MCP23017_0_INT_PIN, bitMask));
     bitMask = 0;
     bitMask |= (1 << 5);   // rudder trim encoder - clk
@@ -153,7 +153,7 @@ void System::config(void)
 //    bitMask |= (1 << 8);   // aileron trim encoder - clk
 //    bitMask |= (1 << 9);   // aileron trim encoder - direction
 //    bitMask |= (1 << 10);   // aileron trim encoder - pushbutton
-    bitMask |= (1 << 3);   // analog joystick pushbutton
+//    bitMask |= (1 << 3);   // analog joystick pushbutton
     bitMask |= (1 << 11);   // left toggle (2 toggle set)
     bitMask |= (1 << 12);   // right toggle (2 toggle set)
     gpioExpanders.push_back(new MCP23017(I2cBus::pI2c2, DeviceAddress::MCP23017_1_ADD, MCP23017_1_INT_PORT, MCP23017_1_INT_PIN, bitMask));
