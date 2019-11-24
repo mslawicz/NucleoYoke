@@ -111,17 +111,6 @@ void Yoke::handler(void)
             ffchannelActive = false;
         }
     }
-
-    //XXX test
-    static Timer tm;
-    if(tm.elapsed(500000))
-    {
-        tm.reset();
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_ADC,
-                            "X=" + std::to_string(scaleValue<uint16_t, float>(0, 4095, -1.0f, 1.0f, static_cast<uint16_t>(4095 - adc.getConvertedValues()[5]))) +
-                            "  Y=" + std::to_string(scaleValue<uint16_t, float>(0, 4095, -1.0f, 1.0f, static_cast<uint16_t>(4095 - adc.getConvertedValues()[4]))) +
-                            "  ");
-    }
 }
 
 /*
