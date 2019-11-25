@@ -53,7 +53,7 @@ void Switch::stateMachine(void)
                     // next change shortly after the previous one
                     doubleChangedTo0Flag = true;
                 }
-                changeTo1Time.reset();
+                changeTo0Time.reset();
             }
             eventTime.reset();
             machineState = SS_debouncing;

@@ -310,7 +310,7 @@ void Yoke::sendYokeData(void)
     static uint32_t lastButtons = 0;
     if(buttons != lastButtons)
     {
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 4, true));
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "buttons=" + toHex(buttons, 8, true));
         lastButtons = buttons;
     }
 }

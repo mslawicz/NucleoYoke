@@ -39,7 +39,7 @@ private:
     bool hasChangedTo0Flag;     // true if switch has changed 1->0
     Timer changeTo0Time;        // remembers last change to 0 time
     Timer changeTo1Time;        // remembers last change to 1 time
-    const uint32_t DoubleChangeTime = 300000;   // boundary time of "double clicking"
+    const uint32_t DoubleChangeTime = 400000;   // boundary time of "double clicking"
     bool doubleChangedTo1Flag;     // true if double chenged 0->1
     bool doubleChangedTo0Flag;     // true if double changed 1->0
 };
