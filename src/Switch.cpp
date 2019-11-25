@@ -16,6 +16,8 @@ Switch::Switch(GPIO_TypeDef* port, uint32_t pin, GPIO_PinState startState, uint3
     hasChangedFlag = false;
     hasChangedTo0Flag = false;
     hasChangedTo1Flag = false;
+    doubleChangedTo0Flag = false;
+    doubleChangedTo1Flag = false;
 }
 
 /*
@@ -36,10 +38,22 @@ void Switch::stateMachine(void)
             if(pinState == GPIO_PinState::GPIO_PIN_SET)
             {
                 hasChangedTo1Flag = true;
+                if(!changeTo1Time.elapsed(DoubleChangeTime))
+                {
+                    // next change shortly after the previous one
+                    doubleChangedTo1Flag = true;
+                }
+                changeTo1Time.reset();
             }
             else
             {
                 hasChangedTo0Flag = true;
+                if(!changeTo0Time.elapsed(DoubleChangeTime))
+                {
+                    // next change shortly after the previous one
+                    doubleChangedTo0Flag = true;
+                }
+                changeTo1Time.reset();
             }
             eventTime.reset();
             machineState = SS_debouncing;
@@ -108,3 +122,33 @@ bool Switch::hasChangedTo0(bool clear)
     return flag;
 }
 
+
+/*
+ * check if switch has changed its state 0->1 two times in short time
+ * by default the change flag is cleared
+ */
+bool Switch::doubleChangedTo1(bool clear)
+{
+    stateMachine();
+    bool flag = doubleChangedTo1Flag;
+    if(clear)
+    {
+        doubleChangedTo1Flag = false;
+    }
+    return flag;
+}
+
+/*
+ * check if switch has changed its state 1->0 two times in short time
+ * by default the change flag is cleared
+ */
+bool Switch::doubleChangedTo0(bool clear)
+{
+    stateMachine();
+    bool flag = doubleChangedTo0Flag;
+    if(clear)
+    {
+        doubleChangedTo0Flag = false;
+    }
+    return flag;
+}

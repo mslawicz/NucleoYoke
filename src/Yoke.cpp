@@ -300,6 +300,8 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(hatRight.getState()) << 8);  // bit 8 - hat switch right (press and hold switch)
     buttons |= (static_cast<int>(hatLeft.getState()) << 9);  // bit 9 - hat switch left (press and hold switch)
     buttons |= (static_cast<int>(hatMiddle.hasChangedTo0()) << 10);  // bit 10 - hat switch middle (one shot switch)
+    buttons |= (static_cast<int>(hatRight.doubleChangedTo0()) << 11);  // bit 11 - double click of hat switch right (one shot switch)
+    buttons |= (static_cast<int>(hatLeft.doubleChangedTo0()) << 12);  // bit 12 - double click of hat switch left (one shot switch)
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));

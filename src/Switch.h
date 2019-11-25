@@ -25,6 +25,8 @@ public:
     bool hasChanged(bool clear = true);
     bool hasChangedTo1(bool clear = true);
     bool hasChangedTo0(bool clear = true);
+    bool doubleChangedTo0(bool clear = true);
+    bool doubleChangedTo1(bool clear = true);
 private:
     void stateMachine(void);
     GPIO inputPin;      // input GPIO object
@@ -34,7 +36,12 @@ private:
     uint32_t debounceTime;      // requested switch stability time
     bool hasChangedFlag;        // true if switch has changed its state
     bool hasChangedTo1Flag;     // true if switch has chenged 0->1
-    bool hasChangedTo0Flag;     //  true if switch has changed 1->0
+    bool hasChangedTo0Flag;     // true if switch has changed 1->0
+    Timer changeTo0Time;        // remembers last change to 0 time
+    Timer changeTo1Time;        // remembers last change to 1 time
+    const uint32_t DoubleChangeTime = 300000;   // boundary time of "double clicking"
+    bool doubleChangedTo1Flag;     // true if double chenged 0->1
+    bool doubleChangedTo0Flag;     // true if double changed 1->0
 };
 
 #endif /* SWITCH_H_ */
