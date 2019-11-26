@@ -45,7 +45,8 @@ Yoke::Yoke() :
     hatDown(GPIOG, GPIO_PIN_13, GPIO_PinState::GPIO_PIN_SET),
     hatLeft(GPIOG, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
     hatRight(GPIOG, GPIO_PIN_15, GPIO_PinState::GPIO_PIN_SET),
-    hatMiddle(GPIOE, GPIO_PIN_6, GPIO_PinState::GPIO_PIN_SET)
+    hatMiddle(GPIOE, GPIO_PIN_6, GPIO_PinState::GPIO_PIN_SET),
+    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
     theta = phi = rudder = dTheta = dPhi = 0.0f;
     alpha = 0.02;
@@ -102,6 +103,8 @@ void Yoke::handler(void)
             }
         }
 
+        // update servo position
+        setServos();
         // apply new forces to joystick
         setJoystickForces();
         // start new AD conversion set
@@ -530,4 +533,27 @@ void Yoke::setJoystickForces(void)
 void Yoke::updateEncoders(void)
 {
     elevatorTrim.handler();
+}
+
+/*
+ * set control servos in desired position
+ */
+void Yoke::setServos(void)
+{
+    static uint32_t counter = 0;
+    switch(yokeMode)
+    {
+    case YM_force_feedback:
+        yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
+        break;
+    case YM_spring:
+        yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
+        break;
+    case YM_demo:
+        yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.2f * sin(counter * 0.02f)));
+        break;
+    default:
+        break;
+    }
+    counter++;
 }
