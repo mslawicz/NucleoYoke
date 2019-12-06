@@ -15,7 +15,6 @@
 #include "SPI.h"
 #include "Display.h"
 #include "RGB.h"
-#include "MCP23017.h"
 #include "Servo.h"
 #include "Menu.h"
 
@@ -51,7 +50,6 @@ public:
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
     RGB* getRGBLeds(void) const { return pRGBLeds; }
-    std::vector<MCP23017*>& getGpioExpanders(void) { return gpioExpanders; }
     Menu* getMenu(void) const { return pMenu; }
     void displayStatus(void);
     void demoHandler(void);
@@ -71,7 +69,6 @@ private:
     SpiBus* pSPI4;
     Display* pDisplay;
     RGB* pRGBLeds;
-    std::vector<MCP23017*> gpioExpanders;
     const uint8_t NumberOfRgbLeds = 11;
     Menu* pMenu;
 };

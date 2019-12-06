@@ -13,7 +13,6 @@
 #include "Timer.h"
 #include "ADC.h"
 #include "Filter.h"
-#include "Decoder.h"
 #include "Servo.h"
 #include "Switch.h"
 #include "RotaryEncoder.h"

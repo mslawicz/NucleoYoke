@@ -11,7 +11,6 @@
 #include "I2C.h"
 #include "GPIO.h"
 #include "Timer.h"
-#include "Decoder.h"
 #include <vector>
 
 #define MCP23017_0_INT_PORT    GPIOD
@@ -45,7 +44,6 @@ public:
     MCP23017(I2cBus* pBus, DeviceAddress deviceAddress, GPIO_TypeDef* portINT, uint32_t pinINT, uint16_t pinMask);
     bool handler(void);
     uint16_t getInputRegister(void) const { return inputRegister; }
-    std::vector<Decoder*>& getDecoders(void) { return decoders; }
     DeviceAddress getDeviceAddress(void) const { return deviceAddress; }
 private:
     DeviceAddress deviceAddress;
@@ -56,7 +54,6 @@ private:
     const uint32_t StabilityTime = 5000;   // required time of stable input states
     const uint32_t DataTimeout = 5000;   // maximal waiting time for data
     uint16_t inputRegister;  // current input data
-    std::vector<Decoder*> decoders;   // vector of decoders for this GPIO expander
 };
 
 #endif /* MCP23017_H_ */

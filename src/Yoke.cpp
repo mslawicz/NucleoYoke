@@ -194,20 +194,20 @@ void Yoke::registerButtonDecoders(void)
 //    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(1, 1));   // gear down
     //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(8, 2));   // flaps up
     //System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(9, 3));   // flaps down
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3
-    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(13, 10, true));   // reverser button (normal closed)
-//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 11, 12, buttonCleanMask)); // elevator trim
-
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 13, 14, buttonCleanMask)); // rudder trim
-    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(8, 9, 15, 16, buttonCleanMask)); // aileron trim
-    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new DirectButton(10, 17));   // aileron trim pushbutton
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(11, 24, 25, buttonCleanMask));     // toggle left of 2
-    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(12, 26, 27, buttonCleanMask));     // toggle right of 2
-
-    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(0, 18));   // blue button
-    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(1, 19));   // yellow button
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(10, 4, 5, buttonCleanMask));     // toggle left of 3
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(11, 6, 7, buttonCleanMask));     // toggle centre of 3
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new ToggleSwitch(12, 8, 9, buttonCleanMask));     // toggle right of 3
+//    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new DirectButton(13, 10, true));   // reverser button (normal closed)
+////    System::getInstance().getGpioExpanders()[0]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 11, 12, buttonCleanMask)); // elevator trim
+//
+//    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(5, 6, 13, 14, buttonCleanMask)); // rudder trim
+//    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new RotaryEncoderEx(8, 9, 15, 16, buttonCleanMask)); // aileron trim
+//    //System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new DirectButton(10, 17));   // aileron trim pushbutton
+//    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(11, 24, 25, buttonCleanMask));     // toggle left of 2
+//    System::getInstance().getGpioExpanders()[1]->getDecoders().push_back(new ToggleSwitch(12, 26, 27, buttonCleanMask));     // toggle right of 2
+//
+//    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(0, 18));   // blue button
+//    System::getInstance().getGpioExpanders()[2]->getDecoders().push_back(new DirectButton(1, 19));   // yellow button
 }
 
 /*
@@ -336,27 +336,6 @@ void Yoke::displayForceFeedbackData(void)
  */
 void Yoke::updateButtons(void)
 {
-    for(auto& pExpander : System::getInstance().getGpioExpanders())
-    {
-        bool updateRequested = pExpander->handler();
-        if(updateRequested)
-        {
-            for(auto& pDecoder : pExpander->getDecoders())
-            {
-                if(pDecoder->decode(pExpander->getInputRegister(), buttons))
-                {
-                    buttonCleanRequest = true;
-                    buttonCleanTimer.reset();
-                }
-            }
-
-            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
-                    "Expander addr=" + toHex(pExpander->getDeviceAddress(), 2, true) +
-                    " value=" + toHex(pExpander->getInputRegister(), 4, true) +
-                    " buttons=" + toHex(buttons, 8, true));
-        }
-    }
-
     if(buttonCleanRequest && buttonCleanTimer.elapsed(buttonCleanDelay))
     {
         buttonCleanRequest = false;

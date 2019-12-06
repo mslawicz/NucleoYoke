@@ -41,7 +41,7 @@ void Menu::handler(void)
  */
 void MenuItem::checkButtons(void)
 {
-    auto inputSignals = System::getInstance().getGpioExpanders()[2]->getInputRegister();
+    auto inputSignals = 0; // XXX remainings after expander removal
 
     if(((inputSignals & (1 << pinUp)) != 0) &&
             (!pressedUp))
