@@ -24,7 +24,6 @@ System::System() :
     testPin1(TEST1_PORT, TEST1_PIN, GPIO_MODE_OUTPUT_PP),
     testPin2(TEST2_PORT, TEST2_PIN, GPIO_MODE_OUTPUT_PP)
 {
-    pI2C1 = nullptr;
     pI2C2 = nullptr;
     pSPI2 = nullptr;
     pSPI4 = nullptr;
@@ -124,8 +123,6 @@ void System::config(void)
     Timer::config();
     pConsole = new Console;
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
-    // I2C1 is used for stepper motor controllers
-    pI2C1 = new I2cBus(I2C1);
     // I2C2 is used for IMU sensor and GPIO expanders
     pI2C2 = new I2cBus(I2C2);
     // SPI2 is used for RGB LEDs in 1-wire mode
@@ -188,7 +185,6 @@ void System::terminate(void)
     delete pSPI4;
     delete pSPI2;
     delete pI2C2;
-    delete pI2C1;
 }
 
 /*
