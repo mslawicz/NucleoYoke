@@ -64,7 +64,6 @@ private:
     System();
     Console* pConsole;
     Yoke* pYoke;
-    I2cBus* pI2C2;
     SpiBus* pSPI2;
     SpiBus* pSPI4;
     Display* pDisplay;
