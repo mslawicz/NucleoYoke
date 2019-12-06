@@ -22,8 +22,6 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    motorDriverBottom(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
-    motorDriverTop(I2cBus::pI2c1, DeviceAddress::PCA9685_0_ADD),
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
     autoRudderGainFilter(0.1f),
