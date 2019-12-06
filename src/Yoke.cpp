@@ -22,7 +22,6 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
     interface(),
-    sensorAG(I2cBus::pI2c2, DeviceAddress::LSM6DS3_ADD),
     motorDriverBottom(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
     motorDriverTop(I2cBus::pI2c1, DeviceAddress::PCA9685_0_ADD),
     electromagnet
@@ -109,8 +108,6 @@ void Yoke::handler(void)
         setJoystickForces();
         // start new AD conversion set
         adc.startConversions();
-        // request data transmission from IMU sensors
-        sensorAG.readNewData();
         // switch data LED off if no force feedback data are being received during 0.2 sec
         if(forceFeedbackDataTimer.elapsed(200000))
         {
@@ -161,9 +158,8 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
  */
 void Yoke::computeParameters(void)
 {
-    // IMU sensor must return data in north-east-down orientation and right hand rule
-    angularRate = sensorAG.getAngularRate();
-    acceleration = sensorAG.getAcceleration();
+    angularRate = {0.0f, 0.0f, 0.0f};   // XXX zero vector after deleting IMU sensor input
+    acceleration = {0.0f, 0.0f, 0.0f};   // XXX zero vector after deleting IMU sensor input
     gGyro = angularRate; //XXX
     gAcc = acceleration; //XXX
 
