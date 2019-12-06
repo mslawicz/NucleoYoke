@@ -13,7 +13,6 @@
 #include "Timer.h"
 #include "ADC.h"
 #include "PCA9685.h"
-#include "Electromagnet.h"
 #include "Filter.h"
 #include "Decoder.h"
 #include "Servo.h"
@@ -99,7 +98,6 @@ private:
     ADConverter adc;                // ADC converter object
     PCA9685 motorDriverBottom;      // DC motor PWM controller for north and south force feedback electromagnets
     PCA9685 motorDriverTop;         // DC motor PWM controller for east, center and west force feedback electromagnets
-    Electromagnet electromagnet[5];    // array of force feedback electromagnets
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 10000;  // handler loop triggered every 10 ms
     Timer forceFeedbackDataTimer;

@@ -24,14 +24,6 @@ Yoke::Yoke() :
     interface(),
     motorDriverBottom(I2cBus::pI2c1, DeviceAddress::PCA9685_1_ADD),
     motorDriverTop(I2cBus::pI2c1, DeviceAddress::PCA9685_0_ADD),
-    electromagnet
-    {
-        Electromagnet(&motorDriverBottom, 2),   // north
-        Electromagnet(&motorDriverTop, 2),      // east
-        Electromagnet(&motorDriverBottom, 3),   // south
-        Electromagnet(&motorDriverTop, 3),      // west
-        Electromagnet(&motorDriverTop, 0)       // center
-    },
     mixtureFilter(0.1f),
     propellerFilter(0.1f),
     autoRudderGainFilter(0.1f),
@@ -55,10 +47,6 @@ Yoke::Yoke() :
     buttonCleanMask = 0x00000000;
     buttonCleanRequest = false;
     yokeMode = YokeMode::YM_force_feedback;
-    for(auto& item : electromagnet)
-    {
-        item.setForce(0);
-    }
     pcDataReceived = false;
     ffchannelActive = false;
 }
@@ -475,11 +463,10 @@ void Yoke::changeMode(int8_t changeValue)
 ;
 
 /*
- * sets joystick forces by driving electromagnets
+ * sets joystick forces by driving electromagnets - XXX electromagnets are obsolete
  */
 void Yoke::setJoystickForces(void)
 {
-    const float ZeroAttraction = 0.15f;   // force for zero electromagnet attraction
     float pitchForce = 0.0f;
     float rollForce = 0.0f;
     static EMA pitchFilter(0.05f);
@@ -509,18 +496,6 @@ void Yoke::setJoystickForces(void)
         pitchForce = 0.5f * amplitude * sin(angle);
         rollForce = amplitude * cos(angle);
     }
-
-    float northForce = -pitchForce * cos(theta) + rollForce * sin(phi); // north electromagnet force value
-    float eastForce = pitchForce * sin(theta) - rollForce * cos(phi);   // east electromagnet force value
-    float southForce = pitchForce * cos(theta) + rollForce * sin(phi);  // south electromagnet force value
-    float westForce = pitchForce * sin(theta) + rollForce * cos(phi);   // west electromagnet force value
-    float centralForce = pitchForce * sin(theta) + rollForce * sin(phi) + ZeroAttraction;   // central electromagnet force value
-    bool disableEM = (yokeMode == YokeMode::YM_force_feedback) && !ffchannelActive;
-    electromagnet[0].setForce(disableEM ? 0.0f : northForce);
-    electromagnet[1].setForce(disableEM ? 0.0f : eastForce);
-    electromagnet[2].setForce(disableEM ? 0.0f : southForce);
-    electromagnet[3].setForce(disableEM ? 0.0f : westForce);
-    electromagnet[4].setForce(disableEM ? 0.0f : centralForce);
 }
 
 /*
