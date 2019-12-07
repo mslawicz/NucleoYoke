@@ -68,7 +68,6 @@ public:
     void forceFeedbackHandler(uint8_t* buffer);
     void resetParameters(void);
     void displayForceFeedbackData(void);
-    void registerButtonDecoders(void);
     void changeMode(int8_t changeValue);
     std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; }
     YokeMode getYokeMode(void) const { return yokeMode; }

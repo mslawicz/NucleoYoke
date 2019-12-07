@@ -129,7 +129,6 @@ void System::config(void)
     Servo::config();    // configure servo timer (must be called before Yoke creation)
     pYoke = new Yoke;
     pConsole->registerCommands();
-    pYoke->registerButtonDecoders();
 }
 
 /*
