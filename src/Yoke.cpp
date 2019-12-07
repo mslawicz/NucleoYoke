@@ -90,7 +90,7 @@ void Yoke::handler(void)
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
 
-    forceFeedbackData.booleanFlags = *(buffer+2);
+    forceFeedbackData.booleanFlags = *(buffer+1);
     forceFeedbackData.gearDeflection[0] = ((*(buffer+3)) >> 0) & 0x03;
     forceFeedbackData.gearDeflection[1] = ((*(buffer+3)) >> 2) & 0x03;
     forceFeedbackData.gearDeflection[2] = ((*(buffer+3)) >> 4) & 0x03;

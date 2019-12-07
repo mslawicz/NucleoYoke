@@ -36,7 +36,7 @@ struct ForceFeedbackData
      * 1 -> 1 if stick shaker is on
      * 2 -> 1 if reverser is deployed
      */
-    uint8_t booleanFlags;
+    uint16_t booleanFlags;
     uint8_t gearDeflection[3]; // gear deflection state: 0-up, 1-on the way, 2-down; array of 3 gear units
     float flapsDeflection;  // flaps deflection ratio 0..1
     float totalPitch;   // total pitch control input (sum of user yoke plus autopilot servo plus artificial stability) <-1.0f .. 1.0f>
