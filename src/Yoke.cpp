@@ -41,7 +41,6 @@ Yoke::Yoke() :
     alpha = 0.02;
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-    buttons = 0;
     buttonCleanMask = 0x00000000;
     buttonCleanRequest = false;
     yokeMode = YokeMode::YM_force_feedback;
@@ -210,10 +209,7 @@ void Yoke::sendJoystickData(void)
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[2]))),    //joystick dial - mixture
             LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[3]))),    //joystick wheel - propeller
             hat, //XXX 0,    // HAT switch 1-8, 0=neutral
-            static_cast<uint8_t>(buttons & 0xFF),         // buttons 0-7
-            static_cast<uint8_t>((buttons >> 8) & 0xFF),  // buttons 8-15
-            static_cast<uint8_t>((buttons >> 16) & 0xFF), // buttons 16-23
-            static_cast<uint8_t>((buttons >> 24) & 0xFF)  // buttons 24-31
+            0, 0, 0, 0  //buttons
     };
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
 }
