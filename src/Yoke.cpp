@@ -64,11 +64,11 @@ void Yoke::handler(void)
                 sendYokeData();
                 pcDataReceived = false;
             }
-            else
-            {
-                // TODO joystick data is to be replaced entirely by the buffered data (report ID 3) in the future
-                sendJoystickData();
-            }
+//            else XXX joystick (report ID 1) disabled
+//            {
+//                // TODO joystick data is to be replaced entirely by the buffered data (report ID 3) in the future
+//                sendJoystickData();
+//            }
         }
 
         // update servo position
@@ -89,35 +89,29 @@ void Yoke::handler(void)
  */
 void Yoke::forceFeedbackHandler(uint8_t* buffer)
 {
-    if(buffer[0] == 0x03)
-    {
-        forceFeedbackData.booleanFlags = *(buffer+2);
-        forceFeedbackData.gearDeflection[0] = ((*(buffer+3)) >> 0) & 0x03;
-        forceFeedbackData.gearDeflection[1] = ((*(buffer+3)) >> 2) & 0x03;
-        forceFeedbackData.gearDeflection[2] = ((*(buffer+3)) >> 4) & 0x03;
-        forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+4);
-        forceFeedbackData.totalPitch = *reinterpret_cast<float*>(buffer+8);
-        forceFeedbackData.totalRoll = *reinterpret_cast<float*>(buffer+12);
-        forceFeedbackData.totalYaw = *reinterpret_cast<float*>(buffer+16);
-        forceFeedbackData.throttle = *reinterpret_cast<float*>(buffer+20);
-        forceFeedbackData.airSpeed = *reinterpret_cast<float*>(buffer+24);
-        forceFeedbackData.propellerSpeed = *reinterpret_cast<float*>(buffer+28);
 
-        // yoke force data is received
-        System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
-        forceFeedbackDataTimer.reset();
+    forceFeedbackData.booleanFlags = *(buffer+2);
+    forceFeedbackData.gearDeflection[0] = ((*(buffer+3)) >> 0) & 0x03;
+    forceFeedbackData.gearDeflection[1] = ((*(buffer+3)) >> 2) & 0x03;
+    forceFeedbackData.gearDeflection[2] = ((*(buffer+3)) >> 4) & 0x03;
+    forceFeedbackData.flapsDeflection = *reinterpret_cast<float*>(buffer+4);
+    forceFeedbackData.totalPitch = *reinterpret_cast<float*>(buffer+8);
+    forceFeedbackData.totalRoll = *reinterpret_cast<float*>(buffer+12);
+    forceFeedbackData.totalYaw = *reinterpret_cast<float*>(buffer+16);
+    forceFeedbackData.throttle = *reinterpret_cast<float*>(buffer+20);
+    forceFeedbackData.airSpeed = *reinterpret_cast<float*>(buffer+24);
+    forceFeedbackData.propellerSpeed = *reinterpret_cast<float*>(buffer+28);
 
-        // check new data and possibly send new values to LED indicators
-        sendDataToIndicators();
+    // yoke force data is received
+    System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_SET);
+    forceFeedbackDataTimer.reset();
 
-        // mark that data from PC has been received
-        pcDataReceived = true;
-        ffchannelActive = true;
-    }
-    else
-    {
-        System::getInstance().getConsole()->sendMessage(Severity::Warning,LogChannel::LC_USB, "Received unexpected HID report id=" + std::to_string(static_cast<int>(buffer[0])));
-    }
+    // check new data and possibly send new values to LED indicators
+    sendDataToIndicators();
+
+    // mark that data from PC has been received
+    pcDataReceived = true;
+    ffchannelActive = true;
 }
 
 /*
@@ -158,8 +152,8 @@ void Yoke::sendJoystickData(void)
 void Yoke::sendYokeData(void)
 {
     float fParameter;
-    uint8_t sendBuffer[64] = {0x03, 0x00};
-    // bytes 8-11 for yoke pith
+    uint8_t sendBuffer[64] = {0x00};
+    // bytes 8-11 for yoke pitch
     fParameter = 0.0f;
     memcpy(sendBuffer+8, &fParameter, sizeof(fParameter));
     // bytes 12-15 for yoke roll
