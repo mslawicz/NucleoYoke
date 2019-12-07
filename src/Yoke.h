@@ -73,7 +73,6 @@ public:
     YokeMode getYokeMode(void) const { return yokeMode; }
     void sendDataToIndicators(bool force = false);
 private:
-    void updateButtons(void);
     void computeParameters(void);
     void sendJoystickData(void);
     void sendYokeData(void);

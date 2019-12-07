@@ -60,8 +60,6 @@ Yoke::~Yoke()
  */
 void Yoke::handler(void)
 {
-    // update joystick button data
-    updateButtons();
     // update encoders
     updateEncoders();
 
@@ -303,23 +301,6 @@ void Yoke::displayForceFeedbackData(void)
     System::getInstance().getConsole()->getInterface().send("stick shaker on? = " + boolToYN(forceFeedbackData.booleanFlags & (1 << 1)) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("reverser on? = " + boolToYN(forceFeedbackData.booleanFlags & (1 << 2)) + "\r\n");
     System::getInstance().getConsole()->getInterface().send("propeller speed = " + std::to_string(forceFeedbackData.propellerSpeed) + " [rpm]\r\n");
-}
-
-/*
- * update yoke buttons according to GPIO expander data
- * to be called in yoke handler
- */
-void Yoke::updateButtons(void)
-{
-    if(buttonCleanRequest && buttonCleanTimer.elapsed(buttonCleanDelay))
-    {
-        buttonCleanRequest = false;
-        // clean all decoder signals
-        buttons &= ~buttonCleanMask;
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_EXP,
-                            "Clean mask=" + toHex(buttonCleanMask, 8, true) +
-                            " clean out buttons=" + toHex(buttons, 8, true));
-    }
 }
 
 /*
