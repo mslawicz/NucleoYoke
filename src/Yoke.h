@@ -66,36 +66,22 @@ public:
     void handler(void);
     USB::Device& getInterface(void) { return interface; }
     void forceFeedbackHandler(uint8_t* buffer);
-    void resetParameters(void);
     void displayForceFeedbackData(void);
     void changeMode(int8_t changeValue);
     std::string getYokeModeText(void) const { return modeText.find(yokeMode)->second; }
     YokeMode getYokeMode(void) const { return yokeMode; }
     void sendDataToIndicators(bool force = false);
 private:
-    void computeParameters(void);
     void sendJoystickData(void);
     void sendYokeData(void);
-    void setJoystickForces(void);
     void updateEncoders(void);
     void setServos(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
-    FloatVector angularRate;    // angular rate measured [rad/s]
-    FloatVector acceleration;   // acceleration measured [g]
-    float dTheta;   // pitch angle derivative [rad/s]
-    float dPhi;     // roll angle derivative [rad/s]
-    float theta;    // joystick pitch angle [rad]
-    float phi;      // joystick roll angle [rad]
-    float rudder;   // rudder pedals deflection in the range -1 ... 1
-    float alpha;    // complementary filter strength factor
-    Timer calculationTimer;
     ADConverter adc;                // ADC converter object
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 10000;  // handler loop triggered every 10 ms
     Timer forceFeedbackDataTimer;
-    EMA rudderFilter;
-    EMA thrustFilter;
     EMA mixtureFilter;
     EMA propellerFilter;
     EMA autoRudderGainFilter;

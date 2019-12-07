@@ -27,9 +27,6 @@ int main(void)
     // send first prompt
     System::getInstance().getConsole()->sendPrompt();
 
-    // reset essential yoke parameters before first handler call
-    System::getInstance().getYoke()->resetParameters();
-
 
     System::getInstance().getDisplay()->print(0, 0, "Nucleo Yoke", FontTahoma16b);
     System::getInstance().displayStatus();

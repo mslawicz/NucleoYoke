@@ -11,13 +11,6 @@
 #include "Conversion.h"
 #include <cmath>
 
-FloatVector gGyro; //XXX
-FloatVector gAcc; //XXX
-float gThetaA; //XXX
-float gPhiA; //XXX
-float gTheta; //XXX
-float gPhi; //XXX
-
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 Yoke::Yoke() :
@@ -37,8 +30,6 @@ Yoke::Yoke() :
     hatMiddle(GPIOE, GPIO_PIN_6, GPIO_PinState::GPIO_PIN_SET),
     yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
-    theta = phi = rudder = dTheta = dPhi = 0.0f;
-    alpha = 0.02;
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
     yokeMode = YokeMode::YM_force_feedback;
@@ -64,9 +55,6 @@ void Yoke::handler(void)
     {
         loopTimer.reset();
 
-        // compute yoke parameters after reception of new sensor data
-        computeParameters();
-
         // send yoke data to PC
         if(interface.isActive())
         {
@@ -85,8 +73,6 @@ void Yoke::handler(void)
 
         // update servo position
         setServos();
-        // apply new forces to joystick
-        setJoystickForces();
         // start new AD conversion set
         adc.startConversions();
         // switch data LED off if no force feedback data are being received during 0.2 sec
@@ -135,52 +121,6 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
 }
 
 /*
- * computes yoke parameters after receiving new data from sensors
- */
-void Yoke::computeParameters(void)
-{
-    angularRate = {0.0f, 0.0f, 0.0f};   // XXX zero vector after deleting IMU sensor input
-    acceleration = {0.0f, 0.0f, 0.0f};   // XXX zero vector after deleting IMU sensor input
-    gGyro = angularRate; //XXX
-    gAcc = acceleration; //XXX
-
-    // calculate pitch angle derivative [rad/s]
-    dTheta = angularRate.Y;
-    // calculate roll angle derivative [rad/s]
-    dPhi = angularRate.X;
-
-    // calculate pitch angle from accelerometer data
-    float thetaA = atan2(acceleration.X, acceleration.Z);
-    // calculate roll angle from accelerometer data
-    float phiA = atan2(acceleration.Y, acceleration.Z);
-
-    gThetaA = thetaA; //XXX
-    gPhiA = phiA; //XXX
-
-    // time elapsed since the last calculation [s]
-    float dt = 1e-6f * calculationTimer.elapsed();
-    calculationTimer.reset();
-
-    // calculate pitch angle using complementary filter [rad]
-    theta = (1-alpha) * (theta + dTheta * dt) + alpha * thetaA;
-    // calculate roll angle using complementary filter [rad]
-    phi = (1-alpha) * (phi + dPhi * dt) + alpha * phiA;
-
-    gTheta = theta; //XXX
-    gPhi = phi; //XXX
-
-    // rudder deflection read from analog input #0, range -1..+1
-    rudder = 2.0f * rudderFilter.getFilteredValue(adc.getConvertedValues()[0]) / 4095.0f - 1.0f;
-    rudder *= 0.0f; // XXX rudder signal is not available yet
-    // autorudder deflection calculated from phi (roll input) and gain
-    float autoRudderGain = scaleValue<int16_t, float>(40, 0xFFF, 0.0f, 1.0f, autoRudderGainFilter.getFilteredValue(adc.getConvertedValues()[4]));
-    // gain is squared to achieve semi-exponential curve
-    float autoRudder = phi * autoRudderGain * autoRudderGain;
-    // autorudder is summed with rudder input
-    rudder += autoRudder;
-}
-
-/*
  * sends yoke data to PC using USB HID joystick report
  */
 void Yoke::sendJoystickData(void)
@@ -220,16 +160,16 @@ void Yoke::sendYokeData(void)
     float fParameter;
     uint8_t sendBuffer[64] = {0x03, 0x00};
     // bytes 8-11 for yoke pith
-    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, -theta);
+    fParameter = 0.0f;
     memcpy(sendBuffer+8, &fParameter, sizeof(fParameter));
     // bytes 12-15 for yoke roll
-    fParameter = scaleValue<float, float>(-0.5f,0.5f, -1.0f, 1.0f, phi);
+    fParameter = 0.0f;
     memcpy(sendBuffer+12, &fParameter, sizeof(fParameter));
     // bytes 16-19 for rudder control
-    fParameter = scaleValue<float, float>(-1.0f, 1.0f, -1.0f, 1.0f, rudder);
+    fParameter = 0.0f;
     memcpy(sendBuffer+16, &fParameter, sizeof(fParameter));
     // bytes 20-23 for throttle control
-    fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, thrustFilter.getFilteredValue(adc.getConvertedValues()[1]));
+    fParameter = 0.0f;
     memcpy(sendBuffer+20, &fParameter, sizeof(fParameter));
     // bytes 24-27 for mixture control
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2]));
@@ -267,14 +207,6 @@ void Yoke::sendYokeData(void)
     }
 }
 
-/*
- * resets essential yoke parameters
- */
-void Yoke::resetParameters(void)
-{
-    theta = phi = dTheta = dPhi = 0.0f;
-    calculationTimer.reset();
-}
 
 /*
  * displays force feedback data in the console window
@@ -388,42 +320,6 @@ void Yoke::changeMode(int8_t changeValue)
     sendDataToIndicators(true);
 }
 ;
-
-/*
- * sets joystick forces by driving electromagnets - XXX electromagnets are obsolete
- */
-void Yoke::setJoystickForces(void)
-{
-    float pitchForce = 0.0f;
-    float rollForce = 0.0f;
-    static EMA pitchFilter(0.05f);
-    static EMA rollFilter(0.05f);
-
-    if(yokeMode == YokeMode::YM_force_feedback)
-    {
-        // yoke in 'force feedback' mode
-        pitchForce = (theta - forceFeedbackData.totalPitch) * forceFeedbackData.airSpeed;
-        rollForce = (phi - forceFeedbackData.totalRoll) * forceFeedbackData.airSpeed * 2.0f;
-    }
-    else if(yokeMode == YokeMode::YM_spring)
-    {
-        // yoke in 'spring' mode or in auto without active FF data
-        const float Amplitude = 2.5f;
-        pitchForce = sin(theta);
-        pitchForce *= pitchForce * Amplitude;
-        rollForce = sin(phi);
-        rollForce *= rollForce * Amplitude;
-    }
-    else
-    {
-        // yoke in demo mode
-        static uint32_t cnt = 0;
-        float angle = cnt++ / 5.0f;
-        float amplitude = scaleValue<uint16_t, float>(0, 0xFFF, -1.0f, 1.0f, adc.getConvertedValues()[2]);
-        pitchForce = 0.5f * amplitude * sin(angle);
-        rollForce = amplitude * cos(angle);
-    }
-}
 
 /*
  * updating rotary encoder states without clearing flags
