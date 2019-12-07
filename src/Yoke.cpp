@@ -188,9 +188,9 @@ void Yoke::sendJoystickData(void)
     //XXX check hat switch
     uint8_t hat = System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET ? 3 : 0; //XXX
 
-    int16_t deflectionX = scaleValue<float, int16_t>(-0.5f,0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, phi);
-    int16_t deflectionY = -scaleValue<float, int16_t>(-0.5f, 0.5f, -JoystickXyzMaxValue, JoystickXyzMaxValue, theta);
-    int16_t deflectionZ = scaleValue<float, int16_t>(-1.0f, 1.0f, -JoystickXyzMaxValue, JoystickXyzMaxValue, rudder);
+    int16_t deflectionX = 0;
+    int16_t deflectionY = 0;
+    int16_t deflectionZ = 0;
     uint8_t reportBuffer[] =
     {
             0x01,   // report ID

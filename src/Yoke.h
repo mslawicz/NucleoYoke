@@ -90,7 +90,6 @@ private:
     float rudder;   // rudder pedals deflection in the range -1 ... 1
     float alpha;    // complementary filter strength factor
     Timer calculationTimer;
-    const int16_t JoystickXyzMaxValue = 0x0FFF;
     ADConverter adc;                // ADC converter object
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 10000;  // handler loop triggered every 10 ms
