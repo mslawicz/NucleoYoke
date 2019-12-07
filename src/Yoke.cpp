@@ -41,8 +41,6 @@ Yoke::Yoke() :
     alpha = 0.02;
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-    buttonCleanMask = 0x00000000;
-    buttonCleanRequest = false;
     yokeMode = YokeMode::YM_force_feedback;
     pcDataReceived = false;
     ffchannelActive = false;

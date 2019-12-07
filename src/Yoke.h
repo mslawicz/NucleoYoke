@@ -95,10 +95,6 @@ private:
     Timer loopTimer;        // timer for triggering main Yoke handler loop
     const uint32_t loopPeriod = 10000;  // handler loop triggered every 10 ms
     Timer forceFeedbackDataTimer;
-    uint32_t buttonCleanMask;   // mask for deferred button clean out
-    bool buttonCleanRequest;
-    Timer buttonCleanTimer;
-    const uint32_t buttonCleanDelay = 100000;   // time which must elapse between last expander update and button clean out
     EMA rudderFilter;
     EMA thrustFilter;
     EMA mixtureFilter;
