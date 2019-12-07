@@ -16,7 +16,6 @@
 #include "Display.h"
 #include "RGB.h"
 #include "Servo.h"
-#include "Menu.h"
 
 #define TEST1_PORT   GPIOD
 #define TEST1_PIN    GPIO_PIN_7
@@ -50,7 +49,6 @@ public:
     Yoke* getYoke(void) const { return pYoke; }
     Display* getDisplay(void) const { return pDisplay; }
     RGB* getRGBLeds(void) const { return pRGBLeds; }
-    Menu* getMenu(void) const { return pMenu; }
     void displayStatus(void);
     void demoHandler(void);
     static ErrorCode initErrorCode;
@@ -69,7 +67,6 @@ private:
     Display* pDisplay;
     RGB* pRGBLeds;
     const uint8_t NumberOfRgbLeds = 11;
-    Menu* pMenu;
 };
 
 #endif /* SYSTEM_H_ */

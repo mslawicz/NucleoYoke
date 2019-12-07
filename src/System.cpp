@@ -29,7 +29,6 @@ System::System() :
     pYoke = nullptr;
     pDisplay = nullptr;
     pRGBLeds = nullptr;
-    pMenu = nullptr;
 }
 
 System::~System()
@@ -131,12 +130,6 @@ void System::config(void)
     pYoke = new Yoke;
     pConsole->registerCommands();
     pYoke->registerButtonDecoders();
-    pMenu = new Menu;
-    pMenu->setItem(0, "mode", [this](){ pYoke->changeMode(1); displayStatus(); },
-            [this](){ pYoke->changeMode(-1); displayStatus(); });
-    pMenu->setItem(1, "", nullptr, nullptr);
-    pMenu->setItem(2, "", nullptr, nullptr);
-    pMenu->setItem(3, "", nullptr, nullptr);
 }
 
 /*
