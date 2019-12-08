@@ -23,7 +23,7 @@ Yoke::Yoke() :
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
-    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
+    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
