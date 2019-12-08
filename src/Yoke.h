@@ -100,6 +100,7 @@ private:
     RotaryEncoder elevatorTrim;
     Servo yokePitchServo;
     Servo yokeRollServo;
+    EMA throttleFilter;     //XXX until tensometer input is ready
 };
 
 #endif /* YOKE_H_ */

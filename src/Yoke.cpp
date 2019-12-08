@@ -24,7 +24,8 @@ Yoke::Yoke() :
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
     yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 1000, 2050),
-    yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150)
+    yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150),
+    throttleFilter(0.2f)    // XXX temporary solution
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -122,7 +123,7 @@ void Yoke::sendYokeData(void)
     fParameter = 0.0f;
     memcpy(sendBuffer+16, &fParameter, sizeof(fParameter));
     // bytes 20-23 for throttle control
-    fParameter = 0.0f;
+    fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, throttleFilter.getFilteredValue(adc.getConvertedValues()[1])); //XXX to be replaced with tensometer input
     memcpy(sendBuffer+20, &fParameter, sizeof(fParameter));
     // bytes 24-27 for mixture control
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, mixtureFilter.getFilteredValue(adc.getConvertedValues()[2]));
@@ -281,19 +282,11 @@ void Yoke::updateEncoders(void)
 void Yoke::setServos(void)
 {
     static uint32_t counter = 0;
-    uint16_t pulse; //XXX test
     switch(yokeMode)
     {
     case YM_force_feedback:
-        //yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
-        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 1000, 2050, adc.getConvertedValues()[3]);
-        yokePitchServo.setValue(scaleValue<uint16_t, float>(1000, 2050, 0.0f, 1.0f, pulse));
-        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 850, 2150, adc.getConvertedValues()[2]);
-        if(counter % 100 == 0)
-        {
-            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "pulse=" + std::to_string(pulse));
-        }
-        yokeRollServo.setValue(scaleValue<uint16_t, float>(850, 2150, 0.0f, 1.0f, pulse));
+        yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
+        yokeRollServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalRoll));
         break;
     case YM_spring:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
