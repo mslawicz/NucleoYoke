@@ -65,6 +65,23 @@ void Yoke::handler(void)
 
         // update servo position
         setServos();
+
+        //XXX test of analog joystick
+        static uint32_t cnt = 0;
+        uint16_t mid = 2047;
+        uint16_t deadZone = 100;
+        uint16_t aX = adc.getConvertedValues()[5];
+        uint16_t aY = adc.getConvertedValues()[6];
+        float jX = aX > mid ? scaleValue<uint16_t, float>(mid+deadZone, 4095, 0.0f, 1.0f, aX) : scaleValue<uint16_t, float>(0, mid-deadZone, -1.0f, 0.0f, aX);
+        float jY = aY > mid ? scaleValue<uint16_t, float>(mid+deadZone, 4095, 0.0f, 1.0f, aY) : scaleValue<uint16_t, float>(0, mid-deadZone, -1.0f, 0.0f, aY);
+        if(cnt++ % 50 == 0)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "joy=" + std::to_string(aX) + "_" +
+                    std::to_string(aY) + "  " +
+                    std::to_string(jX) + "_" +
+                    std::to_string(jY));
+        }
+
         // start new AD conversion set
         adc.startConversions();
         // switch data LED off if no force feedback data are being received during 0.2 sec
