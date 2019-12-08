@@ -22,7 +22,6 @@ Yoke::Yoke() :
     flapsDown(GPIOC, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
-    elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
     yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 1000, 2050),
     yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150),
     throttleFilter(0.2f)    // XXX temporary solution
@@ -65,22 +64,6 @@ void Yoke::handler(void)
 
         // update servo position
         setServos();
-
-        //XXX test of analog joystick
-        static uint32_t cnt = 0;
-        uint16_t mid = 2047;
-        uint16_t deadZone = 100;
-        uint16_t aX = adc.getConvertedValues()[5];
-        uint16_t aY = adc.getConvertedValues()[6];
-        float jX = aX > mid ? scaleValue<uint16_t, float>(mid+deadZone, 4095, 0.0f, 1.0f, aX) : scaleValue<uint16_t, float>(0, mid-deadZone, -1.0f, 0.0f, aX);
-        float jY = aY > mid ? scaleValue<uint16_t, float>(mid+deadZone, 4095, 0.0f, 1.0f, aY) : scaleValue<uint16_t, float>(0, mid-deadZone, -1.0f, 0.0f, aY);
-        if(cnt++ % 50 == 0)
-        {
-            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "joy=" + std::to_string(aX) + "_" +
-                    std::to_string(aY) + "  " +
-                    std::to_string(jX) + "_" +
-                    std::to_string(jY));
-        }
 
         // start new AD conversion set
         adc.startConversions();
@@ -165,9 +148,7 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down (one shot switch)
     buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up (one shot switch)
     buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down (one shot switch)
-    auto trimInput = elevatorTrim.getState();
-    buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up (one shot switch)
-    buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down (one shot switch)
+
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
@@ -300,7 +281,7 @@ void Yoke::changeMode(int8_t changeValue)
  */
 void Yoke::updateEncoders(void)
 {
-    elevatorTrim.handler();
+    //elevatorTrim.handler(); XXX not used any more
 }
 
 /*

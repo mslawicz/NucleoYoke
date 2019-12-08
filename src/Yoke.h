@@ -97,7 +97,6 @@ private:
     Switch flapsDown;
     Switch gearUp;
     Switch gearDown;
-    RotaryEncoder elevatorTrim;
     Servo yokePitchServo;
     Servo yokeRollServo;
     EMA throttleFilter;     //XXX until tensometer input is ready
