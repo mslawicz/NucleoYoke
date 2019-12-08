@@ -99,6 +99,7 @@ private:
     Switch gearDown;
     RotaryEncoder elevatorTrim;
     Servo yokePitchServo;
+    Servo yokeRollServo;
 };
 
 #endif /* YOKE_H_ */

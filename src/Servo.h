@@ -10,6 +10,12 @@
 
 #include "stm32f4xx_hal.h"
 
+/*
+ * servo parameters: min, -90, -45, 0, 45, 90, max
+ * RDS3235 450, 620, 1060, 1500, 2000, 2510, 2550
+ * RDS3225 520, 851, 1150, 1500, 1850, 2150, 2480
+ */
+
 class Servo
 {
 public:

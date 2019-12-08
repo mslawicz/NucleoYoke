@@ -23,7 +23,8 @@ Yoke::Yoke() :
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
-    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 400, 2600)
+    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 1000, 2050),
+    yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150)
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -285,12 +286,14 @@ void Yoke::setServos(void)
     {
     case YM_force_feedback:
         //yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
-        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 400, 2600, adc.getConvertedValues()[3]);
+        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 1000, 2050, adc.getConvertedValues()[3]);
+        yokePitchServo.setValue(scaleValue<uint16_t, float>(1000, 2050, 0.0f, 1.0f, pulse));
+        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 850, 2150, adc.getConvertedValues()[2]);
         if(counter % 100 == 0)
         {
             System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "pulse=" + std::to_string(pulse));
         }
-        yokePitchServo.setValue(scaleValue<uint16_t, float>(400, 2600, 0.0f, 1.0f, pulse));
+        yokeRollServo.setValue(scaleValue<uint16_t, float>(850, 2150, 0.0f, 1.0f, pulse));
         break;
     case YM_spring:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
