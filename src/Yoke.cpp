@@ -148,6 +148,16 @@ void Yoke::sendYokeData(void)
     // bytes 28-31 for propeller control
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]));
     memcpy(sendBuffer+28, &fParameter, sizeof(fParameter));
+    // bytes 32-35 for analog joystick X
+    const uint16_t MidValue = 2047;
+    const uint16_t DeadZone = 100;
+    fParameter = adc.getConvertedValues()[5] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[5]) :
+            scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[5]);
+    memcpy(sendBuffer+32, &fParameter, sizeof(fParameter));
+    // bytes 36-39 for analog joystick Y
+    fParameter = adc.getConvertedValues()[6] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[6]) :
+            scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[6]);
+    memcpy(sendBuffer+36, &fParameter, sizeof(fParameter));
 
     // bytes 4-7 is the bitfield data register (buttons, switches, encoders)
     uint32_t buttons = 0;
