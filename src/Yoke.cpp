@@ -64,11 +64,6 @@ void Yoke::handler(void)
                 sendYokeData();
                 pcDataReceived = false;
             }
-//            else XXX joystick (report ID 1) disabled
-//            {
-//                // TODO joystick data is to be replaced entirely by the buffered data (report ID 3) in the future
-//                sendJoystickData();
-//            }
         }
 
         // update servo position
@@ -112,38 +107,6 @@ void Yoke::forceFeedbackHandler(uint8_t* buffer)
     // mark that data from PC has been received
     pcDataReceived = true;
     ffchannelActive = true;
-}
-
-/*
- * sends yoke data to PC using USB HID joystick report
- */
-void Yoke::sendJoystickData(void)
-{
-    //XXX check hat switch
-    uint8_t hat = System::getInstance().systemPushbutton.read() == GPIO_PinState::GPIO_PIN_SET ? 3 : 0; //XXX
-
-    int16_t deflectionX = 0;
-    int16_t deflectionY = 0;
-    int16_t deflectionZ = 0;
-    uint8_t reportBuffer[] =
-    {
-            0x01,   // report ID
-            LOBYTE(deflectionX),    //joystick axis X
-            HIBYTE(deflectionX),
-            LOBYTE(deflectionY),    //joystick axis Y
-            HIBYTE(deflectionY),
-            LOBYTE(deflectionZ),    //joystick axis Z
-            HIBYTE(deflectionZ),
-            0,    //joystick axis Rx
-            0,    //joystick axis Ry
-            0,    //joystick axis Rz
-            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[1]))),    //joystick slider - throttle
-            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[2]))),    //joystick dial - mixture
-            LOBYTE((scaleValue<int16_t, int16_t>(0, 0xFFF, 0, 255, adc.getConvertedValues()[3]))),    //joystick wheel - propeller
-            hat, //XXX 0,    // HAT switch 1-8, 0=neutral
-            0, 0, 0, 0  //buttons
-    };
-    USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, reportBuffer, sizeof(reportBuffer));
 }
 
 /*

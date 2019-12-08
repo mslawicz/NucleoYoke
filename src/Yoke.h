@@ -72,7 +72,6 @@ public:
     YokeMode getYokeMode(void) const { return yokeMode; }
     void sendDataToIndicators(bool force = false);
 private:
-    void sendJoystickData(void);
     void sendYokeData(void);
     void updateEncoders(void);
     void setServos(void);
