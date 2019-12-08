@@ -98,11 +98,6 @@ private:
     Switch gearUp;
     Switch gearDown;
     RotaryEncoder elevatorTrim;
-    Switch hatUp;
-    Switch hatDown;
-    Switch hatLeft;
-    Switch hatRight;
-    Switch hatMiddle;
     Servo yokePitchServo;
 };
 

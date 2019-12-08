@@ -23,11 +23,6 @@ Yoke::Yoke() :
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
-    hatUp(GPIOG, GPIO_PIN_11, GPIO_PinState::GPIO_PIN_SET),
-    hatDown(GPIOG, GPIO_PIN_13, GPIO_PinState::GPIO_PIN_SET),
-    hatLeft(GPIOG, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
-    hatRight(GPIOG, GPIO_PIN_15, GPIO_PinState::GPIO_PIN_SET),
-    hatMiddle(GPIOE, GPIO_PIN_6, GPIO_PinState::GPIO_PIN_SET),
     yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOA, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
 {
     forceFeedbackDataTimer.reset();
@@ -144,13 +139,6 @@ void Yoke::sendYokeData(void)
     auto trimInput = elevatorTrim.getState();
     buttons |= (static_cast<int>(trimInput == -1) << 4);  // bit 4 - elevator trim up (one shot switch)
     buttons |= (static_cast<int>(trimInput == 1) << 5);  // bit 5 - elevator trim down (one shot switch)
-    buttons |= (static_cast<int>(hatUp.getState()) << 6);  // bit 6 - hat switch up (press and hold switch)
-    buttons |= (static_cast<int>(hatDown.getState()) << 7);  // bit 7 - hat switch down (press and hold switch)
-    buttons |= (static_cast<int>(hatRight.getState()) << 8);  // bit 8 - hat switch right (press and hold switch)
-    buttons |= (static_cast<int>(hatLeft.getState()) << 9);  // bit 9 - hat switch left (press and hold switch)
-    buttons |= (static_cast<int>(hatMiddle.hasChangedTo0()) << 10);  // bit 10 - hat switch middle (one shot switch)
-    buttons |= (static_cast<int>(hatRight.doubleChangedTo0()) << 11);  // bit 11 - double click of hat switch right (one shot switch)
-    buttons |= (static_cast<int>(hatLeft.doubleChangedTo0()) << 12);  // bit 12 - double click of hat switch left (one shot switch)
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
