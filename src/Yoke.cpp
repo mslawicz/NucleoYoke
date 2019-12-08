@@ -23,7 +23,7 @@ Yoke::Yoke() :
     gearUp(GPIOF, GPIO_PIN_5, GPIO_PinState::GPIO_PIN_SET),
     gearDown(GPIOF, GPIO_PIN_4, GPIO_PinState::GPIO_PIN_SET),
     elevatorTrim(GPIOD, GPIO_PIN_4, GPIOD, GPIO_PIN_5, RotaryEncoderType::RET_single_slope, 3000),
-    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1000)
+    yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 400, 2600)
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -280,10 +280,17 @@ void Yoke::updateEncoders(void)
 void Yoke::setServos(void)
 {
     static uint32_t counter = 0;
+    uint16_t pulse; //XXX test
     switch(yokeMode)
     {
     case YM_force_feedback:
-        yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
+        //yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
+        pulse = scaleValue<uint16_t, uint16_t>(0, 4095, 400, 2600, adc.getConvertedValues()[3]);
+        if(counter % 100 == 0)
+        {
+            System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "pulse=" + std::to_string(pulse));
+        }
+        yokePitchServo.setValue(scaleValue<uint16_t, float>(400, 2600, 0.0f, 1.0f, pulse));
         break;
     case YM_spring:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
