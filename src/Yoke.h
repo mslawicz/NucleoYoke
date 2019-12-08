@@ -100,6 +100,7 @@ private:
     Servo yokePitchServo;
     Servo yokeRollServo;
     EMA throttleFilter;     //XXX until tensometer input is ready
+    Switch centerView;
 };
 
 #endif /* YOKE_H_ */
