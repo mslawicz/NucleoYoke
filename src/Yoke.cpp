@@ -132,13 +132,13 @@ void Yoke::sendYokeData(void)
     // bytes 28-31 for propeller control
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]));
     memcpy(sendBuffer+28, &fParameter, sizeof(fParameter));
-    // bytes 32-35 for analog joystick X
+    // bytes 32-35 for analog joystick Y (pilot's view pitch)
     const uint16_t MidValue = 2047;
     const uint16_t DeadZone = 100;
     fParameter = adc.getConvertedValues()[5] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[5]) :
             scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[5]);
     memcpy(sendBuffer+32, &fParameter, sizeof(fParameter));
-    // bytes 36-39 for analog joystick Y
+    // bytes 36-39 for analog joystick X (pilot's view yaw)
     fParameter = adc.getConvertedValues()[6] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[6]) :
             scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[6]);
     memcpy(sendBuffer+36, &fParameter, sizeof(fParameter));
@@ -149,7 +149,7 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(flapsDown.hasChangedTo0()) << 1);  // bit 1 - flaps down (one shot switch)
     buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up (one shot switch)
     buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down (one shot switch)
-    buttons |= (static_cast<int>(centerView.getState()) << 4);  // bit 4 - center pilot's view (analog joystick pushbutton)
+    buttons |= (static_cast<int>(centerView.hasChangedTo0()) << 4);  // bit 4 - center pilot's view (analog joystick pushbutton) (one shot switch)
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
