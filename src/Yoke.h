@@ -17,6 +17,7 @@
 #include "Switch.h"
 #include "RotaryEncoder.h"
 #include "Conversion.h"
+#include "HX711.h"
 #include <string>
 #include <unordered_map>
 
@@ -101,6 +102,7 @@ private:
     Servo yokeRollServo;
     EMA throttleFilter;     //XXX until tensometer input is ready
     Switch centerView;
+    HX711 tensometers;
 };
 
 #endif /* YOKE_H_ */

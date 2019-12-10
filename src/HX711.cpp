@@ -12,3 +12,7 @@ HX711::HX711() :
 {
     boards.push_back(HX711board{GPIO(GPIOA, GPIO_PIN_0, GPIO_MODE_INPUT, GPIO_PULLDOWN, GPIO_SPEED_MEDIUM), 0});  // yoke pitch tension converter board
 }
+
+void HX711::handler(void)
+{
+}

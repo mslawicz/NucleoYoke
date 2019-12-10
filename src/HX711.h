@@ -24,6 +24,7 @@ class HX711
 {
 public:
     HX711();
+    void handler(void);
 private:
     GPIO sckSignal;
     std::vector<HX711board> boards;
