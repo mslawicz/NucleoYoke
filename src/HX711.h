@@ -17,8 +17,14 @@ struct HX711board
     uint32_t data;
 };
 
-#define HX711_SCK_PORT  GPIOA   // XXX change!
-#define HX711_SCK_PIN   GPIO_PIN_0  // XXX change!
+#define HX711_SCK_PORT  GPIOF   // XXX change!
+#define HX711_SCK_PIN   GPIO_PIN_11  // XXX change!
+
+enum HX711State
+{
+    HXS_wait_for_data_ready,
+    HXS_read_bit
+};
 
 class HX711
 {
@@ -28,6 +34,7 @@ public:
 private:
     GPIO sckSignal;
     std::vector<HX711board> boards;
+    HX711State state;
 };
 
 #endif /* HX711_H_ */
