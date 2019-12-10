@@ -295,7 +295,7 @@ void Yoke::setServos(void)
     {
     case YM_force_feedback:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
-        yokeRollServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalRoll));
+        yokeRollServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, -forceFeedbackData.totalRoll));
         break;
     case YM_spring:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
