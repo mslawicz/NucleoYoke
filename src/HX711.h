@@ -9,32 +9,28 @@
 #define HX711_H_
 
 #include "GPIO.h"
-#include <vector>
-
-struct HX711board
-{
-    GPIO dOut;
-    uint32_t data;
-};
-
-#define HX711_SCK_PORT  GPIOF   // XXX change!
-#define HX711_SCK_PIN   GPIO_PIN_11  // XXX change!
 
 enum HX711State
 {
     HXS_wait_for_data_ready,
-    HXS_read_bit
+    HXS_clock_pulse,
+    HXS_after_pulse
 };
 
 class HX711
 {
 public:
-    HX711();
+    HX711(GPIO_TypeDef* clockPort, uint32_t clockPin, GPIO_TypeDef* dataPort, uint32_t dataPin, uint8_t totalPulses = 25);
     void handler(void);
+    uint32_t getData(void) const { return dataRegister; }
 private:
-    GPIO sckSignal;
-    std::vector<HX711board> boards;
+    GPIO clockSignal;
+    GPIO dataSignal;
     HX711State state;
+    uint8_t pulseNumber;
+    uint32_t dataBuffer;
+    uint8_t totalPulses;
+    uint32_t dataRegister;
 };
 
 #endif /* HX711_H_ */

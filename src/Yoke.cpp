@@ -75,8 +75,6 @@ void Yoke::handler(void)
             ffchannelActive = false;
         }
     }
-
-    tensometers.handler();
 }
 
 /*

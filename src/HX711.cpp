@@ -7,37 +7,50 @@
 
 #include "HX711.h"
 
-HX711::HX711() :
-    sckSignal(HX711_SCK_PORT, HX711_SCK_PIN, GPIO_MODE_OUTPUT_PP, GPIO_PULLDOWN, GPIO_SPEED_MEDIUM)
+HX711::HX711(GPIO_TypeDef* clockPort, uint32_t clockPin, GPIO_TypeDef* dataPort, uint32_t dataPin, uint8_t totalPulses) :
+    clockSignal(clockPort, clockPin, GPIO_MODE_OUTPUT_PP, GPIO_PULLDOWN, GPIO_SPEED_MEDIUM),
+    dataSignal(dataPort, dataPin, GPIO_MODE_INPUT, GPIO_PULLUP, GPIO_SPEED_MEDIUM),
+    totalPulses(totalPulses)
 {
-    boards.push_back(HX711board{GPIO(GPIOF, GPIO_PIN_15, GPIO_MODE_INPUT, GPIO_PULLDOWN, GPIO_SPEED_MEDIUM), 0});  // yoke pitch tension converter board
-    sckSignal.write(GPIO_PinState::GPIO_PIN_RESET);
+    clockSignal.write(GPIO_PinState::GPIO_PIN_RESET);
     state = HX711State::HXS_wait_for_data_ready;
+    pulseNumber = 0;
+    dataBuffer = 0;
+    dataRegister = 0;
 }
 
 void HX711::handler(void)
 {
-    bool ready = true;
-    uint8_t bitNumber;
     switch(state)
     {
     case HXS_wait_for_data_ready:
-        for(auto board : boards)
+        if(dataSignal.read() == GPIO_PinState::GPIO_PIN_RESET)
         {
-            if(board.dOut.read() == GPIO_PinState::GPIO_PIN_SET)
-            {
-                ready = false;
-                break;
-            }
-        }
-        if(ready)
-        {
-            // all boards are ready
-            bitNumber = 0;
-            state = HXS_read_bit;
+            // data is ready
+            pulseNumber = 0;
+            dataBuffer = 0;
+            state = HXS_clock_pulse;
         }
         break;
-    case HXS_read_bit:
+    case HXS_clock_pulse:
+        clockSignal.write(GPIO_PinState::GPIO_PIN_SET);
+        if(pulseNumber < 24)
+        {
+            dataBuffer = (dataBuffer << 1) | dataSignal.read();
+        }
+        clockSignal.write(GPIO_PinState::GPIO_PIN_RESET);
+        state = HXS_after_pulse;
+        break;
+    case HXS_after_pulse:
+        if(++pulseNumber == totalPulses)
+        {
+            dataRegister = dataBuffer;
+            state = HXS_wait_for_data_ready;
+        }
+        else
+        {
+            state = HXS_clock_pulse;
+        }
         break;
     default:
         break;

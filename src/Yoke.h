@@ -102,7 +102,6 @@ private:
     Servo yokeRollServo;
     EMA throttleFilter;     //XXX until tensometer input is ready
     Switch centerView;
-    HX711 tensometers;
 };
 
 #endif /* YOKE_H_ */
