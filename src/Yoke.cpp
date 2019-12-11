@@ -78,13 +78,6 @@ void Yoke::handler(void)
             ffchannelActive = false;
         }
     }
-
-    static Timer disp;  //XXX test
-    if(disp.elapsed(1000000))
-    {
-        disp.reset();
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "tensometer=" + toHex(yokePitchTensometer.getData(), 6, true));
-    }
 }
 
 /*
