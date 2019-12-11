@@ -76,6 +76,7 @@ private:
     void sendYokeData(void);
     void updateEncoders(void);
     void setServos(void);
+    void tensometerHandlers(void);
     USB::Device interface;      // USB interface of this yoke
     ForceFeedbackData forceFeedbackData;    // force feedback data read from PC
     ADConverter adc;                // ADC converter object
@@ -102,6 +103,7 @@ private:
     Servo yokeRollServo;
     EMA throttleFilter;     //XXX until tensometer input is ready
     Switch centerView;
+    HX711 yokePitchTensometer;
 };
 
 #endif /* YOKE_H_ */

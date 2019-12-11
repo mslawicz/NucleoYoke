@@ -25,7 +25,8 @@ Yoke::Yoke() :
     yokePitchServo(&Servo::hTim, TIM_CHANNEL_1, GPIOC, GPIO_PIN_6, GPIO_AF2_TIM3, 1500, 1000, 2050),
     yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150),
     throttleFilter(0.2f),    // XXX temporary solution
-    centerView(GPIOA, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET)
+    centerView(GPIOA, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
+    yokePitchTensometer(GPIOF, GPIO_PIN_14, GPIOD, GPIO_PIN_15)
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -47,6 +48,8 @@ void Yoke::handler(void)
 {
     // update encoders
     updateEncoders();
+    // call all tensometer handlers
+    tensometerHandlers();
 
     if(loopTimer.elapsed(loopPeriod))
     {
@@ -74,6 +77,13 @@ void Yoke::handler(void)
             System::getInstance().dataLED.write(GPIO_PinState::GPIO_PIN_RESET);
             ffchannelActive = false;
         }
+    }
+
+    static Timer disp;  //XXX test
+    if(disp.elapsed(1000000))
+    {
+        disp.reset();
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "tensometer=" + toHex(yokePitchTensometer.getData(), 6, true));
     }
 }
 
@@ -307,4 +317,12 @@ void Yoke::setServos(void)
         break;
     }
     counter++;
+}
+
+/*
+ * call all tensometer handlers here
+ */
+void Yoke::tensometerHandlers(void)
+{
+    yokePitchTensometer.handler();
 }

@@ -32,6 +32,8 @@ int main(void)
     System::getInstance().displayStatus();
     System::getInstance().getYoke()->sendDataToIndicators(true);
 
+    GPIO HX711Ready(GPIOD, GPIO_PIN_14, GPIO_MODE_OUTPUT_PP, GPIO_PULLUP, GPIO_SPEED_MEDIUM);   //XXX HX711 test
+    Timer HX711Timer;   //XXX HX711 test
 
     // main loop
     while(1)
@@ -46,6 +48,15 @@ int main(void)
         System::getInstance().getDisplay()->handler();
         System::getInstance().getRGBLeds()->handler();
         System::getInstance().demoHandler();
+        if(HX711Timer.elapsed(12400))
+        {
+            HX711Ready.write(GPIO_PinState::GPIO_PIN_RESET);
+        }
+        if(HX711Timer.elapsed(12500))
+        {
+            HX711Ready.write(GPIO_PinState::GPIO_PIN_SET);
+            HX711Timer.reset();
+        }
     }
 
     System::getInstance().terminate();
