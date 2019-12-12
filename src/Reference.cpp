@@ -7,10 +7,11 @@
 
 #include "Reference.h"
 
-Reference::Reference(uint32_t midValue, uint32_t referenceLimit, float referenceDeviation) :
+Reference::Reference(uint32_t midValue, uint32_t referenceLimit, float referenceDeviation, uint32_t stabilityTime) :
     midValue(midValue),
     referenceLimit(referenceLimit),
-    referenceDeviation(referenceDeviation)
+    referenceDeviation(referenceDeviation),
+    stabilityTime(stabilityTime)
 {
     noOfAveragedSamples = 0;
     averageValue = 0.0f;
@@ -28,6 +29,7 @@ void Reference::calculateReference(uint32_t inputValue)
         {
             // the first valid sample
             averageValue = static_cast<float>(inputValue);
+            stabilityTimer.reset();
         }
 
         if (fabs(inputValue - averageValue) < referenceDeviation)
@@ -41,7 +43,7 @@ void Reference::calculateReference(uint32_t inputValue)
             noOfAveragedSamples = 0;
         }
 
-        if (noOfAveragedSamples > 15)   // XXX use different condition here
+        if (stabilityTimer.elapsed(stabilityTime))   // stable state for enough time
         {
             referenceValue = averageValue;
         }
