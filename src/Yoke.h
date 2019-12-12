@@ -18,6 +18,7 @@
 #include "RotaryEncoder.h"
 #include "Conversion.h"
 #include "HX711.h"
+#include "Reference.h"
 #include <string>
 #include <unordered_map>
 
@@ -104,6 +105,8 @@ private:
     EMA throttleFilter;     //XXX until tensometer input is ready
     Switch centerView;
     HX711 yokePitchTensometer;
+    Reference viewJoystickRefX;
+    Reference viewJoystickRefY;
 };
 
 #endif /* YOKE_H_ */

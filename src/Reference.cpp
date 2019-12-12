@@ -6,6 +6,7 @@
  */
 
 #include "Reference.h"
+#include <cmath>
 
 Reference::Reference(uint32_t midValue, uint32_t referenceLimit, float referenceDeviation, uint32_t stabilityTime) :
     midValue(midValue),

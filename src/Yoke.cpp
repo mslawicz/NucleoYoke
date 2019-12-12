@@ -26,7 +26,9 @@ Yoke::Yoke() :
     yokeRollServo(&Servo::hTim, TIM_CHANNEL_2, GPIOB, GPIO_PIN_5, GPIO_AF2_TIM3, 1500, 850, 2150),
     throttleFilter(0.2f),    // XXX temporary solution
     centerView(GPIOA, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
-    yokePitchTensometer(GPIOF, GPIO_PIN_14, GPIOD, GPIO_PIN_15)
+    yokePitchTensometer(GPIOF, GPIO_PIN_14, GPIOD, GPIO_PIN_15),
+    viewJoystickRefX(2126, 100, 20, 100000),
+    viewJoystickRefY(2116, 100, 20, 100000)
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -136,15 +138,28 @@ void Yoke::sendYokeData(void)
     fParameter = scaleValue<float, float>(0.0f, 4096.0f, 0.0f, 1.0f, propellerFilter.getFilteredValue(adc.getConvertedValues()[3]));
     memcpy(sendBuffer+28, &fParameter, sizeof(fParameter));
     // bytes 32-35 for analog joystick Y (pilot's view yaw)
-    const uint16_t MidValue = 2047;
-    const uint16_t DeadZone = 100;
-    fParameter = adc.getConvertedValues()[5] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[5]) :
-            scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[5]);
+    viewJoystickRefY.calculateReference(adc.getConvertedValues()[5]);
+    float inputY = adc.getConvertedValues()[5];
+    fParameter = inputY > viewJoystickRefY.getReference() ? scaleValue<float, float>(viewJoystickRefY.getReference() + 20.0f, 4095.0f, 0.0f, 1.0f, inputY) :
+            scaleValue<float, float>(0.0f, viewJoystickRefY.getReference() - 20.0f, -1.0f, 0.0f, inputY);
     memcpy(sendBuffer+32, &fParameter, sizeof(fParameter));
     // bytes 36-39 for analog joystick X (pilot's view pitch)
-    fParameter = adc.getConvertedValues()[6] > MidValue ? scaleValue<uint16_t, float>(MidValue+DeadZone, 4095, 0.0f, 1.0f, adc.getConvertedValues()[6]) :
-            scaleValue<uint16_t, float>(0, MidValue-DeadZone, -1.0f, 0.0f, adc.getConvertedValues()[6]);
+    viewJoystickRefX.calculateReference(adc.getConvertedValues()[6]);
+    float inputX = adc.getConvertedValues()[6];
+    fParameter = inputX > viewJoystickRefX.getReference() ? scaleValue<float, float>(viewJoystickRefX.getReference() + 20.0f, 4095.0f, 0.0f, 1.0f, inputX) :
+            scaleValue<float, float>(0.0f, viewJoystickRefX.getReference() - 20.0f, -1.0f, 0.0f, inputX);
     memcpy(sendBuffer+36, &fParameter, sizeof(fParameter));
+
+    //XXX test of reference values
+    static uint32_t cnt = 0;
+    if(++cnt % 30 == 0)
+    {
+        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "ref: " +
+                std::to_string(inputY) + "  " +
+                std::to_string(viewJoystickRefY.getReference()) + "  " +
+                std::to_string(inputX) + "  " +
+                std::to_string(viewJoystickRefX.getReference()));
+    }
 
     // bytes 4-7 is the bitfield data register (buttons, switches, encoders)
     uint32_t buttons = 0;
