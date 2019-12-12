@@ -150,17 +150,6 @@ void Yoke::sendYokeData(void)
             scaleValue<float, float>(0.0f, viewJoystickRefX.getReference() - 20.0f, -1.0f, 0.0f, inputX);
     memcpy(sendBuffer+36, &fParameter, sizeof(fParameter));
 
-    //XXX test of reference values
-    static uint32_t cnt = 0;
-    if(++cnt % 30 == 0)
-    {
-        System::getInstance().getConsole()->sendMessage(Severity::Debug,LogChannel::LC_SYSTEM, "ref: " +
-                std::to_string(inputY) + "  " +
-                std::to_string(viewJoystickRefY.getReference()) + "  " +
-                std::to_string(inputX) + "  " +
-                std::to_string(viewJoystickRefX.getReference()));
-    }
-
     // bytes 4-7 is the bitfield data register (buttons, switches, encoders)
     uint32_t buttons = 0;
     buttons |= (static_cast<int>(flapsUp.hasChangedTo0()) << 0);    // bit 0 - flaps up (one shot switch)
