@@ -31,8 +31,8 @@ public:
     WS2812(SpiBus* pBus);
     void send(std::vector<uint32_t> dataGRB);
 private:
-    const uint8_t zeroBitPattern = 0xC0;
-    const uint8_t onebitPattern = 0xFC;
+    const uint8_t zeroBitPattern = 0b11000000;
+    const uint8_t onebitPattern = 0b11111100;
 };
 
 #endif /* WS2812_H_ */
