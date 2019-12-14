@@ -107,6 +107,8 @@ private:
     HX711 yokePitchTensometer;
     Reference viewJoystickRefX;
     Reference viewJoystickRefY;
+    Switch elevatorTrimUp;
+    Switch elevatorTrimDown;
 };
 
 #endif /* YOKE_H_ */

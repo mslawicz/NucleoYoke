@@ -28,7 +28,9 @@ Yoke::Yoke() :
     centerView(GPIOA, GPIO_PIN_10, GPIO_PinState::GPIO_PIN_SET),
     yokePitchTensometer(GPIOF, GPIO_PIN_14, GPIOD, GPIO_PIN_15),
     viewJoystickRefX(2126, 100, 20, 100000),
-    viewJoystickRefY(2116, 100, 20, 100000)
+    viewJoystickRefY(2116, 100, 20, 100000),
+    elevatorTrimUp(GPIOD, GPIO_PIN_0, GPIO_PinState::GPIO_PIN_SET), //XXX tmp
+    elevatorTrimDown(GPIOD, GPIO_PIN_1, GPIO_PinState::GPIO_PIN_SET)    //XXX tmp
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
@@ -154,6 +156,8 @@ void Yoke::sendYokeData(void)
     buttons |= (static_cast<int>(gearUp.hasChangedTo0()) << 2);  // bit 2 - gear up (one shot switch)
     buttons |= (static_cast<int>(gearDown.hasChangedTo0()) << 3);  // bit 3 - gear down (one shot switch)
     buttons |= (static_cast<int>(centerView.hasChangedTo0()) << 4);  // bit 4 - center pilot's view (analog joystick pushbutton) (one shot switch)
+    buttons |= (static_cast<int>(elevatorTrimUp.getState()) << 5);  // bit 5 - elevator trim up button
+    buttons |= (static_cast<int>(elevatorTrimDown.getState()) << 6);  // bit 6 - elevator trim down button
     memcpy(sendBuffer+4, &buttons, sizeof(buttons));
 
     USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, sendBuffer, sizeof(sendBuffer));
