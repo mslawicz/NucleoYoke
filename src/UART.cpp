@@ -43,8 +43,6 @@ UART::UART(USART_TypeDef* instance, uint32_t baudRate) :
         HAL_NVIC_SetPriority(USART3_IRQn, 1, 0);
         HAL_NVIC_EnableIRQ(USART3_IRQn);
     }
-    busy = false;
-    receptionBuffer = 0;
 }
 
 UART::~UART()

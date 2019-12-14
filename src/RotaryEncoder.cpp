@@ -16,7 +16,6 @@ RotaryEncoder::RotaryEncoder(GPIO_TypeDef* clkPort, uint32_t clkPin, GPIO_TypeDe
     clockSignal.hasChanged();
     clockSignal.hasChangedTo0();
     directionSignal.hasChanged();
-    state = 0;
 }
 
 /*

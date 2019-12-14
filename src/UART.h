@@ -31,9 +31,9 @@ private:
     UART_HandleTypeDef hUart;   // structure defining UART
     USART_TypeDef* instance;    // USART instance
     std::string stringToSend;   // string currently being sent
-    volatile bool busy;         // true if transmission is ongoing
+    volatile bool busy {false};         // true if transmission is ongoing
     std::queue<std::string> transmitQueue;      // queue of strings to transmit
-    uint8_t receptionBuffer;    // 1-byte reception buffer
+    uint8_t receptionBuffer {0};    // 1-byte reception buffer
     std::string receivedString; // string gathering received characters
     std::queue<std::string> receptionQueue;     // queue of received strings
 };

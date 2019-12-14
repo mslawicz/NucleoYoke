@@ -88,14 +88,14 @@ private:
     EMA propellerFilter;
     EMA autoRudderGainFilter;
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
-    YokeMode yokeMode;
+    YokeMode yokeMode {YokeMode::force_feedback};
     const std::unordered_map<YokeMode, std::string> modeText{
             {YokeMode::force_feedback, "FF"},
             {YokeMode::spring, "spring"},
             {YokeMode::demo, "demo"}
     };
-    bool pcDataReceived;
-    bool ffchannelActive;   // true if FF data are being received
+    bool pcDataReceived {false};
+    bool ffchannelActive {false};   // true if FF data are being received
     Switch flapsUp;
     Switch flapsDown;
     Switch gearUp;

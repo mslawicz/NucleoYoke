@@ -60,12 +60,12 @@ public:
     GPIO testPin2; //XXX
 private:
     System();
-    Console* pConsole;
-    Yoke* pYoke;
-    SpiBus* pSPI2;
-    SpiBus* pSPI4;
-    Display* pDisplay;
-    RGB* pRGBLeds;
+    Console* pConsole {nullptr};
+    Yoke* pYoke {nullptr};
+    SpiBus* pSPI2 {nullptr};
+    SpiBus* pSPI4 {nullptr};
+    Display* pDisplay {nullptr};
+    RGB* pRGBLeds {nullptr};
     const uint8_t NumberOfRgbLeds = 11;
 };
 

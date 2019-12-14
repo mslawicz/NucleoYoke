@@ -38,7 +38,7 @@ public:
     void handler(void);
     static SpiBus* pSpi2;       // global pointer for SPI2 bus
     static SpiBus* pSpi4;       // global pointer for SPI4 bus
-    SpiDevice* pCurrentlyServedDevice;
+    SpiDevice* pCurrentlyServedDevice {nullptr};
     friend SpiDevice;
 private:
     SPI_HandleTypeDef hSpi;     // SPI handle structure
@@ -48,7 +48,7 @@ private:
     std::vector<uint8_t> dataToSend;        // buffer for data being sent
     std::queue<sendRequestContainer> sendRequestQueue;      // queue of send requests from devices
     GPIO* pPinCD;     // command/data pin for this SPI bus; set to nullptr if not used
-    volatile bool busy;          // true if SPI is busy transmitting
+    volatile bool busy {false};          // true if SPI is busy transmitting
 };
 
 class SpiDevice
@@ -64,7 +64,7 @@ protected:
     SpiBus* pBus;       // SPI bus for this device
 private:
     GPIO chipSelect;
-    bool autoSelect;
+    bool autoSelect {false};
 };
 
 #endif /* SPI_H_ */

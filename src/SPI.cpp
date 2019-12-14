@@ -134,9 +134,6 @@ SpiBus::SpiBus(SPI_TypeDef* instance) :
         pPinCD = new GPIO(SPI4_CD_PORT, SPI4_CD_PIN, GPIO_MODE_OUTPUT_PP, GPIO_NOPULL, GPIO_SPEED_LOW);
         pSpi4 = this;
     }
-
-    pCurrentlyServedDevice = nullptr;
-    busy = false;
 }
 
 SpiBus::~SpiBus()
@@ -194,7 +191,6 @@ SpiDevice::SpiDevice(SpiBus* pBus) :
         chipSelect(nullptr, 0, GPIO_MODE_INPUT)
 {
     System::getInstance().getConsole()->sendMessage(Severity::Info, LogChannel::LC_SPI, "SPI device created with no CS signal");
-    autoSelect = false;
 }
 
 /*

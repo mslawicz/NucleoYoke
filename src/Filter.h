@@ -14,10 +14,10 @@ public:
     EMA(float quickness = 0.2f);
     float getFilteredValue(float input);
 private:
-    float filteredValue;
-    float alpha;     // filter smoothing parameter: 0-max filtering, 1-no filtering
+    float filteredValue {0.0f};
+    float alpha {0.02f};     // filter smoothing parameter: 0-max filtering, 1-no filtering
     const float Beta = 0.02f;   // average value smoothing factor
-    float averageDelta;     // average value of delta
+    float averageDelta {0.0f};     // average value of delta
     float quickness;     //
 };
 

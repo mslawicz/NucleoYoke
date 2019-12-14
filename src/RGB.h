@@ -24,7 +24,7 @@ public:
 private:
     WS2812 device;
     std::vector<uint32_t> ledData;
-    bool updateRequest;
+    bool updateRequest {true};
 };
 
 #endif /* RGB_H_ */

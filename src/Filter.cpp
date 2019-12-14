@@ -15,9 +15,6 @@
 EMA::EMA(float quickness) :
     quickness (quickness)
 {
-    filteredValue = 0.0f;
-    alpha = 0.02f;
-    averageDelta = 0.0f;
 }
 
 float EMA::getFilteredValue(float input)

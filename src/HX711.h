@@ -26,11 +26,11 @@ public:
 private:
     GPIO clockSignal;
     GPIO dataSignal;
-    HX711State state;
-    uint8_t pulseNumber;
-    uint32_t dataBuffer;
+    HX711State state {HX711State::wait_for_data_ready};
+    uint8_t pulseNumber {0};
+    uint32_t dataBuffer {0};
     uint8_t totalPulses;
-    uint32_t dataRegister;
+    uint32_t dataRegister {0};
 };
 
 #endif /* HX711_H_ */

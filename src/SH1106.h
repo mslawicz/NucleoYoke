@@ -39,7 +39,7 @@ public:
     void setContrast(uint8_t value) {sendRequest(std::vector<uint8_t>{0x81, value}, true);}
 private:
     void refreshDisplay(void);
-    DisplayControllerState state;
+    DisplayControllerState state {DisplayControllerState::start};
     GPIO resetPin;
     Timer controllerTimer;
     const uint32_t WaitBeforeInitTime = 100;
@@ -61,7 +61,7 @@ private:
     static const uint8_t NoOfRows = 128;
     uint8_t displayBuffer[NoOfPages][NoOfRows];     // buffer of display data
     uint8_t refreshRange[NoOfPages][2];     // array of from-to raws to be refreshed; value 0 means 'not to be refreshed'
-    bool refreshRequest;
+    bool refreshRequest {false};
 };
 
 #endif /* SH1106_H_ */

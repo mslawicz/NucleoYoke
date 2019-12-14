@@ -14,8 +14,6 @@ Reference::Reference(uint32_t midValue, uint32_t referenceLimit, float reference
     referenceDeviation(referenceDeviation),
     stabilityTime(stabilityTime)
 {
-    noOfAveragedSamples = 0;
-    averageValue = 0.0f;
     referenceValue = static_cast<float>(midValue);
 }
 

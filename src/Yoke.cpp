@@ -32,9 +32,6 @@ Yoke::Yoke() :
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-    yokeMode = YokeMode::force_feedback;
-    pcDataReceived = false;
-    ffchannelActive = false;
 }
 
 Yoke::~Yoke()

@@ -12,12 +12,6 @@ Switch::Switch(GPIO_TypeDef* port, uint32_t pin, GPIO_PinState startState, uint3
         pinState(startState),
         debounceTime(debounceTime)
 {
-    machineState = SwitchState::stable;
-    hasChangedFlag = false;
-    hasChangedTo0Flag = false;
-    hasChangedTo1Flag = false;
-    doubleChangedTo0Flag = false;
-    doubleChangedTo1Flag = false;
 }
 
 /*

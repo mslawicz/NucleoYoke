@@ -11,7 +11,6 @@ RGB::RGB(SpiBus* pBus, uint8_t numberOfLeds) :
     device(pBus)
 {
     ledData.resize(numberOfLeds, 0);
-    updateRequest = true;
 }
 
 /*

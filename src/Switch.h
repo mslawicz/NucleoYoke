@@ -31,17 +31,17 @@ private:
     void stateMachine(void);
     GPIO inputPin;      // input GPIO object
     GPIO_PinState pinState;     // the current level of the input pin
-    SwitchState machineState;   // state of the state machine
+    SwitchState machineState {SwitchState::stable};   // state of the state machine
     Timer eventTime;            // timer for switching time measurement
     uint32_t debounceTime;      // requested switch stability time
-    bool hasChangedFlag;        // true if switch has changed its state
-    bool hasChangedTo1Flag;     // true if switch has chenged 0->1
-    bool hasChangedTo0Flag;     // true if switch has changed 1->0
+    bool hasChangedFlag {false};        // true if switch has changed its state
+    bool hasChangedTo1Flag {false};     // true if switch has chenged 0->1
+    bool hasChangedTo0Flag {false};     // true if switch has changed 1->0
     Timer changeTo0Time;        // remembers last change to 0 time
     Timer changeTo1Time;        // remembers last change to 1 time
     const uint32_t DoubleChangeTime = 400000;   // boundary time of "double clicking"
-    bool doubleChangedTo1Flag;     // true if double chenged 0->1
-    bool doubleChangedTo0Flag;     // true if double changed 1->0
+    bool doubleChangedTo1Flag {false};     // true if double chenged 0->1
+    bool doubleChangedTo0Flag {false};     // true if double changed 1->0
 };
 
 #endif /* SWITCH_H_ */

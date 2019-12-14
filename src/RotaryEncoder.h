@@ -26,7 +26,7 @@ private:
     Switch clockSignal;
     Switch directionSignal;
     RotaryEncoderType type;
-    int state;
+    int state {0};
 };
 
 #endif /* ROTARYENCODER_H_ */

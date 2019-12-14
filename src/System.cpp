@@ -23,12 +23,6 @@ System::System() :
     testPin1(TEST1_PORT, TEST1_PIN, GPIO_MODE_OUTPUT_PP),
     testPin2(TEST2_PORT, TEST2_PIN, GPIO_MODE_OUTPUT_PP)
 {
-    pSPI2 = nullptr;
-    pSPI4 = nullptr;
-    pConsole = nullptr;
-    pYoke = nullptr;
-    pDisplay = nullptr;
-    pRGBLeds = nullptr;
 }
 
 System::~System()

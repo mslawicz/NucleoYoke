@@ -13,10 +13,6 @@ HX711::HX711(GPIO_TypeDef* clockPort, uint32_t clockPin, GPIO_TypeDef* dataPort,
     totalPulses(totalPulses)
 {
     clockSignal.write(GPIO_PinState::GPIO_PIN_RESET);
-    state = HX711State::wait_for_data_ready;
-    pulseNumber = 0;
-    dataBuffer = 0;
-    dataRegister = 0;
 }
 
 void HX711::handler(void)
