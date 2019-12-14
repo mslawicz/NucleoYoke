@@ -12,7 +12,7 @@ Switch::Switch(GPIO_TypeDef* port, uint32_t pin, GPIO_PinState startState, uint3
         pinState(startState),
         debounceTime(debounceTime)
 {
-    machineState = SwitchState::SS_stable;
+    machineState = SwitchState::stable;
     hasChangedFlag = false;
     hasChangedTo0Flag = false;
     hasChangedTo1Flag = false;
@@ -29,7 +29,7 @@ void Switch::stateMachine(void)
     GPIO_PinState newPinState = inputPin.read();
     switch(machineState)
     {
-    case SS_stable:
+    case SwitchState::stable:
         if(pinState != newPinState)
         {
             // pin state switching occurred
@@ -56,10 +56,10 @@ void Switch::stateMachine(void)
                 changeTo0Time.reset();
             }
             eventTime.reset();
-            machineState = SS_debouncing;
+            machineState = SwitchState::debouncing;
         }
         break;
-    case SS_debouncing:
+    case SwitchState::debouncing:
         if(pinState != newPinState)
         {
             // input is not yet stable - reset timer
@@ -68,11 +68,11 @@ void Switch::stateMachine(void)
         if(eventTime.elapsed(debounceTime))
         {
             // input is stable long enough - end of debouncing
-            machineState = SS_stable;
+            machineState = SwitchState::stable;
         }
         break;
     default:
-        machineState = SS_stable;
+        machineState = SwitchState::stable;
         break;
     }
 }

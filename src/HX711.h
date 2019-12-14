@@ -10,11 +10,11 @@
 
 #include "GPIO.h"
 
-enum HX711State
+enum class HX711State : uint8_t
 {
-    HXS_wait_for_data_ready,
-    HXS_clock_pulse,
-    HXS_after_pulse
+    wait_for_data_ready,
+    clock_pulse,
+    after_pulse
 };
 
 class HX711

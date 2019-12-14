@@ -74,25 +74,25 @@ void Servo::config(void)
     if (HAL_TIM_Base_Init(&Servo::hTim) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_SERVO, "Servo timer initialization failed");
-        System::getInstance().errorHandler(ErrorCode::EC_TimBase);
+        System::getInstance().errorHandler(ErrorCode::TimBase);
     }
     sClockSourceConfig.ClockSource = TIM_CLOCKSOURCE_INTERNAL;
     if (HAL_TIM_ConfigClockSource(&Servo::hTim, &sClockSourceConfig) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_SERVO, "Servo timer clock source error");
-        System::getInstance().errorHandler(ErrorCode::EC_TimConfigClockSource);
+        System::getInstance().errorHandler(ErrorCode::TimConfigClockSource);
     }
     if (HAL_TIM_PWM_Init(&Servo::hTim) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_SERVO, "Servo timer PWM initialization failed");
-        System::getInstance().errorHandler(ErrorCode::EC_TimPwmInit);
+        System::getInstance().errorHandler(ErrorCode::TimPwmInit);
     }
     sMasterConfig.MasterOutputTrigger = TIM_TRGO_RESET;
     sMasterConfig.MasterSlaveMode = TIM_MASTERSLAVEMODE_DISABLE;
     if (HAL_TIMEx_MasterConfigSynchronization(&Servo::hTim, &sMasterConfig) != HAL_OK)
     {
         System::getInstance().getConsole()->sendMessage(Severity::Error,LogChannel::LC_SERVO, "Servo timer master synchronization failed");
-        System::getInstance().errorHandler(ErrorCode::EC_TimMasterConfigSynchronization);
+        System::getInstance().errorHandler(ErrorCode::TimMasterConfigSynchronization);
     }
 }
 

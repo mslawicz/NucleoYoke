@@ -22,12 +22,12 @@
 #include <string>
 #include <unordered_map>
 
-enum YokeMode
+enum class YokeMode : uint8_t
 {
-    YM_force_feedback,
-    YM_spring,
-    YM_demo,
-    YM_end
+    force_feedback,
+    spring,
+    demo,
+    end
 };
 
 struct ForceFeedbackData
@@ -90,9 +90,9 @@ private:
     IndicatorData indicatorData;    // stores data to be displayed in RGB LED indicators
     YokeMode yokeMode;
     const std::unordered_map<YokeMode, std::string> modeText{
-            {YokeMode::YM_force_feedback, "FF"},
-            {YokeMode::YM_spring, "spring"},
-            {YokeMode::YM_demo, "demo"}
+            {YokeMode::force_feedback, "FF"},
+            {YokeMode::spring, "spring"},
+            {YokeMode::demo, "demo"}
     };
     bool pcDataReceived;
     bool ffchannelActive;   // true if FF data are being received

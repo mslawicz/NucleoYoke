@@ -32,7 +32,7 @@ Yoke::Yoke() :
 {
     forceFeedbackDataTimer.reset();
     forceFeedbackData = {0, {0, 0, 0}, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f};
-    yokeMode = YokeMode::YM_force_feedback;
+    yokeMode = YokeMode::force_feedback;
     pcDataReceived = false;
     ffchannelActive = false;
 }
@@ -208,25 +208,25 @@ void Yoke::sendDataToIndicators(bool force)
             (indicatorData.gearDeflection[2] != forceFeedbackData.gearDeflection[2]) ||
             (indicatorData.reverserOn != reverserOn) ||
             force) &&
-            (yokeMode != YokeMode::YM_demo))
+            (yokeMode != YokeMode::demo))
     {
         // data has changed
         // set flaps indicators
-        System::getInstance().getRGBLeds()->setValue(0, forceFeedbackData.flapsDeflection > 0.0f ? WS2812Color::Color_green : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(1, forceFeedbackData.flapsDeflection > 0.125f ? WS2812Color::Color_yellow : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(2, forceFeedbackData.flapsDeflection > 0.25f ? WS2812Color::Color_orange : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(3, forceFeedbackData.flapsDeflection > 0.375f ? WS2812Color::Color_red : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(4, forceFeedbackData.flapsDeflection > 0.5f ? WS2812Color::Color_magenta : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(5, forceFeedbackData.flapsDeflection > 0.625f ? WS2812Color::Color_blue : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(6, forceFeedbackData.flapsDeflection > 0.75f ? WS2812Color::Color_cyan : WS2812Color::Color_off);
-        System::getInstance().getRGBLeds()->setValue(7, forceFeedbackData.flapsDeflection == 1.0f ? WS2812Color::Color_white : WS2812Color::Color_off);
+        System::getInstance().getRGBLeds()->setValue(0, forceFeedbackData.flapsDeflection > 0.0f ? WS2812Color::green : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(1, forceFeedbackData.flapsDeflection > 0.125f ? WS2812Color::yellow : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(2, forceFeedbackData.flapsDeflection > 0.25f ? WS2812Color::orange : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(3, forceFeedbackData.flapsDeflection > 0.375f ? WS2812Color::red : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(4, forceFeedbackData.flapsDeflection > 0.5f ? WS2812Color::magenta : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(5, forceFeedbackData.flapsDeflection > 0.625f ? WS2812Color::blue : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(6, forceFeedbackData.flapsDeflection > 0.75f ? WS2812Color::cyan : WS2812Color::off);
+        System::getInstance().getRGBLeds()->setValue(7, forceFeedbackData.flapsDeflection == 1.0f ? WS2812Color::white : WS2812Color::off);
 
         // set gear indicators
         if(reverserOn)
         {
-            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::Color_blue);     // nose gear indication
-            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::Color_blue);    // left gear indication
-            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::Color_blue);     // right gear indication
+            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::blue);     // nose gear indication
+            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::blue);    // left gear indication
+            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::blue);     // right gear indication
         }
         else if(isRetractable)
         {
@@ -236,15 +236,15 @@ void Yoke::sendDataToIndicators(bool force)
                 WS2812Color color;
                 if(deflection == 0)
                 {
-                    color = WS2812Color::Color_off;
+                    color = WS2812Color::off;
                 }
                 else if(deflection == 2)
                 {
-                    color = WS2812Color::Color_green;
+                    color = WS2812Color::green;
                 }
                 else
                 {
-                    color = WS2812Color::Color_red;
+                    color = WS2812Color::red;
                 }
                 return color;
             };
@@ -256,9 +256,9 @@ void Yoke::sendDataToIndicators(bool force)
         else
         {
             // this aircraft has fixed gear
-            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::Color_gray);     // nose gear indication
-            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::Color_gray);    // left gear indication
-            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::Color_gray);     // right gear indication
+            System::getInstance().getRGBLeds()->setValue(9, WS2812Color::gray);     // nose gear indication
+            System::getInstance().getRGBLeds()->setValue(10, WS2812Color::gray);    // left gear indication
+            System::getInstance().getRGBLeds()->setValue(8, WS2812Color::gray);     // right gear indication
         }
 
         // request the LED update
@@ -279,7 +279,7 @@ void Yoke::sendDataToIndicators(bool force)
  */
 void Yoke::changeMode(int8_t changeValue)
 {
-    yokeMode = static_cast<YokeMode>((yokeMode + YokeMode::YM_end + changeValue) % YokeMode::YM_end);
+    yokeMode = static_cast<YokeMode>((static_cast<uint8_t>(yokeMode) + static_cast<uint8_t>(YokeMode::end) + changeValue) % static_cast<uint8_t>(YokeMode::end));
     sendDataToIndicators(true);
 }
 ;
@@ -300,14 +300,14 @@ void Yoke::setServos(void)
     static uint32_t counter = 0;
     switch(yokeMode)
     {
-    case YM_force_feedback:
+    case YokeMode::force_feedback:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, forceFeedbackData.totalPitch));
         yokeRollServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, -forceFeedbackData.totalRoll));
         break;
-    case YM_spring:
+    case YokeMode::spring:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.0f));  // TODO add spring function here
         break;
-    case YM_demo:
+    case YokeMode::demo:
         yokePitchServo.setValue(scaleValue<float, float>(-1.0f, 1.0f, 0.0f, 1.0f, 0.2f * sin(counter * 0.02f)));
         break;
     default:

@@ -13,7 +13,7 @@
 
 #define USE_HSE_OSCILLATOR  1
 
-ErrorCode System::initErrorCode = ErrorCode::EC_OK;
+ErrorCode System::initErrorCode = ErrorCode::OK;
 
 System::System() :
     systemLED(LED1_GPIO_PORT, LED1_PIN, GPIO_MODE_OUTPUT_PP),   //green LED
@@ -91,7 +91,7 @@ void System::configMCU(void)
 
     if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
     {
-        System::initErrorCode = ErrorCode::EC_RccOscConfig;
+        System::initErrorCode = ErrorCode::RccOscConfig;
     }
     //Select the PLL as system clock source and configure the HCLK, PCLK1 and PCLK2 clocks dividers
     RCC_ClkInitStruct.ClockType = RCC_CLOCKTYPE_HCLK|RCC_CLOCKTYPE_SYSCLK|RCC_CLOCKTYPE_PCLK1|RCC_CLOCKTYPE_PCLK2;
@@ -101,13 +101,13 @@ void System::configMCU(void)
     RCC_ClkInitStruct.APB2CLKDivider = RCC_HCLK_DIV1;
     if (HAL_RCC_ClockConfig(&RCC_ClkInitStruct, FLASH_LATENCY_3) != HAL_OK)
     {
-        System::initErrorCode = ErrorCode::EC_RccClockConfig;
+        System::initErrorCode = ErrorCode::RccClockConfig;
     }
     PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_CLK48;
     PeriphClkInitStruct.Clk48ClockSelection = RCC_CLK48CLKSOURCE_PLLQ;
     if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
     {
-        System::initErrorCode = ErrorCode::EC_RccPeriphClkConfig;
+        System::initErrorCode = ErrorCode::RccPeriphClkConfig;
     }
 }
 
@@ -116,7 +116,7 @@ void System::configMCU(void)
  */
 void System::config(void)
 {
-    errorLED.write(System::initErrorCode == ErrorCode::EC_OK ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
+    errorLED.write(System::initErrorCode == ErrorCode::OK ? GPIO_PinState::GPIO_PIN_RESET : GPIO_PinState::GPIO_PIN_SET);
     Timer::config();
     pConsole = new Console;
     pConsole->sendMessage(Severity::Info,LogChannel::LC_SYSTEM, "Nucleo Yoke program started");
@@ -171,7 +171,7 @@ void System::displayStatus(void)
  */
 void System::demoHandler(void)
 {
-    if(pYoke->getYokeMode() == YokeMode::YM_demo)
+    if(pYoke->getYokeMode() == YokeMode::demo)
     {
         static Timer cycleTimer;
         if(cycleTimer.elapsed(50000))

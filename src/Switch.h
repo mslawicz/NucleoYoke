@@ -11,10 +11,10 @@
 #include "GPIO.h"
 #include "Timer.h"
 
-enum SwitchState
+enum class SwitchState : uint8_t
 {
-    SS_stable,
-    SS_debouncing
+    stable,
+    debouncing
 };
 
 class Switch

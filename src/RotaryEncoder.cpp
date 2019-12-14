@@ -44,14 +44,14 @@ void RotaryEncoder::handler(void)
     int direction = directionSignal.getState();
     switch(type)
     {
-    case RET_single_slope:
+    case RotaryEncoderType::single_slope:
         if(clockSignal.hasChanged())
         {
             // clock signal state change detected
             state = (direction == clockSignal.getState() ? -1 : 1);
         }
         break;
-    case RET_dual_slope:
+    case RotaryEncoderType::dual_slope:
         if(clockSignal.hasChangedTo0())
         {
             // clock signal falling slope detected

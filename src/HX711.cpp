@@ -13,7 +13,7 @@ HX711::HX711(GPIO_TypeDef* clockPort, uint32_t clockPin, GPIO_TypeDef* dataPort,
     totalPulses(totalPulses)
 {
     clockSignal.write(GPIO_PinState::GPIO_PIN_RESET);
-    state = HX711State::HXS_wait_for_data_ready;
+    state = HX711State::wait_for_data_ready;
     pulseNumber = 0;
     dataBuffer = 0;
     dataRegister = 0;
@@ -23,33 +23,33 @@ void HX711::handler(void)
 {
     switch(state)
     {
-    case HXS_wait_for_data_ready:
+    case HX711State::wait_for_data_ready:
         if(dataSignal.read() == GPIO_PinState::GPIO_PIN_RESET)
         {
             // data is ready
             pulseNumber = 0;
             dataBuffer = 0;
-            state = HXS_clock_pulse;
+            state = HX711State::clock_pulse;
         }
         break;
-    case HXS_clock_pulse:
+    case HX711State::clock_pulse:
         clockSignal.write(GPIO_PinState::GPIO_PIN_SET);
         if(pulseNumber < 24)
         {
             dataBuffer = (dataBuffer << 1) | dataSignal.read();
         }
         clockSignal.write(GPIO_PinState::GPIO_PIN_RESET);
-        state = HXS_after_pulse;
+        state = HX711State::after_pulse;
         break;
-    case HXS_after_pulse:
+    case HX711State::after_pulse:
         if(++pulseNumber == totalPulses)
         {
             dataRegister = dataBuffer;
-            state = HXS_wait_for_data_ready;
+            state = HX711State::wait_for_data_ready;
         }
         else
         {
-            state = HXS_clock_pulse;
+            state = HX711State::clock_pulse;
         }
         break;
     default:

@@ -28,7 +28,7 @@ enum DeviceAddress
     MCP23017_2_ADD = 0x46
 };
 
-enum ActionType
+enum class ActionType : bool
 {
     I2C_WRITE,
     I2C_READ

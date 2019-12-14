@@ -19,6 +19,7 @@ public:
     uint32_t getCycledValue(uint8_t step, uint8_t phase);
     void handler(void);
     void setValue(uint8_t ledIndex, uint32_t value);
+    void setValue(uint8_t ledIndex, WS2812Color value) { setValue(ledIndex, static_cast<uint32_t>(value)); }
     void requestUpdate(void) { updateRequest = true; }
 private:
     WS2812 device;

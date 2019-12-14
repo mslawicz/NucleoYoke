@@ -61,10 +61,10 @@ void Console::sendMessage(Severity level, LogChannel channel, std::string messag
 {
     const std::unordered_map<Severity, std::string> severityStrings =
     {
-            {Error, "error"},
-            {Warning, "warning"},
-            {Info, "info"},
-            {Debug, "debug"}
+            {Severity::Error, "error"},
+            {Severity::Warning, "warning"},
+            {Severity::Info, "info"},
+            {Severity::Debug, "debug"}
     };
 
     if(Console::IsChannelActive[channel] &&

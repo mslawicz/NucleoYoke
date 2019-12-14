@@ -15,7 +15,7 @@ SH1106::SH1106(SpiBus* pBus, GPIO_TypeDef* portCS, uint32_t pinCS) :
     displayBuffer{},
     refreshRange{}
 {
-    state = DisplayControllerState::DCS_start;
+    state = DisplayControllerState::start;
     refreshRequest = false;
 }
 
@@ -27,34 +27,34 @@ void SH1106::handler(void)
 {
     switch(state)
     {
-    case DCS_start:
+    case DisplayControllerState::start:
         resetPin.write(GPIO_PinState::GPIO_PIN_RESET);
         //send a dummy byte to get SPI ready
         sendRequest(std::vector<uint8_t>{0x00}, true);
-        state = DCS_reset_off;
+        state = DisplayControllerState::reset_off;
         break;
-    case DCS_reset_off:
+    case DisplayControllerState::reset_off:
         //wait for end of transmission
         if(!pBus->isBusy())
         {
             resetPin.write(GPIO_PinState::GPIO_PIN_SET);
             controllerTimer.reset();
-            state = DCS_wait_before_init;
+            state = DisplayControllerState::wait_before_init;
         }
         break;
-    case DCS_wait_before_init:
+    case DisplayControllerState::wait_before_init:
         if(controllerTimer.elapsed(WaitBeforeInitTime))
         {
-            state = DCS_initialize;
+            state = DisplayControllerState::initialize;
         }
         break;
-    case DCS_initialize:
+    case DisplayControllerState::initialize:
         //send the initialization data
         sendRequest(SH1106InitData, true);
         controllerTimer.reset();
-        state = DCS_clear_screen;
+        state = DisplayControllerState::clear_screen;
         break;
-    case DCS_clear_screen:
+    case DisplayControllerState::clear_screen:
         for(uint8_t page = 0; page < NoOfPages; page++)
         {
             // declare the whole row to be refreshed
@@ -62,19 +62,19 @@ void SH1106::handler(void)
             refreshRange[page][1] = 129;
         }
         refreshDisplay();
-        state = DCS_display_on;
+        state = DisplayControllerState::display_on;
         break;
-    case DCS_display_on:
+    case DisplayControllerState::display_on:
         sendRequest(std::vector<uint8_t>{0xAF}, true);   //display on
-        state = DCS_wait_after_init;
+        state = DisplayControllerState::wait_after_init;
         break;
-    case DCS_wait_after_init:
+    case DisplayControllerState::wait_after_init:
         if(controllerTimer.elapsed(WaitAfterInitTime))
         {
-            state = DCS_refresh_loop;
+            state = DisplayControllerState::refresh_loop;
         }
         break;
-    case DCS_refresh_loop:
+    case DisplayControllerState::refresh_loop:
         if(refreshRequest)
         {
             refreshRequest = false;

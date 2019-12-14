@@ -15,7 +15,7 @@
 #include <utility>
 #include <functional>
 
-enum Severity
+enum class Severity : uint8_t
 {
     Error,
     Warning,

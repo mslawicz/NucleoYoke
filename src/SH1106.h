@@ -17,16 +17,16 @@
 #define SH1106_RESET_PORT    GPIOE
 #define SH1106_RESET_PIN     GPIO_PIN_15
 
-enum DisplayControllerState
+enum class DisplayControllerState : uint8_t
 {
-    DCS_start,
-    DCS_reset_off,
-    DCS_wait_before_init,
-    DCS_initialize,
-    DCS_wait_after_init,
-    DCS_clear_screen,
-    DCS_display_on,
-    DCS_refresh_loop
+    start,
+    reset_off,
+    wait_before_init,
+    initialize,
+    wait_after_init,
+    clear_screen,
+    display_on,
+    refresh_loop
 };
 
 class SH1106 : public SpiDevice

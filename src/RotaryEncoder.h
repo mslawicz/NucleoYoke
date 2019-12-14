@@ -10,10 +10,10 @@
 
 #include "Switch.h"
 
-enum RotaryEncoderType
+enum class RotaryEncoderType : bool
 {
-    RET_single_slope,   // one clock slope per encoder detent
-    RET_dual_slope      // two clock slopes per encoder detent (falling slope detection only)
+    single_slope,   // one clock slope per encoder detent
+    dual_slope      // two clock slopes per encoder detent (falling slope detection only)
 };
 
 class RotaryEncoder

@@ -22,17 +22,17 @@
 #define TEST2_PORT   GPIOE
 #define TEST2_PIN    GPIO_PIN_3
 
-enum ErrorCode
+enum class ErrorCode
 {
-    EC_OK = 0,
-    EC_RccOscConfig,
-    EC_RccClockConfig,
-    EC_RccPeriphClkConfig,
-    EC_TimBase,
-    EC_TimConfigClockSource,
-    EC_TimMasterConfigSynchronization,
-    EC_UartInit,
-    EC_TimPwmInit
+    OK = 0,
+    RccOscConfig,
+    RccClockConfig,
+    RccPeriphClkConfig,
+    TimBase,
+    TimConfigClockSource,
+    TimMasterConfigSynchronization,
+    UartInit,
+    TimPwmInit
 };
 
 class System
