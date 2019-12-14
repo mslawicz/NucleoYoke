@@ -23,7 +23,7 @@ void moveDataToReceiveQueue(uint8_t* data, uint32_t length);
 }
 #endif
 
-typedef std::queue<std::vector<uint8_t>> PacketQueue;
+using PacketQueue = std::queue<std::vector<uint8_t>>;
 
 class VirtualCom
 {

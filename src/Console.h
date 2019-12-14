@@ -36,8 +36,8 @@ enum LogChannel
     LC_END
 };
 
-typedef std::vector<std::string> StringVector;
-typedef std::unordered_map<std::string, std::pair<std::string, std::function<void(StringVector)>>> CommandContainer;
+using StringVector = std::vector<std::string>;
+using CommandContainer = std::unordered_map<std::string, std::pair<std::string, std::function<void(StringVector)>>>;
 
 class Console
 {
